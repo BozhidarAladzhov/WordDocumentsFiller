@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Word Generator</title>
+</head>
+<body>
+<h1>Генериране на Word документ</h1>
+<form th:action="@{/generate}" method="post">
+    <label>Име:</label>
+    <input type="text" name="name"/><br/>
+    <label>Дата:</label>
+    <input type="date" name="date"/><br/>
+    <button type="submit">Генерирай</button>
+</form>
+</body>
+</html>
