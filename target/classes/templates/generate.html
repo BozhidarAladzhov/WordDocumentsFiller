@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Генериране на Word оферта</title>
+    <style>
+        body {
+            background: #f8fafc;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #1a202c;
+            margin: 0; padding: 0;
+        }
+        .container {
+            max-width: 720px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 36px 32px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px #0001;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 34px;
+            font-weight: 600;
+            color: #2b6cb0;
+        }
+        form {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .column {
+            flex: 1 1 0;
+            min-width: 280px;
+        }
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 1rem;
+            background: #f1f5f9;
+        }
+        button {
+            width: 100%;
+            margin-top: 32px;
+            padding: 12px 0;
+            background: #2b6cb0;
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.15rem;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        @media (max-width: 800px) {
+            form { flex-direction: column; gap: 0; }
+            .column { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Генериране на Word оферта</h1>
+    <form th:action="@{/generate}" method="post">
+        <div class="column">
+            <label>Дата на оферта:</label>
+            <input type="date" name="date" required/>
+
+            <label>Мейл:</label>
+            <input type="email" name="email" required/>
+
+            <label>Име:</label>
+            <input type="text" name="fullName" required/>
+
+            <label>Автомобил:</label>
+            <input type="text" name="vehicle" required/>
+
+            <label>Дата на валидност:</label>
+            <input type="date" name="validate" required/>
+
+        </div>
+        <div class="column">
+            <label>Адрес на взимане:</label>
+            <input type="text" name="pickUpAddress" required/>
+
+            <label>Товарно пристанище:</label>
+            <select name="portOfLoading" required>
+                <option value="New York">New York</option>
+                <option value="Savannah">Savannah</option>
+                <option value="Miami">Miami</option>
+                <option value="Indianapolis">Indianapolis</option>
+                <option value="Houston">Houston</option>
+                <option value="Los Angeles">Los Angeles</option>
+                <option value="San Francisco">San Francisco</option>
+            </select>
+
+            <label>Разтоварно пристанище:</label>
+            <select name="portOfDelivery" required>
+                <option value="Varna">Varna</option>
+                <option value="Rotterdam">Rotterdam</option>
+            </select>
+
+            <label>Цена за вътрешен транспорт (USD):</label>
+            <input type="text" name="domesticTransport" required/>
+
+            <label>Морски транспорт:</label>
+            <input type="text" name="oceanFreight" required/>
+
+            <label>Вътрешен транспорт Ротердам - София: </label>
+            <input type="text" name="inlandTransport" required/>
+
+
+        </div>
+        <button type="submit">Генерирай офертата</button>
+    </form>
+</div>
+</body>
+</html>
