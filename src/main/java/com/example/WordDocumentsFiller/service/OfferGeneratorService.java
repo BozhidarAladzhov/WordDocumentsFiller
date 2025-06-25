@@ -124,6 +124,8 @@ public class OfferGeneratorService {
 
             XWPFRun valueRun = paragraph.insertNewRun(startRun + 1);
             valueRun.setText(value != null ? value : "");
+            valueRun.setFontFamily("Calibri");
+            valueRun.setFontSize(12);
             valueRun.setBold(true);
             valueRun.setUnderline(UnderlinePatterns.SINGLE);
 
@@ -149,6 +151,8 @@ public class OfferGeneratorService {
             // Добавяме bold стойност след първия run
             XWPFRun valueRun = paragraph.insertNewRun(startRun + 1);
             valueRun.setText(value != null ? value : "");
+            valueRun.setFontFamily("Calibri");
+            valueRun.setFontSize(12);
             valueRun.setBold(true);
             valueRun.setUnderline(UnderlinePatterns.SINGLE);
 
@@ -157,6 +161,8 @@ public class OfferGeneratorService {
             afterRun.setText(after, 0);
         }
     }
+
+
 
 
 

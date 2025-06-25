@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.File;
@@ -25,21 +26,29 @@ public class OfferController {
         this.offerGeneratorService = offerGeneratorService;
     }
 
+
     @GetMapping("/")
-    public String showForm(Model model) {
-        model.addAttribute("offerData", new OfferData());
-        return "generate";
+    public String showHome() {
+        return "home";
     }
 
-    @PostMapping("/generate")
-    public ResponseEntity<InputStreamResource> generateOffer(@ModelAttribute OfferData data) throws IOException {
+    @GetMapping("/form/{template}")
+    public String showForm(@PathVariable String template, Model model) {
+        model.addAttribute("offerData", new OfferData());
+        model.addAttribute("template", template);
 
-        String template = "offer_template.docx";
+        return "offer_template_" + template;
+    }
+
+    @PostMapping("/generate/{template}")
+    public ResponseEntity<InputStreamResource> generateOffer(@ModelAttribute OfferData data, @PathVariable String template) throws IOException {
+
+
+        String docxTemplate = "offer_template_" + template + ".docx";
 
         File tempFile = File.createTempFile("offer_", ".docx");
-        offerGeneratorService.generateOffer(data, template, tempFile.getAbsolutePath());
+        offerGeneratorService.generateOffer(data, docxTemplate, tempFile.getAbsolutePath());
 
-        // Връщане на документа като файл за сваляне
         InputStreamResource resource = new InputStreamResource(new FileInputStream(tempFile));
 
         return ResponseEntity.ok()
