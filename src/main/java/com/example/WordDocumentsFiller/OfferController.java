@@ -46,14 +46,24 @@ public class OfferController {
 
         String docxTemplate = "offer_template_" + template + ".docx";
 
-        File tempFile = File.createTempFile("offer_", ".docx");
+        String fileName = "offer_LCL" +
+                (data.getPortOfLoading() != null ? data.getPortOfLoading().replaceAll("\\s+", "_") : "portOfLoading") + "_" +
+                (data.getPortOfDelivery() != null ? data.getPortOfDelivery().replaceAll("-", "") : "portOfDelivery") + "_" +
+                (data.getVehicle() != null ? data.getVehicle().replaceAll("\\s+", "_") : "vehicle") +
+                ".docx";
+
+        File tempFile = new File(System.getProperty("java.io.tmpdir"), fileName);
+
         offerGeneratorService.generateOffer(data, docxTemplate, tempFile.getAbsolutePath());
 
         InputStreamResource resource = new InputStreamResource(new FileInputStream(tempFile));
 
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=offer.docx")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                 .body(resource);
+
+
     }
 }
