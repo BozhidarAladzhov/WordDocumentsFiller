@@ -32,6 +32,8 @@ public class OfferGeneratorService {
         replacements.put("${fullName}", data.getFullName());
         replacements.put("${vehicle}", data.getVehicle());
         replacements.put("${domesticTransport}", data.getDomesticTransport());
+        replacements.put("${hazardousCargo}", data.getHazardousCargo());
+        replacements.put("${terminalHandling}", data.getTerminalHandling());
         replacements.put("${pickUpAddress}", data.getPickUpAddress());
         replacements.put("${portOfLoading}", data.getPortOfLoading());
         replacements.put("${oceanFreight}", data.getOceanFreight());

@@ -6,6 +6,8 @@ public class OfferData {
     public String date;
     public String fullName;
     public String vehicle;
+    public String hazardousCargo;
+    public String terminalHandling;
     public String domesticTransport;
     public String pickUpAddress;
     public String portOfLoading;
@@ -100,5 +102,21 @@ public class OfferData {
 
     public void setValidate(String validate) {
         this.validate = validate;
+    }
+
+    public String getHazardousCargo() {
+        return hazardousCargo;
+    }
+
+    public void setHazardousCargo(String hazardousCargo) {
+        this.hazardousCargo = hazardousCargo;
+    }
+
+    public String getTerminalHandling() {
+        return terminalHandling;
+    }
+
+    public void setTerminalHandling(String terminalHandling) {
+        this.terminalHandling = terminalHandling;
     }
 }
