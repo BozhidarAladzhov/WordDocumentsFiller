@@ -46,7 +46,7 @@ public class OfferController {
 
         String docxTemplate = "offer_template_" + template + ".docx";
 
-        String fileName = "offer_LCL" +
+        String fileName = "offer_LCL_" +
                 (data.getPortOfLoading() != null ? data.getPortOfLoading().replaceAll("\\s+", "_") : "portOfLoading") + "_" +
                 (data.getPortOfDelivery() != null ? data.getPortOfDelivery().replaceAll("-", "") : "portOfDelivery") + "_" +
                 (data.getVehicle() != null ? data.getVehicle().replaceAll("\\s+", "_") : "vehicle") +
