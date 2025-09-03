@@ -32,19 +32,26 @@ public class OfferController {
         return "home";
     }
 
-    @GetMapping("/form/{template}")
-    public String showForm(@PathVariable String template, Model model) {
+    @GetMapping("/form/{destination}/{category}")
+    public String showForm(@PathVariable String destination,
+                           @PathVariable String category,
+                           Model model) {
         model.addAttribute("offerData", new OfferData());
-        model.addAttribute("template", template);
+        model.addAttribute("market", destination);
+        model.addAttribute("category", category);
 
-        return "offer_template_" + template;
+        return "offer_template_" + destination + "_" + category;
     }
 
-    @PostMapping("/generate/{template}")
-    public ResponseEntity<InputStreamResource> generateOffer(@ModelAttribute OfferData data, @PathVariable String template) throws IOException {
+    @PostMapping("/generate/{destination}/{category}")
+    public ResponseEntity<InputStreamResource> generateOffer(@ModelAttribute OfferData data,
+                                                             @PathVariable String destination,
+                                                             @PathVariable String category
+                                                             ) throws IOException {
 
 
-        String docxTemplate = "offer_template_" + template + ".docx";
+
+        String docxTemplate = "offer_template_" + destination + "_" + category + ".docx";
 
         String fileName = "offer_LCL_" +
                 (data.getPortOfLoading() != null ? data.getPortOfLoading().replaceAll("\\s+", "_") : "portOfLoading") + "_" +
