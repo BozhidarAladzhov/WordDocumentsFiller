@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Инструкции за разтоварване на контейнер</title>
+    <style>
+        body {
+          background: #f8fafc;
+          font-family: 'Segoe UI', Arial, sans-serif;
+          color: #1a202c;
+          margin: 0; padding: 0;
+        }
+        nav {
+          background: #2b6cb0;
+          padding: 14px 0;
+          margin-bottom: 26px;
+        }
+        nav .nav-inner{
+          max-width: 860px;
+          margin: 0 auto;
+          display: flex;
+          gap: 26px;
+          padding: 0 16px;
+          flex-wrap: wrap;
+        }
+        nav a {
+          color: #fff;
+          text-decoration:none;
+          font-weight:600;
+          margin-right:20px;
+        }
+
+        .container {
+          max-width: 860px;
+          margin: 40px auto;
+          background: #fff;
+          padding: 36px 32px;
+          border-radius: 14px;
+          box-shadow: 0 4px 20px #0001;
+        }
+        h1 {
+          text-align: center;
+          margin-bottom: 24px;
+          font-weight: 600;
+          color: #2b6cb0;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 18px 28px;
+          align-items: end;
+        }
+        @media (max-width: 860px) {
+          .container { margin: 18px auto; padding: 22px 16px; }
+          .grid { grid-template-columns: 1fr; }
+        }
+
+        label {
+          display: block;
+          margin-top: 14px;
+          font-weight: 500;
+        }
+        input[type="text"], input[type="date"] {
+          width: 100%;
+          padding: 8px 10px;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          margin-top: 6px;
+          font-size: 1rem;
+          background: #f1f5f9;
+          box-sizing: border-box;
+        }
+
+        .checkbox-row{
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 10px;
+          padding: 10px 12px;
+          background: #f1f5f9;
+          border: 1px solid #cbd5e1;
+          border-radius: 8px;
+        }
+        .checkbox-row input{
+          width: 18px;
+          height: 18px;
+          margin: 0;
+        }
+        .muted { color: #64748b; font-size: .95rem; }
+
+        .section-title{
+          margin-top: 26px;
+          font-size: 1.05rem;
+          font-weight: 700;
+          color: #0f172a;
+          border-top: 1px dashed #cbd5e1;
+          padding-top: 18px;
+        }
+
+        .vehicles-header {
+          display:flex;
+          justify-content: space-between;
+          align-items:center;
+          gap: 12px;
+          flex-wrap: wrap;
+          margin-top: 6px;
+        }
+
+        .btn-row{
+          display:flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        button {
+          padding: 11px 14px;
+          background: #2b6cb0;
+          color: #fff;
+          font-weight: 600;
+          border: none;
+          border-radius: 10px;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: background 0.18s;
+        }
+        button:hover { background: #2563eb; }
+
+        .btn-secondary{
+          background:#0f172a;
+        }
+        .btn-secondary:hover{
+          background:#111827;
+        }
+        .btn-ghost{
+          background:#e2e8f0;
+          color:#0f172a;
+          border: 1px solid #cbd5e1;
+        }
+        .btn-ghost:hover{
+          background:#dbeafe;
+        }
+        .btn-danger{
+          background:#dc2626;
+        }
+        .btn-danger:hover{
+          background:#b91c1c;
+        }
+
+        .vehicle-card{
+          margin-top: 14px;
+          padding: 16px 14px;
+          border: 1px solid #cbd5e1;
+          border-radius: 12px;
+          background: #ffffff;
+        }
+        .vehicle-card h3{
+          margin: 0 0 10px 0;
+          font-size: 1.02rem;
+          color: #0f172a;
+          display:flex;
+          justify-content: space-between;
+          align-items:center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        .vehicle-grid{
+          display:grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px 16px;
+          align-items:end;
+        }
+        @media (max-width: 860px) {
+          .vehicle-grid { grid-template-columns: 1fr; }
+        }
+
+        .resultBox{
+          display:none;
+          margin-top: 26px;
+          padding: 18px 16px;
+          background:#f1f5f9;
+          border-radius: 12px;
+          border:1px solid #cbd5e1;
+        }
+        .resultBox p{
+          line-height: 1.6;
+          margin: 0;
+          white-space: normal;
+        }
+        .hint {
+          margin-top: 10px;
+          font-size: .92rem;
+          color: #475569;
+        }
+        .copied {
+          display:none;
+          margin-top: 10px;
+          padding: 10px 12px;
+          border-radius: 10px;
+          background: #dcfce7;
+          border: 1px solid #86efac;
+          color: #14532d;
+          font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+<nav>
+    <div class="nav-inner">
+        <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+        <a href="/customs_duties" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Митнически задължения</a>
+        <a href="/unloading" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструкции за разтоварване</a>
+        <a href="/pickup_instructions" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">САЩ pick up</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Инструкции за разтоварване на контейнер</h1>
+
+    <form onsubmit="return false;">
+        <div class="grid">
+            <div>
+                <label>Дата</label>
+                <input type="date" name="unloadDate" required />
+            </div>
+
+            <div>
+                <label>Контейнер №</label>
+                <input type="text" name="containerNo" required />
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+                <div class="checkbox-row">
+                    <input type="checkbox" id="hasInspection" />
+                    <label for="hasInspection" style="margin:0; font-weight:600;">Контейнерът е с проверка</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Автомобили в контейнера</div>
+
+        <div class="vehicles-header">
+            <div class="btn-row">
+                <button type="button" class="btn-ghost" onclick="addVehicle()">+ Добави автомобил</button>
+                <button type="button" onclick="generateText()">Генерирай</button>
+                <button type="button" class="btn-secondary" onclick="copyGeneratedText()">Копирай текста</button>
+            </div>
+        </div>
+
+        <div id="vehiclesContainer"></div>
+    </form>
+
+    <div id="resultBox" class="resultBox">
+        <p id="resultText"></p>
+        <div class="hint">Копиране: ако пействаш в Gmail/Outlook/Word ще получиш форматиран текст (bold). Ако пействаш в чат/Notepad — ще е чист текст.</div>
+        <div id="copiedToast" class="copied">✅ Текстът е копиран!</div>
+    </div>
+
+    <!-- hidden plain text for clipboard fallback -->
+    <textarea id="plainTextOut" style="position:absolute; left:-9999px; top:-9999px;"></textarea>
+</div>
+
+<script>
+    let vehicleIdSeq = 0;
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatDateBG(isoDate) {
+      if (!isoDate || typeof isoDate !== "string" || isoDate.length < 10) return isoDate || "";
+      const parts = isoDate.split("-");
+      if (parts.length !== 3) return isoDate;
+      const y = parts[0], m = parts[1], d = parts[2];
+      return d + "." + m + "." + y;
+    }
+
+    function addVehicle(prefill = {}) {
+      vehicleIdSeq += 1;
+      const id = vehicleIdSeq;
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "vehicle-card";
+      wrapper.dataset.vehicleId = String(id);
+
+      wrapper.innerHTML = `
+        <h3>
+          <span>Автомобил #${id}</span>
+          <button type="button" class="btn-danger" onclick="removeVehicle(${id})">Премахни</button>
+        </h3>
+
+        <div class="vehicle-grid">
+          <div>
+            <label>Автомобил</label>
+            <input type="text" name="car_${id}" value="${escapeHtml(prefill.car || "")}" required />
+          </div>
+
+          <div>
+            <div class="checkbox-row" style="margin-top: 22px;">
+              <input type="checkbox" id="canPickup_${id}" ${prefill.canPickup ? "checked" : ""} />
+              <label for="canPickup_${id}" style="margin:0; font-weight:600;">Може да се вземе.</label>
+            </div>
+
+            <div class="checkbox-row">
+              <input type="checkbox" id="hasDocs_${id}" ${prefill.hasDocs ? "checked" : ""} />
+              <label for="hasDocs_${id}" style="margin:0; font-weight:600;">Има оригинални документи</label>
+            </div>
+
+            <div class="checkbox-row">
+              <input type="checkbox" id="clientPickup_${id}" ${prefill.clientPickup ? "checked" : ""} />
+              <label for="clientPickup_${id}" style="margin:0; font-weight:600;">Клиентът ще си я вземе</label>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("vehiclesContainer").appendChild(wrapper);
+    }
+
+    function removeVehicle(id) {
+      const el = document.querySelector('.vehicle-card[data-vehicle-id="' + id + '"]');
+      if (el) el.remove();
+    }
+
+    function collectVehicles() {
+      const cards = Array.from(document.querySelectorAll(".vehicle-card"));
+      const vehicles = [];
+
+      for (const card of cards) {
+        const vid = card.dataset.vehicleId;
+        const carInput = card.querySelector('input[name="car_' + vid + '"]');
+
+        const canPickup = (document.getElementById("canPickup_" + vid)?.checked) || false;
+        const hasDocs = (document.getElementById("hasDocs_" + vid)?.checked) || false;
+        const clientPickup = (document.getElementById("clientPickup_" + vid)?.checked) || false;
+
+        vehicles.push({
+          id: vid,
+          car: (carInput?.value || "").trim(),
+          canPickup,
+          hasDocs,
+          clientPickup
+        });
+      }
+      return vehicles;
+    }
+
+    function buildTexts(data) {
+      const linesHtml = [];
+      const linesTxt = [];
+
+      const dateBG = formatDateBG(data.date);
+      const containerNo = data.containerNo;
+
+      linesHtml.push(`Здравейте,<br><br>`);
+      linesTxt.push(`Здравейте,\n`);
+
+      linesHtml.push(`<strong>Моля да организирате разтоварване както следва:</strong><br>`);
+      linesTxt.push(`Моля да организирате разтоварване както следва:\n`);
+
+      linesHtml.push(`<strong>Дата:</strong> ${escapeHtml(dateBG)}<br>`);
+      linesTxt.push(`Дата: ${dateBG}\n`);
+
+      linesHtml.push(`<strong>Контейнер:</strong> ${escapeHtml(containerNo)}<br><br>`);
+      linesTxt.push(`Контейнер: ${containerNo}\n\n`);
+
+      if (data.hasInspection) {
+        linesHtml.push(`<strong>ВАЖНО:</strong> Контейнерът е с проверка, изчакайте инструкции от Пламена преди да отворите контейнера!<br><br>`);
+        linesTxt.push(`ВАЖНО: Контейнерът е с проверка, изчакайте инструкции от Пламена преди да отворите контейнера!\n\n`);
+      }
+
+      data.vehicles.forEach((v, idx) => {
+        const n = idx + 1;
+
+        linesHtml.push(`<br><strong>${n}) ${escapeHtml(v.car || "(няма въведен автомобил)")}</strong><br>`);
+        linesTxt.push(`\n${n}) ${v.car || "(няма въведен автомобил)"}\n`);
+
+        if (v.canPickup) {
+          linesHtml.push(`╰┈➤ Може да го предавате.<br>`);
+          linesTxt.push(`╰┈➤ Може да го предавате.\n`);
+        } else {
+          linesHtml.push(`╰┈➤ Моля <strong>НЕ предавайте</strong>, клиента още не си е заплатил разходите.<br>`);
+          linesTxt.push(`╰┈➤ Моля НЕ предавайте, клиента още не си е заплатил разходите.\n`);
+        }
+
+        if (v.clientPickup) {
+          linesHtml.push(`╰┈➤ Клиентът ще си я вземе.<br>`);
+          linesTxt.push(`╰┈➤ Клиентът ще си я вземе.\n`);
+        } else {
+          linesHtml.push(`╰┈➤ Ние ще изпратим платформа да я вземе.<br>`);
+          linesTxt.push(`╰┈➤ Ние ще изпратим платформа да я вземе.\n`);
+        }
+
+        if (v.hasDocs) {
+          linesHtml.push(`╰┈➤ Има оригинални документи за предаване при взимане.<br>`);
+          linesTxt.push(`╰┈➤ Има оригинални документи за предаване при взимане.\n`);
+        } else {
+          linesHtml.push(`╰┈➤ Няма оригинални документи за взимане.<br>`);
+          linesTxt.push(`╰┈➤ Няма оригинални документи за взимане.\n`);
+        }
+      });
+
+      linesHtml.push(`<br><br>Поздрави,<br>Божидар<br>`);
+      linesTxt.push(`\n\nПоздрави,\nБожидар\n`);
+
+      return { html: linesHtml.join(""), text: linesTxt.join("") };
+    }
+
+    function generateText() {
+      const unloadDate = document.querySelector('input[name="unloadDate"]').value;
+      const containerNo = document.querySelector('input[name="containerNo"]').value.trim();
+      const hasInspection = document.getElementById("hasInspection").checked;
+
+      const vehicles = collectVehicles();
+      if (vehicles.length === 0) { alert("Добави поне 1 автомобил."); return; }
+      if (!unloadDate) { alert("Моля, посочи дата."); return; }
+      if (!containerNo) { alert("Моля, въведи контейнер №."); return; }
+      if (vehicles.some(v => !v.car)) { alert("Моля, попълни полето 'Автомобил' за всеки запис."); return; }
+
+      const built = buildTexts({ date: unloadDate, containerNo, hasInspection, vehicles });
+
+      document.getElementById("resultText").innerHTML = built.html;
+      document.getElementById("plainTextOut").value = built.text;
+
+      document.getElementById("resultBox").style.display = "block";
+      document.getElementById("copiedToast").style.display = "none";
+    }
+
+    async function copyGeneratedText() {
+      if (document.getElementById("resultBox").style.display !== "block") generateText();
+
+      const html = document.getElementById("resultText").innerHTML || "";
+      const text = document.getElementById("plainTextOut").value || "";
+
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([text], { type: "text/plain" })
+          })
+        ]);
+      } catch (e) {
+        // fallback: plain text
+        try { await navigator.clipboard.writeText(text); }
+        catch (e2) {
+          const ta = document.getElementById("plainTextOut");
+          ta.style.position = "static";
+          ta.style.width = "100%";
+          ta.focus(); ta.select();
+          document.execCommand("copy");
+          ta.style.position = "absolute";
+          ta.style.left = "-9999px";
+          ta.style.top = "-9999px";
+        }
+      }
+
+      const toast = document.getElementById("copiedToast");
+      toast.style.display = "block";
+      setTimeout(() => toast.style.display = "none", 2000);
+    }
+
+    // стартово: 1 автомобил по подразбиране
+    addVehicle();
+</script>
+
+</body>
+</html>

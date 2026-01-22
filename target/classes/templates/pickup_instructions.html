@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Pickup Instructions</title>
+    <style>
+        body {
+          background: #f8fafc;
+          font-family: 'Segoe UI', Arial, sans-serif;
+          color: #1a202c;
+          margin: 0; padding: 0;
+        }
+        nav {
+          background: #2b6cb0;
+          padding: 14px 0;
+          margin-bottom: 26px;
+        }
+        nav .nav-inner{
+          max-width: 860px;
+          margin: 0 auto;
+          display: flex;
+          gap: 26px;
+          padding: 0 16px;
+          flex-wrap: wrap;
+        }
+        nav a {
+          color: #fff;
+          text-decoration:none;
+          font-weight:600;
+          margin-right:20px;
+        }
+
+        .container {
+          max-width: 860px;
+          margin: 40px auto;
+          background: #fff;
+          padding: 36px 32px;
+          border-radius: 14px;
+          box-shadow: 0 4px 20px #0001;
+        }
+        h1 {
+          text-align: center;
+          margin-bottom: 24px;
+          font-weight: 600;
+          color: #2b6cb0;
+        }
+
+        .grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 18px 28px;
+          align-items: end;
+        }
+        @media (max-width: 860px) {
+          .container { margin: 18px auto; padding: 22px 16px; }
+          .grid { grid-template-columns: 1fr; }
+        }
+
+        label {
+          display: block;
+          margin-top: 14px;
+          font-weight: 600;
+        }
+        input[type="text"], select, textarea {
+          width: 100%;
+          padding: 8px 10px;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          margin-top: 6px;
+          font-size: 1rem;
+          background: #f1f5f9;
+          box-sizing: border-box;
+        }
+        textarea{
+          min-height: 90px;
+          resize: vertical;
+        }
+
+        .btn-row{
+          display:flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-top: 16px;
+        }
+
+        button {
+          padding: 11px 14px;
+          background: #2b6cb0;
+          color: #fff;
+          font-weight: 600;
+          border: none;
+          border-radius: 10px;
+          font-size: 1rem;
+          cursor: pointer;
+        }
+
+        .btn-secondary{ background:#0f172a; }
+        .btn-ghost{
+          background:#e2e8f0;
+          color:#0f172a;
+          border: 1px solid #cbd5e1;
+        }
+
+        .resultBox{
+          display:none;
+          margin-top: 26px;
+          padding: 18px 16px;
+          background:#f1f5f9;
+          border-radius: 12px;
+          border:1px solid #cbd5e1;
+        }
+
+        .copied {
+          display:none;
+          margin-top: 10px;
+          padding: 10px 12px;
+          border-radius: 10px;
+          background: #dcfce7;
+          border: 1px solid #86efac;
+          color: #14532d;
+          font-weight: 600;
+        }
+
+        .hidden{ display:none; }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Pickup Instructions Generator</h1>
+
+    <form onsubmit="return false;">
+        <div class="grid">
+            <div>
+                <label>Place</label>
+                <select id="place" onchange="handlePlaceChange()">
+                    <option value="Copart">Copart</option>
+                    <option value="IAAI">IAAI</option>
+                    <option value="Private address">Private address</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Vehicle</label>
+                <input type="text" id="vehicle"/>
+            </div>
+
+            <div>
+                <label>VIN</label>
+                <input type="text" id="vin"/>
+            </div>
+
+            <div id="lotStockWrap">
+                <label id="lotStockLabel">LOT</label>
+                <input type="text" id="lotStockValue"/>
+            </div>
+
+            <!-- PIN WRAP -->
+            <div id="pinWrap">
+                <label id="pinLabel">GATE PASS PIN</label>
+                <input type="text" id="pinValue"/>
+            </div>
+
+            <div>
+                <label id="locationLabel">Location</label>
+                <input type="text" id="locationValue"/>
+            </div>
+
+            <div id="privateFields" class="hidden" style="grid-column: 1 / -1;">
+                <div class="grid">
+                    <div>
+                        <label>Contact</label>
+                        <input type="text" id="contact" />
+                    </div>
+                    <div>
+                        <label>Phone number</label>
+                        <input type="text" id="phone" />
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label>Items in the car</label>
+                        <select id="itemsInCar">
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label>To terminal</label>
+                <input type="text" id="toTerminal" />
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+                <label>Special requirements</label>
+                <textarea id="specialReq"></textarea>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button onclick="generateText()">Generate</button>
+            <button class="btn-secondary" onclick="copyGeneratedText()">Copy</button>
+            <button class="btn-ghost" onclick="resetForm()">Reset</button>
+        </div>
+    </form>
+
+    <div id="resultBox" class="resultBox">
+        <p id="resultText"></p>
+        <div id="copiedToast" class="copied">✅ Copied!</div>
+    </div>
+
+    <textarea id="plainTextOut" style="position:absolute; left:-9999px;"></textarea>
+</div>
+
+<script>
+    function handlePlaceChange() {
+      const place = document.getElementById("place").value;
+
+      document.getElementById("lotStockWrap").classList.toggle("hidden", place === "Private address");
+      document.getElementById("pinWrap").classList.toggle("hidden", place === "Private address");
+      document.getElementById("privateFields").classList.toggle("hidden", place !== "Private address");
+
+      document.getElementById("lotStockLabel").textContent = place === "IAAI" ? "STOCK" : "LOT";
+      document.getElementById("pinLabel").textContent = place === "IAAI" ? "PICK UP PIN" : "GATE PASS PIN";
+      document.getElementById("locationLabel").textContent = place === "Private address" ? "Address" : "Location";
+    }
+
+    function generateText() {
+      const place = document.getElementById("place").value;
+      const lines = [];
+
+      lines.push(`<strong>${place}</strong><br>`);
+      lines.push(`🚘 <strong>Vehicle:</strong> ${vehicle.value}<br>`);
+      lines.push(`🎫 <strong>VIN:</strong> ${vin.value}<br>`);
+
+      if (place !== "Private address") {
+        lines.push(`🔎 <strong>${lotStockLabel.textContent}:</strong> ${lotStockValue.value}<br>`);
+        if (pinValue.value) {
+          lines.push(`🔎 <strong>${pinLabel.textContent}:</strong> ${pinValue.value}<br>`);
+        }
+      }
+
+      lines.push(`${place === "Private address" ? "🏠" : "📍"} <strong>${locationLabel.textContent}:</strong> ${locationValue.value}<br>`);
+
+      if (place === "Private address") {
+        lines.push(`👤 <strong>Contact:</strong> ${contact.value}<br>`);
+        lines.push(`📞 <strong>Phone:</strong> ${phone.value}<br>`);
+        lines.push(`📦 <strong>Items in the car:</strong> ${itemsInCar.value}<br>`);
+      }
+
+      lines.push(`🕋 <strong>To terminal:</strong> ${toTerminal.value}<br>`);
+      lines.push(`📋 <strong>Special requirements:</strong> ${specialReq.value || "None"}<br>`);
+
+      resultText.innerHTML = lines.join("");
+      plainTextOut.value = resultText.innerText;
+      resultBox.style.display = "block";
+    }
+
+    function copyGeneratedText() {
+      navigator.clipboard.writeText(plainTextOut.value);
+      copiedToast.style.display = "block";
+      setTimeout(() => copiedToast.style.display = "none", 1500);
+    }
+
+    function resetForm() {
+      document.querySelector("form").reset();
+      resultBox.style.display = "none";
+      handlePlaceChange();
+    }
+
+    handlePlaceChange();
+</script>
+</body>
+</html>

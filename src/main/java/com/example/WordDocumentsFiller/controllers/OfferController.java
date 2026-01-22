@@ -1,4 +1,4 @@
-package com.example.WordDocumentsFiller;
+package com.example.WordDocumentsFiller.controllers;
 
 import com.example.WordDocumentsFiller.dto.OfferData;
 import com.example.WordDocumentsFiller.service.OfferGeneratorService;
@@ -70,7 +70,20 @@ public class OfferController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                 .body(resource);
+    }
 
+    @GetMapping("/customs_duties")
+    public String showDuty(){
+        return "customs_duties";
+    }
 
+    @GetMapping("/unloading")
+    public String instructions(){
+        return "unloading";
+    }
+
+    @GetMapping("/pickup_instructions")
+    public String pickupInstructions(){
+        return "pickup_instructions";
     }
 }
