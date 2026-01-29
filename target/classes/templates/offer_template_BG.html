@@ -1,63 +1,77 @@
 <!DOCTYPE html>
 
 <html lang="bg" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
-<meta charset="utf-8"/>
-<title>Оферта BG</title>
-<!-- Използвай същия стил и navbar както по-горе -->
+    <meta charset="utf-8" />
+    <title>Vehicle LCL -> POD Varna</title>
+    <!-- Използвай същия стил и navbar както по-горе -->
 
-<link href="/css/app.css" rel="stylesheet"/></head>
+    <link href="/css/app.css" rel="stylesheet" />
+</head>
+
 <body>
-<nav>
-<div class="wrap">
-<a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-<a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за транспорт</a>
-<a href="/instruments" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
-</div>
-</nav>
-<div class="container offer">
-<h1>Оферта – BG</h1>
-<form class="offer-form" method="post" th:action="@{/generate/BG}">
+    <nav>
+        <div class="wrap">
+            <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+            <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за
+                транспорт</a>
+            <a href="/instruments"
+                style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
+        </div>
+    </nav>
+    <div class="container offer">
+        <h1>Vehicle LCL -> POD Varna</h1>
+        <form class="offer-form" method="post" th:action="@{/generate/BG}">
 
 
-<section class="offer-pane"><h2 class="pane-title">Данни на клиента</h2><div class="column">
-<label>Дата на оферта:</label>
-<input name="date" required="" type="date"/>
-<label>Мейл:</label>
-<input name="email" required="" type="email"/>
-<label>Име и фамилия:</label>
-<input name="fullName" required="" type="text"/>
-<label>Автомобил:</label>
-<input name="vehicle" required="" type="text"/>
-<label>Дата на валидност:</label>
-<input name="validate" required="" type="date"/>
-</div></section><section class="offer-pane"><h2 class="pane-title">Пристанища и цени</h2><div class="column">
-<label>Адрес за взимане:</label>
-<input name="pickUpAddress" required="" type="text"/>
-<label>Товарно пристанище:</label>
-<select name="portOfLoading" required="">
-<option value="New York">New York</option>
-<option value="Savannah">Savannah</option>
-<option value="Miami">Miami</option>
-<option value="Indianapolis">Indianapolis</option>
-<option value="Houston">Houston</option>
-<option value="Los Angeles">Los Angeles</option>
-<option value="San Francisco">San Francisco</option>
-</select>
-<label>Разтоварно пристанище:</label>
-<select name="portOfDelivery" required="">
-<option value="Varna">Varna</option>
-</select>
-<label>Вътрешен транспорт в САЩ (USD):</label>
-<input name="domesticTransport" required="" type="text"/>
-<label>Морски транспорт (USD):</label>
-<input name="oceanFreight" type="text"/>
-<label>Такса опасен товар (USD):</label>
-<input name="hazardousCargo" type="text"/>
-<label>Терминални разходи (BGN):</label>
-<input name="terminalHandling" type="text"/>
-</div></section>
-<div class="offer-actions"><button type="submit">Генерирай офертата</button></div></form>
-</div>
+            <section class="offer-pane">
+                <h2 class="pane-title">Данни на клиента</h2>
+                <div class="column">
+                    <label>Дата на оферта:</label>
+                    <input name="date" required="" type="date" />
+                    <label>Мейл:</label>
+                    <input name="email" required="" type="email" />
+                    <label>Име и фамилия:</label>
+                    <input name="fullName" required="" type="text" />
+                    <label>Автомобил:</label>
+                    <input name="vehicle" required="" type="text" />
+                    <label>Дата на валидност:</label>
+                    <input name="validate" required="" type="date" />
+                </div>
+            </section>
+            <section class="offer-pane">
+                <h2 class="pane-title">Пристанища и цени</h2>
+                <div class="column">
+                    <label>Адрес за взимане:</label>
+                    <input name="pickUpAddress" required="" type="text" />
+                    <label>Товарно пристанище:</label>
+                    <select name="portOfLoading" required="">
+                        <option value="New York">New York</option>
+                        <option value="Savannah">Savannah</option>
+                        <option value="Miami">Miami</option>
+                        <option value="Indianapolis">Indianapolis</option>
+                        <option value="Houston">Houston</option>
+                        <option value="Los Angeles">Los Angeles</option>
+                        <option value="San Francisco">San Francisco</option>
+                    </select>
+                    <label>Разтоварно пристанище:</label>
+                    <select name="portOfDelivery" required="">
+                        <option value="Varna">Varna</option>
+                    </select>
+                    <label>Вътрешен транспорт в САЩ (USD):</label>
+                    <input name="domesticTransport" required="" type="text" />
+                    <label>Морски транспорт (USD):</label>
+                    <input name="oceanFreight" type="text" />
+                    <label>Такса опасен товар (USD):</label>
+                    <input name="hazardousCargo" type="text" />
+                    <label>Терминални разходи (EUR):</label>
+                    <input name="terminalHandling" type="text" />
+                </div>
+            </section>
+            <div class="offer-actions"><button type="submit">Генерирай офертата</button></div>
+        </form>
+    </div>
 </body>
+
 </html>

@@ -1,69 +1,73 @@
 <!DOCTYPE html>
 <html lang="bg">
+
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Инструкции за разтоварване на контейнер</title>
-    <link rel="stylesheet" href="/css/app.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UnloadingInstructions</title>
+  <link rel="stylesheet" href="/css/app.css">
 
 </head>
 
 <body>
-<nav>
+  <nav>
     <div class="wrap">
-        <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-        <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за транспорт</a>
-        <a href="/instruments" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
+      <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+      <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за
+        транспорт</a>
+      <a href="/instruments"
+        style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
     </div>
-</nav>
+  </nav>
 
-<div class="container tools">
+  <div class="container tools">
     <h1>Инструкции за разтоварване на контейнер</h1>
 
     <form onsubmit="return false;">
-        <div class="grid">
-            <div>
-                <label>Дата</label>
-                <input type="date" name="unloadDate" required />
-            </div>
-
-            <div>
-                <label>Контейнер №</label>
-                <input type="text" name="containerNo" required />
-            </div>
-
-            <div style="grid-column: 1 / -1;">
-                <div class="checkbox-row">
-                    <input type="checkbox" id="hasInspection" />
-                    <label for="hasInspection" style="margin:0; font-weight:600;">Контейнерът е с проверка</label>
-                </div>
-            </div>
+      <div class="grid">
+        <div>
+          <label>Дата</label>
+          <input type="date" name="unloadDate" required />
         </div>
 
-        <div class="section-title">Автомобили в контейнера</div>
-
-        <div class="vehicles-header">
-            <div class="btn-row">
-                <button type="button" class="btn-ghost" onclick="addVehicle()">+ Добави автомобил</button>
-                <button type="button" onclick="generateText()">Генерирай</button>
-                <button type="button" class="btn-secondary" onclick="copyGeneratedText()">Копирай текста</button>
-            </div>
+        <div>
+          <label>Контейнер №</label>
+          <input type="text" name="containerNo" required />
         </div>
 
-        <div id="vehiclesContainer"></div>
+        <div style="grid-column: 1 / -1;">
+          <div class="checkbox-row">
+            <input type="checkbox" id="hasInspection" />
+            <label for="hasInspection" style="margin:0; font-weight:600;">Контейнерът е с проверка</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">Автомобили в контейнера</div>
+
+      <div class="vehicles-header">
+        <div class="btn-row">
+          <button type="button" class="btn-ghost" onclick="addVehicle()">+ Добави автомобил</button>
+          <button type="button" onclick="generateText()">Генерирай</button>
+          <button type="button" class="btn-secondary" onclick="copyGeneratedText()">Копирай текста</button>
+        </div>
+      </div>
+
+      <div id="vehiclesContainer"></div>
     </form>
 
     <div id="resultBox" class="resultBox">
-        <p id="resultText"></p>
-        <div class="hint">Копиране: ако пействаш в Gmail/Outlook/Word ще получиш форматиран текст (bold). Ако пействаш в чат/Notepad — ще е чист текст.</div>
-        <div id="copiedToast" class="copied">✅ Текстът е копиран!</div>
+      <p id="resultText"></p>
+      <div class="hint">Копиране: ако пействаш в Gmail/Outlook/Word ще получиш форматиран текст (bold). Ако пействаш в
+        чат/Notepad — ще е чист текст.</div>
+      <div id="copiedToast" class="copied">✅ Текстът е копиран!</div>
     </div>
 
     <!-- hidden plain text for clipboard fallback -->
     <textarea id="plainTextOut" style="position:absolute; left:-9999px; top:-9999px;"></textarea>
-</div>
+  </div>
 
-<script>
+  <script>
     let vehicleIdSeq = 0;
 
     function escapeHtml(str) {
@@ -269,7 +273,8 @@
 
     // стартово: 1 автомобил по подразбиране
     addVehicle();
-</script>
+  </script>
 
 </body>
+
 </html>

@@ -1,49 +1,54 @@
 <!DOCTYPE html>
 <html lang="bg" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
     <title>Митнически задължения</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
+
 <body>
-<nav>
-    <div class="wrap">
-        <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-        <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за транспорт</a>
-        <a href="/instruments" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
-    </div>
-</nav>
-
-<div class="container">
-    <h1>Митнически задължения</h1>
-    <form>
-        <div class="column">
-            <label>Задължено лице</label>
-            <input type="text" name="payer" required/>
-
-            <label>Дължима сума (EUR)</label>
-            <input type="text" name="amountDue" required/>
-
-            <label>За митница</label>
-            <input type="text" name="customsID" required/>
+    <nav>
+        <div class="wrap">
+            <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+            <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за
+                транспорт</a>
+            <a href="/instruments"
+                style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
         </div>
-        <button type="button" onclick="generateText()">Генерирай</button>
-    </form>
+    </nav>
 
-    <div id="resultBox" style="display:none; margin-top:32px; padding:20px; background:#f1f5f9; border-radius:10px; border:1px solid #cbd5e1;">
-        <p id="resultText" style="line-height:1.6;"></p>
+    <div class="container">
+        <h1>Митнически задължения</h1>
+        <form>
+            <div class="column">
+                <label>Задължено лице</label>
+                <input type="text" name="payer" required />
+
+                <label>Дължима сума (EUR)</label>
+                <input type="text" name="amountDue" required />
+
+                <label>За митница</label>
+                <input type="text" name="customsID" required />
+            </div>
+            <button type="button" onclick="generateText()">Генерирай</button>
+        </form>
+
+        <div id="resultBox"
+            style="display:none; margin-top:32px; padding:20px; background:#f1f5f9; border-radius:10px; border:1px solid #cbd5e1;">
+            <p id="resultText" style="line-height:1.6;"></p>
+        </div>
+
+
     </div>
 
+    <script>
+        function generateText() {
+            const payer = document.querySelector('input[name="payer"]').value;
+            const amountDue = document.querySelector('input[name="amountDue"]').value;
+            const customsID = document.querySelector('input[name="customsID"]').value;
 
-</div>
-
-<script>
-    function generateText() {
-        const payer = document.querySelector('input[name="payer"]').value;
-        const amountDue = document.querySelector('input[name="amountDue"]').value;
-        const customsID = document.querySelector('input[name="customsID"]').value;
-
-        const text = `
+            const text = `
             Здравейте,<br>
             <br>
             Изпращам дължимите митнически вземания и инструкции за плащане.<br>
@@ -65,10 +70,11 @@
             Божидар<br>
         `;
 
-        document.getElementById("resultText").innerHTML = text;
-        document.getElementById("resultBox").style.display = "block";
-    }
-</script>
+            document.getElementById("resultText").innerHTML = text;
+            document.getElementById("resultBox").style.display = "block";
+        }
+    </script>
 
 </body>
+
 </html>

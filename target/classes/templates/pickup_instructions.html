@@ -1,166 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Pickup Instructions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Instructions USA</title>
     <link rel="stylesheet" href="/css/app.css">
 </head>
 
 <body>
 
-<nav>
-    <div class="wrap">
-        <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-        <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за транспорт</a>
-        <a href="/instruments" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
-    </div>
-</nav>
+    <nav>
+        <div class="wrap">
+            <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+            <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за
+                транспорт</a>
+            <a href="/instruments"
+                style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
+        </div>
+    </nav>
 
 
-<div class="container">
-    <h1>Pickup Instructions</h1>
+    <div class="container">
+        <h1>Инструкции за вътрешен транспорт в САЩ</h1>
 
-    <form onsubmit="return false;">
-        <div class="grid">
-            <div>
-                <label>Place</label>
-                <select id="place" onchange="handlePlaceChange()">
-                    <option value="Copart">Copart</option>
-                    <option value="IAAI">IAAI</option>
-                    <option value="Private address">Private address</option>
-                </select>
-            </div>
+        <form onsubmit="return false;">
+            <div class="grid">
+                <div>
+                    <label>Place</label>
+                    <select id="place" onchange="handlePlaceChange()">
+                        <option value="Copart">Copart</option>
+                        <option value="IAAI">IAAI</option>
+                        <option value="Private address">Private address</option>
+                    </select>
+                </div>
 
-            <div>
-                <label>Vehicle</label>
-                <input type="text" id="vehicle"/>
-            </div>
+                <div>
+                    <label>Vehicle</label>
+                    <input type="text" id="vehicle" />
+                </div>
 
-            <div>
-                <label>VIN</label>
-                <input type="text" id="vin"/>
-            </div>
+                <div>
+                    <label>VIN</label>
+                    <input type="text" id="vin" />
+                </div>
 
-            <div id="lotStockWrap">
-                <label id="lotStockLabel">LOT</label>
-                <input type="text" id="lotStockValue"/>
-            </div>
+                <div id="lotStockWrap">
+                    <label id="lotStockLabel">LOT</label>
+                    <input type="text" id="lotStockValue" />
+                </div>
 
-            <!-- PIN WRAP -->
-            <div id="pinWrap">
-                <label id="pinLabel">GATE PASS PIN</label>
-                <input type="text" id="pinValue"/>
-            </div>
+                <!-- PIN WRAP -->
+                <div id="pinWrap">
+                    <label id="pinLabel">GATE PASS PIN</label>
+                    <input type="text" id="pinValue" />
+                </div>
 
-            <div>
-                <label id="locationLabel">Location</label>
-                <input type="text" id="locationValue"/>
-            </div>
+                <div>
+                    <label id="locationLabel">Location</label>
+                    <input type="text" id="locationValue" />
+                </div>
 
-            <div id="privateFields" class="hidden" style="grid-column: 1 / -1;">
-                <div class="grid">
-                    <div>
-                        <label>Contact</label>
-                        <input type="text" id="contact" />
+                <div id="privateFields" class="hidden" style="grid-column: 1 / -1;">
+                    <div class="grid">
+                        <div>
+                            <label>Contact</label>
+                            <input type="text" id="contact" />
+                        </div>
+                        <div>
+                            <label>Phone number</label>
+                            <input type="text" id="phone" />
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <label>Items in the car</label>
+                            <select id="itemsInCar">
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
                     </div>
-                    <div>
-                        <label>Phone number</label>
-                        <input type="text" id="phone" />
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                        <label>Items in the car</label>
-                        <select id="itemsInCar">
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
-                        </select>
-                    </div>
+                </div>
+
+                <div>
+                    <label>To terminal</label>
+                    <input type="text" id="toTerminal" />
+                </div>
+
+                <div style="grid-column: 1 / -1;">
+                    <label>Special requirements</label>
+                    <textarea id="specialReq"></textarea>
                 </div>
             </div>
 
-            <div>
-                <label>To terminal</label>
-                <input type="text" id="toTerminal" />
+            <div class="btn-row">
+                <button onclick="generateText()">Generate</button>
+                <button class="btn-secondary" onclick="copyGeneratedText()">Copy</button>
+                <button class="btn-ghost" onclick="resetForm()">Reset</button>
             </div>
+        </form>
 
-            <div style="grid-column: 1 / -1;">
-                <label>Special requirements</label>
-                <textarea id="specialReq"></textarea>
-            </div>
+        <div id="resultBox" class="resultBox">
+            <p id="resultText"></p>
+            <div id="copiedToast" class="copied">✅ Copied!</div>
         </div>
 
-        <div class="btn-row">
-            <button onclick="generateText()">Generate</button>
-            <button class="btn-secondary" onclick="copyGeneratedText()">Copy</button>
-            <button class="btn-ghost" onclick="resetForm()">Reset</button>
-        </div>
-    </form>
-
-    <div id="resultBox" class="resultBox">
-        <p id="resultText"></p>
-        <div id="copiedToast" class="copied">✅ Copied!</div>
+        <textarea id="plainTextOut" style="position:absolute; left:-9999px;"></textarea>
     </div>
 
-    <textarea id="plainTextOut" style="position:absolute; left:-9999px;"></textarea>
-</div>
+    <script>
+        function handlePlaceChange() {
+            const place = document.getElementById("place").value;
 
-<script>
-    function handlePlaceChange() {
-      const place = document.getElementById("place").value;
+            document.getElementById("lotStockWrap").classList.toggle("hidden", place === "Private address");
+            document.getElementById("pinWrap").classList.toggle("hidden", place === "Private address");
+            document.getElementById("privateFields").classList.toggle("hidden", place !== "Private address");
 
-      document.getElementById("lotStockWrap").classList.toggle("hidden", place === "Private address");
-      document.getElementById("pinWrap").classList.toggle("hidden", place === "Private address");
-      document.getElementById("privateFields").classList.toggle("hidden", place !== "Private address");
-
-      document.getElementById("lotStockLabel").textContent = place === "IAAI" ? "STOCK" : "LOT";
-      document.getElementById("pinLabel").textContent = place === "IAAI" ? "PICK UP PIN" : "GATE PASS PIN";
-      document.getElementById("locationLabel").textContent = place === "Private address" ? "Address" : "Location";
-    }
-
-    function generateText() {
-      const place = document.getElementById("place").value;
-      const lines = [];
-
-      lines.push(`<strong>${place}</strong><br>`);
-      lines.push(`🚘 <strong>Vehicle:</strong> ${vehicle.value}<br>`);
-      lines.push(`🎫 <strong>VIN:</strong> ${vin.value}<br>`);
-
-      if (place !== "Private address") {
-        lines.push(`🔎 <strong>${lotStockLabel.textContent}:</strong> ${lotStockValue.value}<br>`);
-        if (pinValue.value) {
-          lines.push(`🔎 <strong>${pinLabel.textContent}:</strong> ${pinValue.value}<br>`);
+            document.getElementById("lotStockLabel").textContent = place === "IAAI" ? "STOCK" : "LOT";
+            document.getElementById("pinLabel").textContent = place === "IAAI" ? "PICK UP PIN" : "GATE PASS PIN";
+            document.getElementById("locationLabel").textContent = place === "Private address" ? "Address" : "Location";
         }
-      }
 
-      lines.push(`${place === "Private address" ? "🏠" : "📍"} <strong>${locationLabel.textContent}:</strong> ${locationValue.value}<br>`);
+        function generateText() {
+            const place = document.getElementById("place").value;
+            const lines = [];
 
-      if (place === "Private address") {
-        lines.push(`👤 <strong>Contact:</strong> ${contact.value}<br>`);
-        lines.push(`📞 <strong>Phone:</strong> ${phone.value}<br>`);
-        lines.push(`📦 <strong>Items in the car:</strong> ${itemsInCar.value}<br>`);
-      }
+            lines.push(`<strong>${place}</strong><br>`);
+            lines.push(`🚘 <strong>Vehicle:</strong> ${vehicle.value}<br>`);
+            lines.push(`🎫 <strong>VIN:</strong> ${vin.value}<br>`);
 
-      lines.push(`🕋 <strong>To terminal:</strong> ${toTerminal.value}<br>`);
-      lines.push(`📋 <strong>Special requirements:</strong> ${specialReq.value || "None"}<br>`);
+            if (place !== "Private address") {
+                lines.push(`🔎 <strong>${lotStockLabel.textContent}:</strong> ${lotStockValue.value}<br>`);
+                if (pinValue.value) {
+                    lines.push(`🔎 <strong>${pinLabel.textContent}:</strong> ${pinValue.value}<br>`);
+                }
+            }
 
-      resultText.innerHTML = lines.join("");
-      plainTextOut.value = resultText.innerText;
-      resultBox.style.display = "block";
-    }
+            lines.push(`${place === "Private address" ? "🏠" : "📍"} <strong>${locationLabel.textContent}:</strong> ${locationValue.value}<br>`);
 
-    function copyGeneratedText() {
-      navigator.clipboard.writeText(plainTextOut.value);
-      copiedToast.style.display = "block";
-      setTimeout(() => copiedToast.style.display = "none", 1500);
-    }
+            if (place === "Private address") {
+                lines.push(`👤 <strong>Contact:</strong> ${contact.value}<br>`);
+                lines.push(`📞 <strong>Phone:</strong> ${phone.value}<br>`);
+                lines.push(`📦 <strong>Items in the car:</strong> ${itemsInCar.value}<br>`);
+            }
 
-    function resetForm() {
-      document.querySelector("form").reset();
-      resultBox.style.display = "none";
-      handlePlaceChange();
-    }
+            lines.push(`🕋 <strong>To terminal:</strong> ${toTerminal.value}<br>`);
+            lines.push(`📋 <strong>Special requirements:</strong> ${specialReq.value || "None"}<br>`);
 
-    handlePlaceChange();
-</script>
+            resultText.innerHTML = lines.join("");
+            plainTextOut.value = resultText.innerText;
+            resultBox.style.display = "block";
+        }
+
+        function copyGeneratedText() {
+            navigator.clipboard.writeText(plainTextOut.value);
+            copiedToast.style.display = "block";
+            setTimeout(() => copiedToast.style.display = "none", 1500);
+        }
+
+        function resetForm() {
+            document.querySelector("form").reset();
+            resultBox.style.display = "none";
+            handlePlaceChange();
+        }
+
+        handlePlaceChange();
+    </script>
 </body>
+
 </html>
