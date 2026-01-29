@@ -1,0 +1,483 @@
+/* =====================
+   THEME VARIABLES
+===================== */
+:root{
+  --brand:#2563eb;
+  --brand-2:#0ea5e9;
+  --brand-dark:#1e40af;
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#475569;
+  --border:#e2e8f0;
+  --ring:#93c5fd;
+  --success:#22c55e;
+  --danger:#dc2626;
+  --radius:14px;
+  --shadow-sm:0 4px 12px rgba(0,0,0,.08);
+  --shadow-md:0 14px 35px rgba(0,0,0,.12);
+}
+
+/* =====================
+   RESET
+===================== */
+*{ box-sizing:border-box }
+html,body{
+  margin:0;
+  background:var(--bg);
+  font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+  color:var(--text);
+}
+
+/* =====================
+   NAVBAR
+===================== */
+nav{
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+  box-shadow:var(--shadow-sm);
+}
+nav .wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:14px 20px;
+  display:flex;
+  gap:26px;
+  flex-wrap:wrap;
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  position:relative;
+}
+nav a::after{
+  content:"";
+  position:absolute;
+  left:0; bottom:-4px;
+  width:0; height:2px;
+  background:#fff;
+  transition:.25s;
+}
+nav a:hover::after{ width:100% }
+
+/* =====================
+   CONTAINERS
+===================== */
+.container{
+  max-width:1000px;
+  margin:40px auto;
+  padding:36px 32px;
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-md);
+  animation:fadeUp .4s ease;
+}
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(10px)}
+  to{opacity:1; transform:none}
+}
+
+/* =====================
+   HEADINGS
+===================== */
+h1{
+  text-align:center;
+  color:var(--brand-dark);
+  margin-bottom:28px;
+}
+h2,h3{ color:var(--brand-dark) }
+
+/* =====================
+   FORMS
+===================== */
+form{ width:100% }
+
+label{
+  display:block;
+  margin-top:14px;
+  font-weight:600;
+}
+input, select, textarea{
+  width:100%;
+  margin-top:6px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#f1f5f9;
+  font-size:1rem;
+  transition:.2s;
+}
+input:focus, select:focus, textarea:focus{
+  outline:none;
+  background:#fff;
+  border-color:var(--brand);
+  box-shadow:0 0 0 4px rgba(37,99,235,.15);
+}
+
+/* =====================
+   GRID HELPERS
+===================== */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px 26px;
+}
+@media(max-width:900px){
+  .grid{ grid-template-columns:1fr }
+}
+
+/* =====================
+   BUTTONS
+===================== */
+button, .btn{
+  border:none;
+  border-radius:12px;
+  padding:12px 18px;
+  font-weight:700;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+  color:#fff;
+  transition:.25s;
+}
+button:hover, .btn:hover{
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-sm);
+}
+.btn-secondary{ background:#0f172a }
+.btn-ghost{
+  background:#e2e8f0;
+  color:#0f172a;
+}
+.btn-danger{ background:var(--danger) }
+
+/* =====================
+   CARDS
+===================== */
+.card{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-sm);
+  padding:22px;
+  transition:.25s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md);
+}
+
+/* =====================
+   RESULT BOXES
+===================== */
+.resultBox{
+  margin-top:30px;
+  padding:20px;
+  border-radius:14px;
+  background:#f1f5f9;
+  border:1px solid var(--border);
+  animation:fadeUp .3s ease;
+}
+.copied{
+  margin-top:12px;
+  padding:10px 14px;
+  border-radius:10px;
+  background:#dcfce7;
+  border:1px solid #86efac;
+  color:#14532d;
+  font-weight:700;
+}
+
+/* =====================
+   UTILS
+===================== */
+.hidden{ display:none }
+.hint{
+  margin-top:6px;
+  font-size:.9rem;
+  color:var(--muted);
+}
+
+/* =========================
+   FIX 1: buttons overlap in cards (.btn-row)
+   Used in offers/home pages
+========================= */
+.btn-row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.btn-row .btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  white-space:nowrap;
+  flex: 1 1 220px;   /* 2 бутона да седят стабилно; ако няма място → wrap */
+  max-width:100%;
+}
+
+/* ако имаш .btn.alt от offers.html */
+.btn.alt{
+  background: linear-gradient(135deg, var(--brand-2), #0284c7);
+}
+
+/* =========================
+   FIX 2: better readability for tool pages
+   (unloading / pickup / customs)
+========================= */
+.container{
+  /* оставяме твоето, но добавяме по-добър line-height */
+  line-height:1.45;
+}
+
+/* по-четимо за “инструмент” страниците – по-тясно и компактно */
+.container.tools{
+  max-width: 900px;
+  padding: 30px 28px;
+}
+@media(max-width:900px){
+  .container.tools{
+    padding: 22px 16px;
+  }
+}
+
+/* =========================
+   Unloading / Pickup shared UI blocks
+   (classes exist in unloading.html & pickup_instructions.html)
+========================= */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 28px;
+  align-items:end;
+}
+@media (max-width: 860px) {
+  .grid{ grid-template-columns:1fr; }
+}
+
+/* checkbox rows (was inline in unloading) */
+.checkbox-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+  padding:10px 12px;
+  background:#f1f5f9;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+.checkbox-row input[type="checkbox"]{
+  width:18px;
+  height:18px;
+  margin:0;
+}
+
+/* section title in unloading */
+.section-title{
+  margin-top: 26px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  border-top: 1px dashed var(--border);
+  padding-top: 18px;
+}
+
+/* header row with buttons */
+.vehicles-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+/* vehicle cards */
+.vehicle-card{
+  margin-top:14px;
+  padding:16px 14px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#fff;
+  box-shadow: var(--shadow-sm);
+  transition:.25s;
+}
+.vehicle-card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.vehicle-card h3{
+  margin:0 0 12px 0;
+  font-size: 1.05rem;
+  color: var(--brand-dark);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.vehicle-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 16px;
+  align-items:end;
+}
+@media (max-width: 860px) {
+  .vehicle-grid{ grid-template-columns: 1fr; }
+}
+
+/* =========================
+   Result area behavior
+========================= */
+/* default hidden (JS sets display:block inline when needed) */
+.resultBox{ display:none; }
+.copied{ display:none; }  /* <- това оправя “свети постоянно” */
+
+/* little nicer result spacing */
+.resultBox{
+  margin-top: 26px;
+  padding: 18px 16px;
+  background:#f1f5f9;
+  border-radius: 16px;
+  border:1px solid var(--border);
+}
+.resultBox p{
+  line-height:1.65;
+  margin:0;
+}
+
+/* hint text */
+.hint, .muted{
+  color: var(--muted);
+  font-size: .95rem;
+}
+
+
+/* OFFERS: 2-column layout (client info vs ports & prices) */
+.container.offer{
+  max-width: 980px;
+  padding: 28px 26px;
+}
+
+.offer-form{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items:start;
+}
+
+.offer-pane{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 16px 14px;
+  box-shadow: var(--shadow-sm);
+  transition: .25s;
+}
+.offer-pane:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.pane-title{
+  margin: 4px 0 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--brand-dark);
+  letter-spacing: .2px;
+}
+
+.offer-pane .column{ margin:0; }
+
+.offer-pane label{
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--text);
+}
+.offer-pane input,
+.offer-pane select{
+  margin-top: 6px;
+  padding: 9px 10px;
+  border-radius: 10px;
+}
+
+.offer-actions{
+  grid-column: 1 / -1;
+  display:flex;
+  justify-content:center;
+  margin-top: 4px;
+}
+.offer-actions button{
+  width: min(520px, 100%);
+}
+
+@media (max-width: 920px){
+  .offer-form{ grid-template-columns: 1fr; }
+}
+
+.container.offer h1{ margin-bottom: 18px; }
+
+/* =========================
+   UNP: compact 2-column form (2 x 3 fields)
+========================= */
+.container.unp{
+  max-width: 920px;          /* малко по-тясно и “инструментно” */
+}
+
+.unp-form{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+  align-items:start;
+}
+
+/* една “клетка” */
+.unp-form .field{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 14px 10px;
+  box-shadow: var(--shadow-sm);
+  transition: .25s;
+}
+.unp-form .field:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.unp-form label{
+  margin-top: 0;
+  font-weight: 800;
+  font-size: .95rem;
+}
+
+.unp-form input{
+  padding: 9px 10px;
+}
+
+/* hint по-компактен */
+.unp-form .hint{
+  margin-top: 8px;
+  font-size: .88rem;
+}
+
+/* бутон на цял ред */
+.unp-actions{
+  grid-column: 1 / -1;
+  display:flex;
+  justify-content:center;
+  margin-top: 6px;
+}
+.unp-actions button{
+  width: min(520px, 100%);
+}
+
+/* mobile */
+@media (max-width: 860px){
+  .unp-form{ grid-template-columns: 1fr; }
+}
+

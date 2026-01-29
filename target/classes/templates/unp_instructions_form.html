@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>УНП – Инструкции</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+<nav>
+    <div class="wrap">
+        <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+        <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за транспорт</a>
+        <a href="/instruments" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
+    </div>
+</nav>
+
+<div class="container tools unp">
+    <h1>УНП Инструкции</h1>
+
+    <form class="unp-form" th:action="@{/generate/UNP}" th:object="${unpData}" method="post">
+
+        <div class="field">
+            <label>Транспортна фирма (TransportCompany)</label>
+            <input type="text" th:field="*{transportCompany}" required/>
+        </div>
+
+        <div class="field">
+            <label>ЕИК/ДДС номер (TransportCompanyVAT)</label>
+            <input type="text" th:field="*{transportCompanyVAT}" required/>
+        </div>
+
+        <div class="field">
+            <label>Камион (латиница)</label>
+            <input type="text" th:field="*{truck}" required/>
+        </div>
+
+        <div class="field">
+            <label>Ремарке (латиница)</label>
+            <input type="text" th:field="*{trailer}" required/>
+        </div>
+
+        <div class="field">
+            <label>Дата на пристигане</label>
+            <input type="date" th:field="*{arrivalDate}" required/>
+        </div>
+
+        <div class="field">
+            <label>Час на пристигане</label>
+            <input type="time" th:field="*{arrivalTime}" required/>
+        </div>
+
+        <div class="unp-actions">
+            <button type="submit">Генерирай DOCX</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

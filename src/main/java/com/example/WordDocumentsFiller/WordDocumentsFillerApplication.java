@@ -9,7 +9,6 @@ public class WordDocumentsFillerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(WordDocumentsFillerApplication.class, args);
-
 	}
 
 

@@ -27,9 +27,9 @@ public class OfferController {
     }
 
 
-    @GetMapping("/")
-    public String showHome() {
-        return "home";
+    @GetMapping("/offers")
+    public String showOffers() {
+        return "offers";
     }
 
     @GetMapping("/form/{destination}/{category}")
@@ -40,24 +40,30 @@ public class OfferController {
         model.addAttribute("market", destination);
         model.addAttribute("category", category);
 
+        if ("LCL".equalsIgnoreCase(category)) {
+            return "offer_template_" + destination;
+        }
+
         return "offer_template_" + destination + "_" + category;
     }
 
     @PostMapping("/generate/{destination}/{category}")
     public ResponseEntity<InputStreamResource> generateOffer(@ModelAttribute OfferData data,
                                                              @PathVariable String destination,
-                                                             @PathVariable String category
-                                                             ) throws IOException {
+                                                             @PathVariable String category) throws IOException {
 
+        String docxTemplate;
+        if ("LCL".equalsIgnoreCase(category)) {
+            docxTemplate = "offer_template_" + destination + ".docx";
+        } else {
+            docxTemplate = "offer_template_" + destination + "_" + category + ".docx";
+        }
 
-
-        String docxTemplate = "offer_template_" + destination + "_" + category + ".docx";
-
-        String fileName = "offer_LCL_" +
-                (data.getPortOfLoading() != null ? data.getPortOfLoading().replaceAll("\\s+", "_") : "portOfLoading") + "_" +
-                (data.getPortOfDelivery() != null ? data.getPortOfDelivery().replaceAll("-", "") : "portOfDelivery") + "_" +
-                (data.getVehicle() != null ? data.getVehicle().replaceAll("\\s+", "_") : "vehicle") +
-                ".docx";
+        String fileName = ("offer_" + destination + "_" + category + "_" +
+                safeFilePart(data.getPortOfLoading(), "portOfLoading") + "_" +
+                safeFilePart(data.getPortOfDelivery(), "portOfDelivery") + "_" +
+                safeFilePart(data.getVehicle(), "vehicle") +
+                ".docx");
 
         File tempFile = new File(System.getProperty("java.io.tmpdir"), fileName);
 
@@ -65,25 +71,16 @@ public class OfferController {
 
         InputStreamResource resource = new InputStreamResource(new FileInputStream(tempFile));
 
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                 .body(resource);
     }
 
-    @GetMapping("/customs_duties")
-    public String showDuty(){
-        return "customs_duties";
+    private String safeFilePart(String v, String fallback) {
+        if (v == null || v.isBlank()) return fallback;
+        return v.trim().replaceAll("\\s+", "_").replaceAll("[^a-zA-Z0-9_\\-\\.]", "");
     }
 
-    @GetMapping("/unloading")
-    public String instructions(){
-        return "unloading";
-    }
 
-    @GetMapping("/pickup_instructions")
-    public String pickupInstructions(){
-        return "pickup_instructions";
-    }
 }

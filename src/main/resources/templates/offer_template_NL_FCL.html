@@ -1,140 +1,64 @@
 <!DOCTYPE html>
+
 <html lang="bg" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Оферта BG</title>
-    <style>
-        body {
-            background: #f8fafc;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: #1a202c;
-            margin: 0; padding: 0;
-        }
-        .container {
-            max-width: 720px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 36px 32px;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px #0001;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 34px;
-            font-weight: 600;
-            color: #2b6cb0;
-        }
-        form {
-            display: flex;
-            gap: 32px;
-            flex-wrap: wrap;
-        }
-        .column {
-            flex: 1 1 0;
-            min-width: 280px;
-        }
-        label {
-            display: block;
-            margin-top: 16px;
-            font-weight: 500;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            margin-top: 5px;
-            font-size: 1rem;
-            background: #f1f5f9;
-        }
-        button {
-            width: 100%;
-            margin-top: 32px;
-            padding: 12px 0;
-            background: #2b6cb0;
-            color: #fff;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.15rem;
-            cursor: pointer;
-            transition: background 0.18s;
-        }
-        button:hover {
-            background: #2563eb;
-        }
-        @media (max-width: 800px) {
-            form { flex-direction: column; gap: 0; }
-            .column { min-width: 100%; }
-        }
-    </style>
-</head>
+<meta charset="utf-8"/>
+<title>Оферта BG</title>
+
+<link href="/css/app.css" rel="stylesheet"/></head>
 <body>
-<nav style="background: #2b6cb0; padding: 14px 0; margin-bottom: 26px;">
-    <div style="max-width: 720px; margin: 0 auto; display: flex; gap: 26px;">
-        <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-    </div>
+<nav>
+<div class="wrap">
+<a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
+<a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за транспорт</a>
+<a href="/instruments" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
+</div>
 </nav>
-
-<div class="container">
-    <h1>Оферта с POD Netherlands</h1>
-    <form th:action="@{/generate/NL/FCL}" method="post">
-        <div class="column">
-            <label>Дата на оферта:</label>
-            <input type="date" name="date" required/>
-
-            <label>Мейл:</label>
-            <input type="email" name="email" required/>
-
-            <label>Име и фамилия:</label>
-            <input type="text" name="fullName" required/>
-
-            <label>Автомобил:</label>
-            <input type="text" name="vehicle" required/>
-
-            <label>Дата на валидност:</label>
-            <input type="date" name="validate" required/>
-
-        </div>
-        <div class="column">
-            <label>Адрес за взимане:</label>
-            <input type="text" name="pickUpAddress" required/>
-
-            <label>Товарно пристанище:</label>
-            <select name="portOfLoading" required>
-                <option value="New York">New York</option>
-                <option value="Savannah">Savannah</option>
-                <option value="Miami">Miami</option>
-                <option value="Indianapolis">Indianapolis</option>
-                <option value="Houston">Houston</option>
-                <option value="Los Angeles">Los Angeles</option>
-                <option value="San Francisco">San Francisco</option>
-            </select>
-
-            <label>Разтоварно пристанище:</label>
-            <select name="portOfDelivery" required>
-                <option value="Rotterdam">Rotterdam</option>
-            </select>
-
-            <label>Вътрешен транспорт в САЩ (USD):</label>
-            <input type="text" name="domesticTransport" required/>
-
-            <label>Морски транспорт (USD):</label>
-            <input type="text" name="oceanFreight" required/>
-
-            <label>Такса опасен товар (USD):</label>
-            <input type="text" name="hazardousCargo" required/>
-
-            <label>Терминални разходи (EUR):</label>
-            <input type="text" name="terminalHandling" required/>
-
-            <label>Вътрешен транспорт Ротердам - София (BGN): </label>
-            <input type="text" name="inlandTransport" required/>
+<div class="container offer">
+<h1>Оферта с POD Netherlands</h1>
+<form class="offer-form" method="post" th:action="@{/generate/NL/FCL}">
 
 
-        </div>
-        <button type="submit">Генерирай офертата</button>
-    </form>
+<section class="offer-pane"><h2 class="pane-title">Данни на клиента</h2><div class="column">
+<label>Дата на оферта:</label>
+<input name="date" required="" type="date"/>
+<label>Мейл:</label>
+<input name="email" required="" type="email"/>
+<label>Име и фамилия:</label>
+<input name="fullName" required="" type="text"/>
+<label>Автомобил:</label>
+<input name="vehicle" required="" type="text"/>
+<label>Дата на валидност:</label>
+<input name="validate" required="" type="date"/>
+</div></section><section class="offer-pane"><h2 class="pane-title">Пристанища и цени</h2><div class="column">
+<label>Адрес за взимане:</label>
+<input name="pickUpAddress" required="" type="text"/>
+<label>Товарно пристанище:</label>
+<select name="portOfLoading" required="">
+<option value="New York">New York</option>
+<option value="Savannah">Savannah</option>
+<option value="Miami">Miami</option>
+<option value="Indianapolis">Indianapolis</option>
+<option value="Houston">Houston</option>
+<option value="Los Angeles">Los Angeles</option>
+<option value="San Francisco">San Francisco</option>
+</select>
+<label>Разтоварно пристанище:</label>
+<select name="portOfDelivery" required="">
+<option value="Rotterdam">Rotterdam</option>
+</select>
+<label>Вътрешен транспорт в САЩ (USD):</label>
+<input name="domesticTransport" required="" type="text"/>
+<label>Морски транспорт (USD):</label>
+<input name="oceanFreight" required="" type="text"/>
+<label>Такса опасен товар (USD):</label>
+<input name="hazardousCargo" required="" type="text"/>
+<label>Терминални разходи (EUR):</label>
+<input name="terminalHandling" required="" type="text"/>
+<label>Вътрешен транспорт Ротердам - София (BGN): </label>
+<input name="inlandTransport" required="" type="text"/>
+</div></section>
+<div class="offer-actions"><button type="submit">Генерирай офертата</button></div></form>
 </div>
 </body>
 </html>
