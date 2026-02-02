@@ -31,13 +31,21 @@
                 <label>За митница</label>
                 <input type="text" name="customsID" required />
             </div>
-            <button type="button" onclick="generateText()">Генерирай</button>
+            <div class="btn-row">
+                <button type="button" onclick="generateText()">Генерирай</button>
+                <button type="button" class="btn-secondary" onclick="copyText()">Копирай</button>
+            </div>
+
         </form>
 
         <div id="resultBox"
             style="display:none; margin-top:32px; padding:20px; background:#f1f5f9; border-radius:10px; border:1px solid #cbd5e1;">
             <p id="resultText" style="line-height:1.6;"></p>
         </div>
+
+        <div id="copiedToast" class="copied" style="display:none;">✅ Текстът е копиран!</div>
+        <textarea id="plainTextOut" style="position:absolute; left:-9999px;"></textarea>
+
 
 
     </div>
@@ -48,32 +56,63 @@
             const amountDue = document.querySelector('input[name="amountDue"]').value;
             const customsID = document.querySelector('input[name="customsID"]').value;
 
-            const text = `
-            Здравейте,<br>
-            <br>
-            Изпращам дължимите митнически вземания и инструкции за плащане.<br>
-            <br>
-            <strong>Задължено лице: ${payer}</strong><br>
-            <br>
-            Банкови данни<br>
-            Агенция Митници – БНБ<br>
-            IBAN: BG80BNBG96618000122201<br>
-            <br>
-            <strong>Дължима сума: ${amountDue} EUR</strong><br>
-            <br>
-            <strong>Основание: За МП ${customsID}</strong><br>
-            <br>
-            Моля, след плащане ни изпратете платежния документ за потвърждение.<br>
-            Приложено изпращам и фактура за нашите услуги, моля да я заплатите по банков път.<br>
-            <br>
-            Поздрави,<br>
-            Божидар<br>
-        `;
+            const html = `
+                Здравейте,<br><br>
+                Изпращам дължимите митнически вземания и инструкции за плащане.<br><br>
+                <strong>Задължено лице: ${payer}</strong><br><br>
+                Банкови данни<br>
+                Агенция Митници – БНБ<br>
+                IBAN: BG80BNBG96618000122201<br><br>
+                <strong>Дължима сума: ${amountDue} EUR</strong><br><br>
+                <strong>Основание: За МП ${customsID}</strong><br><br>
+                Моля, след плащане ни изпратете платежния документ за потвърждение.<br>
+                Приложено изпращам и фактура за нашите услуги, моля да я заплатите по банков път.<br><br>
+                Поздрави,<br>
+                Божидар<br>
+            `;
 
-            document.getElementById("resultText").innerHTML = text;
+            document.getElementById("resultText").innerHTML = html;
             document.getElementById("resultBox").style.display = "block";
+
+            // Подготвяме plain text за копиране
+            document.getElementById("plainTextOut").value =
+                document.getElementById("resultText").innerText;
+
+            // като генерираш — скриваме toast-а
+            document.getElementById("copiedToast").style.display = "none";
+        }
+
+        function copyText() {
+            const text = document.getElementById("plainTextOut").value;
+
+            if (!text) {
+                alert("Първо генерирай текста.");
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById("copiedToast");
+                toast.style.display = "block";
+                setTimeout(() => toast.style.display = "none", 2000);
+            }).catch(() => {
+                // fallback за браузъри без permission
+                const ta = document.getElementById("plainTextOut");
+                ta.style.position = "static";
+                ta.style.left = "0";
+                ta.style.width = "100%";
+                ta.focus();
+                ta.select();
+                document.execCommand("copy");
+                ta.style.position = "absolute";
+                ta.style.left = "-9999px";
+
+                const toast = document.getElementById("copiedToast");
+                toast.style.display = "block";
+                setTimeout(() => toast.style.display = "none", 2000);
+            });
         }
     </script>
+
 
 </body>
 

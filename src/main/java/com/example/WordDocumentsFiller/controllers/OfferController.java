@@ -59,7 +59,7 @@ public class OfferController {
             docxTemplate = "offer_template_" + destination + "_" + category + ".docx";
         }
 
-        String fileName = ("offer_" + destination + "_" + category + "_" +
+        String fileName = ("offer_" +
                 safeFilePart(data.getPortOfLoading(), "portOfLoading") + "_" +
                 safeFilePart(data.getPortOfDelivery(), "portOfDelivery") + "_" +
                 safeFilePart(data.getVehicle(), "vehicle") +

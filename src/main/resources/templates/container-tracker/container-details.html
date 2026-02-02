@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Container Tracker - Details</title>
+</head>
+<body>
+
+<a th:href="@{/container-tracker/containers}">← Back</a>
+
+<h1 th:text="'Container: ' + ${container.containerNo}"></h1>
+
+<div>
+    <p><b>BOL:</b> <span th:text="${container.bol}"></span></p>
+    <p><b>Carrier:</b> <span th:text="${container.carrier}"></span></p>
+    <p><b>ETA:</b> <span th:text="${container.eta}"></span></p>
+    <p><b>Status:</b> <span th:text="${container.status}"></span></p>
+</div>
+
+<hr/>
+
+<h2>Add Vehicle</h2>
+<form th:action="@{/container-tracker/containers/{id}/vehicles(id=${container.id})}" method="post" th:object="${newVehicle}">
+    <div>
+        <label>VIN</label>
+        <input type="text" th:field="*{vin}" />
+    </div>
+    <div>
+        <label>Description</label>
+        <input type="text" th:field="*{description}" />
+    </div>
+    <div>
+        <label>Owner Name</label>
+        <input type="text" th:field="*{ownerName}" />
+    </div>
+    <button type="submit">Add</button>
+</form>
+
+<hr/>
+
+<h2 th:text="'Vehicles (' + ${#lists.size(vehicles)} + ')'"></h2>
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>VIN</th>
+        <th>Description</th>
+        <th>Owner</th>
+        <th>Paid</th>
+        <th>Titles</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="v : ${vehicles}">
+        <td th:text="${v.id}"></td>
+        <td th:text="${v.vin}"></td>
+        <td th:text="${v.description}"></td>
+        <td th:text="${v.ownerName}"></td>
+        <td th:text="${v.paid}"></td>
+        <td th:text="${v.titles}"></td>
+        <td th:text="${v.status}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Container Tracker - Containers</title>
+</head>
+<body>
+<h1>Containers</h1>
+
+<form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}">
+    <div>
+        <label>Container No</label>
+        <input type="text" th:field="*{containerNo}" placeholder="KKFU8145400" required />
+    </div>
+    <div>
+        <label>BOL</label>
+        <input type="text" th:field="*{bol}" />
+    </div>
+    <div>
+        <label>Carrier</label>
+        <input type="text" th:field="*{carrier}" />
+    </div>
+    <button type="submit">Create</button>
+</form>
+
+<hr/>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Container</th>
+        <th>BOL</th>
+        <th>Carrier</th>
+        <th>ETA</th>
+        <th>Status</th>
+        <th>Open</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${containers}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.containerNo}"></td>
+        <td th:text="${c.bol}"></td>
+        <td th:text="${c.carrier}"></td>
+        <td th:text="${c.eta}"></td>
+        <td th:text="${c.status}"></td>
+        <td><a th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
