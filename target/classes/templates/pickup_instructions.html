@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8" />
@@ -9,16 +9,7 @@
 </head>
 
 <body>
-
-    <nav>
-        <div class="wrap">
-            <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-            <a href="/offers" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Оферти за
-                транспорт</a>
-            <a href="/instruments"
-                style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Инструменти</a>
-        </div>
-    </nav>
+<div th:replace="fragments/navbar :: main-nav"></div>
 
 
     <div class="container">

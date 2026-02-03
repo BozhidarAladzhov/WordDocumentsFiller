@@ -1,0 +1,16 @@
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<nav th:fragment="main-nav">
+    <div class="wrap">
+        <a class="navbar-brand" th:href="@{/}"></a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <a class="nav-link" th:href="@{/}">Начало</a>
+            <a class="nav-link" th:href="@{/offers}">Оферти за транспорт</a>
+            <a class="nav-link" th:href="@{/instruments}">Инструменти</a>
+            <a class="nav-link" th:href="@{/container-tracker/containers}">Контейнер тракер</a>
+        </div>
+    </div>
+</nav>
+

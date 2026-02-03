@@ -3,51 +3,82 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Container Tracker - Containers</title>
+    <link rel="stylesheet" href="/css/app.css">
+
 </head>
 <body>
-<h1>Containers</h1>
+<div th:replace="fragments/navbar :: main-nav"></div>
 
-<form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}">
-    <div>
-        <label>Container No</label>
-        <input type="text" th:field="*{containerNo}" placeholder="KKFU8145400" required />
-    </div>
-    <div>
-        <label>BOL</label>
-        <input type="text" th:field="*{bol}" />
-    </div>
-    <div>
-        <label>Carrier</label>
-        <input type="text" th:field="*{carrier}" />
-    </div>
-    <button type="submit">Create</button>
-</form>
+<div class="container tools tracker">
+    <h1 style="text-align:left;margin-top:20px;">Container Tracker</h1>
+    <p class="hint">Списък контейнери • създаване • отваряне</p>
 
-<hr/>
+    <div class="card">
+        <h2 style="margin-top:0;">Create Container</h2>
 
-<table border="1" cellpadding="6" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Container</th>
-        <th>BOL</th>
-        <th>Carrier</th>
-        <th>ETA</th>
-        <th>Status</th>
-        <th>Open</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="c : ${containers}">
-        <td th:text="${c.id}"></td>
-        <td th:text="${c.containerNo}"></td>
-        <td th:text="${c.bol}"></td>
-        <td th:text="${c.carrier}"></td>
-        <td th:text="${c.eta}"></td>
-        <td th:text="${c.status}"></td>
-        <td><a th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a></td>
-    </tr>
-    </tbody>
-</table>
+        <form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}">
+            <div class="grid">
+                <div>
+                    <label>Container No</label>
+                    <input th:field="*{containerNo}" required placeholder="KKFU8145400">
+                </div>
+                <div>
+                    <label>BOL</label>
+                    <input th:field="*{bol}" placeholder="BOL...">
+                </div>
+                <div>
+                    <label>Carrier</label>
+                    <input th:field="*{carrier}" placeholder="MSC / Maersk...">
+                </div>
+                <div>
+                    <label>ETA</label>
+                    <input th:field="*{eta}" type="date">
+                </div>
+            </div>
+
+            <div class="btn-row" style="margin-top:14px;">
+                <button type="submit">Create Container</button>
+            </div>
+        </form>
+    </div>
+
+    <div style="height:14px;"></div>
+
+    <div class="card">
+        <h2 style="margin-top:0;">Containers</h2>
+
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Container</th>
+                    <th>BOL</th>
+                    <th>Carrier</th>
+                    <th>ETA</th>
+                    <th>Status</th>
+                    <th>Open</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${containers}">
+                    <td th:text="${c.id}"></td>
+                    <td><span class="kbd" th:text="${c.containerNo}"></span></td>
+                    <td th:text="${c.bol}"></td>
+                    <td th:text="${c.carrier}"></td>
+                    <td th:text="${c.eta}"></td>
+                    <td><span class="badge info" th:text="${c.status}"></span></td>
+                    <td>
+                        <a class="btn btn-ghost"
+                           th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
 </body>
+
 </html>

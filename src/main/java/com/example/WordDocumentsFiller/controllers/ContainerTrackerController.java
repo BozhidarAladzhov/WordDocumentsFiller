@@ -24,7 +24,7 @@ public class ContainerTrackerController {
     public String containers(Model model) {
         model.addAttribute("containers", containerService.getAll());
         model.addAttribute("newContainer", new Container());
-        return "/containers";
+        return "container-tracker/containers";
     }
 
     @PostMapping("/containers")

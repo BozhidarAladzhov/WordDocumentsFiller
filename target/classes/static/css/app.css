@@ -481,3 +481,193 @@ button:hover, .btn:hover{
   .unp-form{ grid-template-columns: 1fr; }
 }
 
+/* =========================
+   Container Tracker (module)
+========================= */
+
+/* по-широко за таблиците */
+.container.tracker{
+  max-width: 1100px;
+}
+
+/* header row за заглавие + бутони */
+.tracker-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-bottom: 18px;
+}
+.tracker-header h1{
+  text-align:left;
+  margin:0;
+}
+.tracker-sub{
+  margin:6px 0 0;
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+/* “toolbar” */
+.tracker-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+/* таблица стил */
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  min-width: 940px;
+  background:#fff;
+}
+.table th{
+  text-align:left;
+  font-size:.85rem;
+  color: var(--muted);
+  padding:12px 14px;
+  border-bottom:1px solid var(--border);
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+.table td{
+  padding:12px 14px;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+.table tr:hover td{
+  background:#f8fafc;
+}
+
+/* badge за статуси */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 10px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:.78rem;
+  border:1px solid var(--border);
+  background:#f1f5f9;
+  color: var(--text);
+}
+.badge.good{ background:#dcfce7; border-color:#86efac; color:#14532d; }
+.badge.warn{ background:#fef9c3; border-color:#fde68a; color:#854d0e; }
+.badge.info{ background:#dbeafe; border-color:#93c5fd; color:#1e40af; }
+.badge.bad{  background:#fee2e2; border-color:#fecaca; color:#7f1d1d; }
+
+/* inline “code” вид за containerNo/VIN */
+.kbd{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:.85rem;
+  padding:3px 8px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#f1f5f9;
+}
+
+/* detail layout: 2 колони */
+.tracker-split{
+  display:grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 18px;
+  align-items:start;
+}
+@media(max-width:900px){
+  .tracker-split{ grid-template-columns: 1fr; }
+  .table{ min-width: 720px; }
+}
+
+/* Navbar links (unify, remove inline styles) */
+.nav-link{
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  margin-right:20px;
+}
+.nav-link:hover{
+  opacity:.9;
+  text-decoration:underline;
+}
+
+/* Container Tracker – keeps existing app style */
+.tracker{
+  max-width: 1100px;
+}
+
+/* table styling (since module uses tables) */
+.table-wrap{
+  overflow:auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.table{
+  width:100%;
+  border-collapse: collapse;
+  background: #fff;
+  min-width: 900px;
+}
+
+.table th{
+  text-align:left;
+  font-size: .85rem;
+  color: var(--muted);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  background: #f8fafc;
+}
+
+.table td{
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table tr:hover td{
+  background: #f8fafc;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f1f5f9;
+  font-weight: 700;
+  font-size: .78rem;
+}
+.badge.good{ background:#dcfce7; border-color:#86efac; color:#14532d; }
+.badge.warn{ background:#fef9c3; border-color:#fde68a; color:#854d0e; }
+.badge.info{ background:#dbeafe; border-color:#93c5fd; color:#1e40af; }
+
+.kbd{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size:.85rem;
+  padding:3px 8px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#f1f5f9;
+}
+
+/* details layout */
+.tracker-split{
+  display:grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 18px;
+}
+@media(max-width: 900px){
+  .tracker-split{ grid-template-columns: 1fr; }
+  .table{ min-width: 700px; }
+}
+

@@ -3,66 +3,91 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Container Tracker - Details</title>
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+<div th:replace="fragments/navbar :: main-nav"></div>
 
-<a th:href="@{/container-tracker/containers}">← Back</a>
+<div class="container tools tracker">
+    <h1 style="text-align:left;margin-top:20px;" th:text="'Container: ' + ${container.containerNo}">Container</h1>
+    <p class="hint">Детайли • Vehicles • добавяне</p>
 
-<h1 th:text="'Container: ' + ${container.containerNo}"></h1>
+    <div class="tracker-split">
+        <div class="card">
+            <h2 style="margin-top:0;">Details</h2>
 
-<div>
-    <p><b>BOL:</b> <span th:text="${container.bol}"></span></p>
-    <p><b>Carrier:</b> <span th:text="${container.carrier}"></span></p>
-    <p><b>ETA:</b> <span th:text="${container.eta}"></span></p>
-    <p><b>Status:</b> <span th:text="${container.status}"></span></p>
+            <div class="grid">
+                <div>
+                    <label>BOL</label>
+                    <input th:value="${container.bol}" readonly>
+                </div>
+                <div>
+                    <label>Carrier</label>
+                    <input th:value="${container.carrier}" readonly>
+                </div>
+                <div>
+                    <label>ETA</label>
+                    <input th:value="${container.eta}" readonly>
+                </div>
+                <div>
+                    <label>Status</label>
+                    <div style="margin-top:6px;">
+                        <span class="badge info" th:text="${container.status}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:14px;"></div>
+
+            <h2 style="margin:0 0 10px;">Vehicles</h2>
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID</th><th>VIN</th><th>Description</th><th>Owner</th><th>Paid</th><th>Titles</th><th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="v : ${vehicles}">
+                        <td th:text="${v.id}"></td>
+                        <td><span class="kbd" th:text="${v.vin}"></span></td>
+                        <td th:text="${v.description}"></td>
+                        <td th:text="${v.ownerName}"></td>
+                        <td><span class="badge" th:text="${v.paid}"></span></td>
+                        <td><span class="badge" th:text="${v.titles}"></span></td>
+                        <td><span class="badge warn" th:text="${v.status}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="btn-row" style="justify-content:flex-start;margin-bottom:10px;">
+                <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">← Back</a>
+            </div>
+
+            <h2 style="margin-top:0;">Add Vehicle</h2>
+
+            <form th:action="@{/container-tracker/containers/{id}/vehicles(id=${container.id})}"
+                  method="post" th:object="${newVehicle}">
+                <label>VIN</label>
+                <input th:field="*{vin}" placeholder="1HGCM82633A...">
+
+                <label>Description</label>
+                <input th:field="*{description}" placeholder="2016 BMW X5...">
+
+                <label>Owner Name</label>
+                <input th:field="*{ownerName}" placeholder="Client name...">
+
+                <div class="btn-row" style="margin-top:14px;">
+                    <button type="submit">Add Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-
-<hr/>
-
-<h2>Add Vehicle</h2>
-<form th:action="@{/container-tracker/containers/{id}/vehicles(id=${container.id})}" method="post" th:object="${newVehicle}">
-    <div>
-        <label>VIN</label>
-        <input type="text" th:field="*{vin}" />
-    </div>
-    <div>
-        <label>Description</label>
-        <input type="text" th:field="*{description}" />
-    </div>
-    <div>
-        <label>Owner Name</label>
-        <input type="text" th:field="*{ownerName}" />
-    </div>
-    <button type="submit">Add</button>
-</form>
-
-<hr/>
-
-<h2 th:text="'Vehicles (' + ${#lists.size(vehicles)} + ')'"></h2>
-<table border="1" cellpadding="6" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>VIN</th>
-        <th>Description</th>
-        <th>Owner</th>
-        <th>Paid</th>
-        <th>Titles</th>
-        <th>Status</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="v : ${vehicles}">
-        <td th:text="${v.id}"></td>
-        <td th:text="${v.vin}"></td>
-        <td th:text="${v.description}"></td>
-        <td th:text="${v.ownerName}"></td>
-        <td th:text="${v.paid}"></td>
-        <td th:text="${v.titles}"></td>
-        <td th:text="${v.status}"></td>
-    </tr>
-    </tbody>
-</table>
-
 </body>
+
+
 </html>

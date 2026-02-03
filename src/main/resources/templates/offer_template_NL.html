@@ -10,13 +10,9 @@
 </head>
 
 <body>
-    <nav style="background: #2b6cb0; padding: 14px 0; margin-bottom: 26px;">
-        <div style="max-width: 720px; margin: 0 auto; display: flex; gap: 26px;">
-            <a href="/" style="color: #fff; text-decoration:none; font-weight:600; margin-right:20px;">Начало</a>
-            <a href="/form/NL" style="color: #fff; text-decoration:none; margin-right:12px;">Оферта NL</a>
-            <a href="/form/BG" style="color: #fff; text-decoration:none;">Оферта BG</a>
-        </div>
-    </nav>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+
     <div class="container offer">
         <h1>Motorcycle LCL -> POD Rotterdam</h1>
         <form class="offer-form" method="post" th:action="@{/generate/NL}">
