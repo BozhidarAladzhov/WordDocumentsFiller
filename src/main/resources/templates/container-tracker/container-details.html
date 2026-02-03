@@ -9,78 +9,197 @@
 <div th:replace="fragments/navbar :: main-nav"></div>
 
 <div class="container tools tracker">
-    <h1 style="text-align:left;margin-top:20px;" th:text="'Container: ' + ${container.containerNo}">Container</h1>
-    <p class="hint">Детайли • Vehicles • добавяне</p>
+    <div class="tracker-topbar">
+        <div>
+            <h1 class="tracker-title" th:text="'Container: ' + ${container.containerNo}">Container</h1>
+            <p class="hint">Детайли • Vehicles • добавяне</p>
+        </div>
 
-    <div class="tracker-split">
-        <div class="card">
-            <h2 style="margin-top:0;">Details</h2>
+        <div class="tracker-actions">
+            <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">← Back</a>
+        </div>
+    </div>
 
-            <div class="grid">
-                <div>
-                    <label>BOL</label>
-                    <input th:value="${container.bol}" readonly>
-                </div>
-                <div>
-                    <label>Carrier</label>
-                    <input th:value="${container.carrier}" readonly>
-                </div>
-                <div>
-                    <label>ETA</label>
-                    <input th:value="${container.eta}" readonly>
-                </div>
-                <div>
-                    <label>Status</label>
-                    <div style="margin-top:6px;">
-                        <span class="badge info" th:text="${container.status}"></span>
-                    </div>
-                </div>
+    <div class="card">
+        <h2 class="section-head">Details</h2>
+
+        <div class="grid">
+            <div>
+                <label>BOL</label>
+                <input th:value="${container.bol}" readonly>
             </div>
-
-            <div style="height:14px;"></div>
-
-            <h2 style="margin:0 0 10px;">Vehicles</h2>
-            <div class="table-wrap">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>ID</th><th>VIN</th><th>Description</th><th>Owner</th><th>Paid</th><th>Titles</th><th>Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="v : ${vehicles}">
-                        <td th:text="${v.id}"></td>
-                        <td><span class="kbd" th:text="${v.vin}"></span></td>
-                        <td th:text="${v.description}"></td>
-                        <td th:text="${v.ownerName}"></td>
-                        <td><span class="badge" th:text="${v.paid}"></span></td>
-                        <td><span class="badge" th:text="${v.titles}"></span></td>
-                        <td><span class="badge warn" th:text="${v.status}"></span></td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div>
+                <label>Carrier</label>
+                <input th:value="${container.carrier}" readonly>
+            </div>
+            <div>
+                <label>ETA</label>
+                <input th:value="${container.eta}" readonly>
+            </div>
+            <div>
+                <label>Status</label>
+                <div style="margin-top:6px;">
+                    <span class="badge info" th:text="${container.status}"></span>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <div class="btn-row" style="justify-content:flex-start;margin-bottom:10px;">
-                <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">← Back</a>
+        <div class="section-divider"></div>
+
+        <div class="vehicles-header">
+            <h2 class="section-head" style="margin:0;">Vehicles</h2>
+        </div>
+
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+<!--                    <th>ID</th>-->
+                    <th>Description</th>
+                    <th>VIN</th>
+                    <th>Owner</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <th:block th:each="v : ${vehicles}">
+
+                    <!-- MAIN INFO ROW -->
+                    <tr class="vehicle-row">
+<!--                        <td th:text="${v.id}"></td>-->
+                        <td th:text="${v.description}"></td>
+                        <td><span class="kbd" th:text="${v.vin}"></span></td>
+                        <td th:text="${v.ownerName}"></td>
+
+                        <td>
+                            <input class="input-sm" type="text" name="phone"
+                                   th:value="${v.phone}" placeholder="Phone"
+                                   th:attr="form=${'f__' + v.id}">
+                        </td>
+
+                        <td>
+                            <input class="input-sm" type="email" name="email"
+                                   th:value="${v.email}" placeholder="Email"
+                                   th:attr="form=${'f__' + v.id}">
+                        </td>
+                    </tr>
+
+                    <!-- META / STATUS ROW -->
+                    <tr class="vehicle-meta">
+                        <td colspan="6">
+                            <form class="vehicle-meta__form"
+                                  th:id="${'f__' + v.id}"
+                                  th:action="@{/container-tracker/containers/{cid}/vehicles/{vid}/update(cid=${container.id},vid=${v.id})}"
+                                  method="post">
+
+                                <div class="meta-grid">
+                                    <div>
+                                        <label>Paid</label>
+                                        <select name="paid"
+                                                class="pill"
+                                                th:classappend="${' pill--paid-' + #strings.toLowerCase(#strings.replace(v.paid,'_','-'))}">
+                                            <option th:each="p : ${paidOptions}" th:value="${p}" th:text="${p}" th:selected="${p == v.paid}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label>Titles</label>
+                                        <select name="titles"
+                                                class="pill"
+                                                th:classappend="${' pill--titles-' + #strings.toLowerCase(#strings.replace(v.titles,'_','-'))}">
+                                            <option th:each="t : ${titlesOptions}" th:value="${t}" th:text="${t}" th:selected="${t == v.titles}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label>Status</label>
+                                        <select name="status"
+                                                class="pill"
+                                                th:classappend="${' pill--status-' + #strings.toLowerCase(#strings.replace(v.status,'_','-'))}">
+                                            <option th:each="s : ${vehicleStatusOptions}" th:value="${s}" th:text="${s}" th:selected="${s == v.status}"></option>
+                                        </select>
+                                    </div>
+
+                                    <div class="meta-notes">
+                                        <label>Notes</label>
+                                        <textarea name="notes"
+                                                  class="notes-field"
+                                                  rows="1"
+                                                  placeholder="Internal notes…"
+                                                  th:text="${v.notes}"></textarea>
+                                    </div>
+
+                                    <div class="meta-actions">
+                                        <button type="submit" class="btn-sm btn-sm--save">Save</button>
+
+                                        <button type="submit"
+                                                class="btn-sm btn-sm--danger"
+                                                th:formaction="@{/container-tracker/containers/{cid}/vehicles/{vid}/delete(cid=${container.id},vid=${v.id})}"
+                                                formmethod="post"
+                                                onclick="return confirm('Delete this vehicle? This cannot be undone.');">
+                                            Delete
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+
+                </th:block>
+                </tbody>
+
+
+            </table>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="vehicle-add">
+            <div class="vehicle-add__head">
+                <h2 class="section-head" style="margin:0;">Add Vehicle</h2>
+                <p class="hint" style="margin:6px 0 0;">Попълни VIN, описание и собственик, после натисни Add Vehicle.</p>
             </div>
 
-            <h2 style="margin-top:0;">Add Vehicle</h2>
-
-            <form th:action="@{/container-tracker/containers/{id}/vehicles(id=${container.id})}"
+            <form class="vehicle-add__form"
+                  th:action="@{/container-tracker/containers/{id}/vehicles(id=${container.id})}"
                   method="post" th:object="${newVehicle}">
-                <label>VIN</label>
-                <input th:field="*{vin}" placeholder="1HGCM82633A...">
 
-                <label>Description</label>
-                <input th:field="*{description}" placeholder="2016 BMW X5...">
+                <div class="vehicle-add__grid">
+                    <div>
+                        <label>Description</label>
+                        <input th:field="*{description}">
+                    </div>
 
-                <label>Owner Name</label>
-                <input th:field="*{ownerName}" placeholder="Client name...">
+                    <div>
+                        <label>VIN</label>
+                        <input th:field="*{vin}">
+                    </div>
 
-                <div class="btn-row" style="margin-top:14px;">
+
+                    <div>
+                        <label>Owner Name</label>
+                        <input th:field="*{ownerName}">
+                    </div>
+                    <div>
+                        <label>Phone</label>
+                        <input th:field="*{phone}">
+                    </div>
+
+                    <div>
+                        <label>Email</label>
+                        <input th:field="*{email}">
+                    </div>
+
+                    <div>
+                        <label>Notes</label>
+                        <input th:field="*{notes}">
+                    </div>
+                </div>
+
+                <div class="vehicle-add__actions">
                     <button type="submit">Add Vehicle</button>
                 </div>
             </form>
@@ -88,6 +207,4 @@
     </div>
 </div>
 </body>
-
-
 </html>

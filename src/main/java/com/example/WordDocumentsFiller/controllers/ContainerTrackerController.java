@@ -2,6 +2,9 @@ package com.example.WordDocumentsFiller.controllers;
 
 import com.example.WordDocumentsFiller.entities.Container;
 import com.example.WordDocumentsFiller.entities.Vehicle;
+import com.example.WordDocumentsFiller.entities.enums.PaidStatus;
+import com.example.WordDocumentsFiller.entities.enums.TitlesStatus;
+import com.example.WordDocumentsFiller.entities.enums.VehicleStatus;
 import com.example.WordDocumentsFiller.service.ContainerService;
 import com.example.WordDocumentsFiller.service.VehicleService;
 import org.springframework.stereotype.Controller;
@@ -36,9 +39,15 @@ public class ContainerTrackerController {
     @GetMapping("/containers/{id}")
     public String containerDetails(@PathVariable Long id, Model model) {
         Container container = containerService.getById(id);
+
         model.addAttribute("container", container);
         model.addAttribute("vehicles", vehicleService.getByContainerId(id));
         model.addAttribute("newVehicle", new Vehicle());
+
+        model.addAttribute("paidOptions", PaidStatus.values());
+        model.addAttribute("titlesOptions", TitlesStatus.values());
+        model.addAttribute("vehicleStatusOptions", VehicleStatus.values());
+
         return "container-tracker/container-details";
     }
 
@@ -48,5 +57,28 @@ public class ContainerTrackerController {
         vehicleService.addToContainer(container, newVehicle);
         return "redirect:/container-tracker/containers/" + id;
     }
+
+    @PostMapping("/containers/{containerId}/vehicles/{vehicleId}/update")
+    public String updateVehicle(@PathVariable Long containerId,
+                                @PathVariable Long vehicleId,
+                                @RequestParam PaidStatus paid,
+                                @RequestParam TitlesStatus titles,
+                                @RequestParam VehicleStatus status,
+                                @RequestParam(required = false) String phone,
+                                @RequestParam(required = false) String email,
+                                @RequestParam(required = false) String notes) {
+
+        vehicleService.updateVehicle(containerId, vehicleId, paid, titles, status, phone, email, notes);
+        return "redirect:/container-tracker/containers/" + containerId;
+    }
+
+    @PostMapping("/containers/{containerId}/vehicles/{vehicleId}/delete")
+    public String deleteVehicle(@PathVariable Long containerId,
+                                @PathVariable Long vehicleId) {
+        vehicleService.deleteVehicle(containerId, vehicleId);
+        return "redirect:/container-tracker/containers/" + containerId;
+    }
+
+
 
 }

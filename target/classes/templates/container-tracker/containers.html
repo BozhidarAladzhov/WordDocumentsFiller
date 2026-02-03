@@ -11,24 +11,23 @@
 
 <div class="container tools tracker">
     <h1 style="text-align:left;margin-top:20px;">Container Tracker</h1>
-    <p class="hint">Списък контейнери • създаване • отваряне</p>
 
     <div class="card">
-        <h2 style="margin-top:0;">Create Container</h2>
+        <h2 style="margin-top:0;">Add Container</h2>
 
         <form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}">
             <div class="grid">
                 <div>
                     <label>Container No</label>
-                    <input th:field="*{containerNo}" required placeholder="KKFU8145400">
+                    <input th:field="*{containerNo}">
                 </div>
                 <div>
-                    <label>BOL</label>
-                    <input th:field="*{bol}" placeholder="BOL...">
+                    <label>Bill of Lading</label>
+                    <input th:field="*{bol}">
                 </div>
                 <div>
                     <label>Carrier</label>
-                    <input th:field="*{carrier}" placeholder="MSC / Maersk...">
+                    <input th:field="*{carrier}">
                 </div>
                 <div>
                     <label>ETA</label>
@@ -37,7 +36,7 @@
             </div>
 
             <div class="btn-row" style="margin-top:14px;">
-                <button type="submit">Create Container</button>
+                <button type="submit">Add Container</button>
             </div>
         </form>
     </div>
