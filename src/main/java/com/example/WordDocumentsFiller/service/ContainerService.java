@@ -52,7 +52,6 @@ public class ContainerService {
 
     @Transactional
     public void deleteContainer(Long id) {
-        // CascadeType.ALL + orphanRemoval=true върху vehicles => ще изтрие и vehicle-ите. :contentReference[oaicite:2]{index=2}
         containerRepository.deleteById(id);
     }
 
