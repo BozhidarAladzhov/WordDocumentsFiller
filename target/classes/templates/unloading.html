@@ -10,7 +10,14 @@
 </head>
 
 <body>
-<div th:replace="fragments/navbar :: main-nav"></div>
+<div th:replace="~{fragments/navbar :: main-nav}"></div>
+<script id="unload-prefill"
+        type="application/json"
+        th:if="${prefillJson != null}"
+        th:utext="${prefillJson}">
+</script>
+
+
 
   <div class="container tools">
     <h1>Инструкции за разтоварване на контейнер</h1>
@@ -58,6 +65,7 @@
     <!-- hidden plain text for clipboard fallback -->
     <textarea id="plainTextOut" style="position:absolute; left:-9999px; top:-9999px;"></textarea>
   </div>
+
 
   <script>
     let vehicleIdSeq = 0;
@@ -263,8 +271,42 @@
       setTimeout(() => toast.style.display = "none", 2000);
     }
 
-    // стартово: 1 автомобил по подразбиране
+
+  (function bootPrefill(){
+  const el = document.getElementById("unload-prefill");
+
+  // no prefill => normal behaviour
+  if (!el || !el.textContent) {
     addVehicle();
+    return;
+  }
+
+  let p;
+  try {
+    p = JSON.parse(el.textContent);
+  } catch (e) {
+    console.error("Invalid prefill JSON", e, el.textContent);
+    addVehicle();
+    return;
+  }
+
+  // container
+  const containerInput = document.querySelector('input[name="containerNo"]');
+  if (p.containerNo && containerInput) {
+    containerInput.value = String(p.containerNo);
+    containerInput.readOnly = true;
+  }
+
+  // vehicles
+  if (Array.isArray(p.vehicles) && p.vehicles.length > 0) {
+    p.vehicles.forEach(v => addVehicle(v));
+    return;
+  }
+
+  addVehicle();
+})();
+
+
   </script>
 
 </body>

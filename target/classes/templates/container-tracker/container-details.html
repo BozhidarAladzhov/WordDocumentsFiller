@@ -8,43 +8,87 @@
 <body>
 <div th:replace="fragments/navbar :: main-nav"></div>
 
-<div class="container tools tracker">
+<div class="container tools tracker tracker--wide">
     <div class="tracker-topbar">
         <div>
             <h1 class="tracker-title" th:text="'Container: ' + ${container.containerNo}">Container</h1>
-            <p class="hint">Детайли • Vehicles • добавяне</p>
         </div>
+
+        <a class="btn btn-ghost"
+           th:href="@{/container-tracker/containers/{id}/unloading(id=${container.id})}">
+            Unloading
+        </a>
+
 
         <div class="tracker-actions">
             <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">← Back</a>
         </div>
     </div>
 
-    <div class="card">
-        <h2 class="section-head">Details</h2>
+    <div class="details-card details-card--compact">
 
-        <div class="grid">
-            <div>
-                <label>BOL</label>
-                <input th:value="${container.bol}" readonly>
-            </div>
-            <div>
-                <label>Carrier</label>
-                <input th:value="${container.carrier}" readonly>
-            </div>
-            <div>
-                <label>ETA</label>
-                <input th:value="${container.eta}" readonly>
-            </div>
-            <div>
-                <label>Status</label>
-                <div style="margin-top:6px;">
-                    <span class="badge info" th:text="${container.status}"></span>
+        <form id="containerEditForm"
+              th:action="@{/container-tracker/containers/{id}/update(id=${container.id})}"
+              method="post"
+              class="details-form">
+
+            <!-- ONE-LINE INFO ROW -->
+            <div class="details-row">
+
+                <div class="field">
+                    <label>Container No</label>
+                    <input th:value="${container.containerNo}" readonly>
                 </div>
-            </div>
-        </div>
 
-        <div class="section-divider"></div>
+                <div class="field">
+                    <label>BOL</label>
+                    <input name="bol" th:value="${container.bol}" placeholder="BOL…">
+                </div>
+
+                <div class="field">
+                    <label>Carrier</label>
+                    <input name="carrier" th:value="${container.carrier}" placeholder="Carrier…">
+                </div>
+
+                <div class="field">
+                    <label>ETA</label>
+                    <input name="eta" type="date" th:value="${container.eta}">
+                </div>
+
+                <div class="field field--status">
+                    <label>Status</label>
+                    <select name="status"
+                            class="pill"
+                            th:classappend="${' pill--status-' + #strings.toLowerCase(#strings.replace(container.status,'_','-'))}">
+                        <option th:each="s : ${containerStatusOptions}"
+                                th:value="${s}"
+                                th:text="${s}"
+                                th:selected="${s == container.status}">
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- FOOTER ACTIONS -->
+            <div class="details-footer details-footer--right">
+                <button type="submit" class="btn-sm btn-sm--save">Save</button>
+
+                <button type="submit"
+                        class="btn-sm btn-sm--danger"
+                        th:formaction="@{/container-tracker/containers/{id}/delete(id=${container.id})}"
+                        formmethod="post"
+                        onclick="return confirm('Delete this container? This will delete all vehicles inside it.');">
+                    Delete
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+
+
+    <div class="section-divider"></div>
 
         <div class="vehicles-header">
             <h2 class="section-head" style="margin:0;">Vehicles</h2>
@@ -54,12 +98,19 @@
             <table class="table">
                 <thead>
                 <tr>
-<!--                    <th>ID</th>-->
+                    <thead>
+                <tr>
                     <th>Description</th>
                     <th>VIN</th>
                     <th>Owner</th>
                     <th>Phone</th>
                     <th>Email</th>
+                    <th>Paid</th>
+                    <th>Titles</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+
                 </tr>
                 </thead>
 
@@ -68,7 +119,6 @@
 
                     <!-- MAIN INFO ROW -->
                     <tr class="vehicle-row">
-<!--                        <td th:text="${v.id}"></td>-->
                         <td th:text="${v.description}"></td>
                         <td><span class="kbd" th:text="${v.vin}"></span></td>
                         <td th:text="${v.ownerName}"></td>
@@ -84,46 +134,52 @@
                                    th:value="${v.email}" placeholder="Email"
                                    th:attr="form=${'f__' + v.id}">
                         </td>
+
+                        <!-- NEW: move Paid/Titles/Status to TOP ROW after Email -->
+                        <td>
+                            <select name="paid"
+                                    class="pill"
+                                    th:attr="form=${'f__' + v.id}"
+                                    th:classappend="${' pill--paid-' + #strings.toLowerCase(#strings.replace(v.paid,'_','-'))}">
+                                <option th:each="p : ${paidOptions}"
+                                        th:value="${p}" th:text="${p}" th:selected="${p == v.paid}">
+                                </option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <select name="titles"
+                                    class="pill"
+                                    th:attr="form=${'f__' + v.id}"
+                                    th:classappend="${' pill--titles-' + #strings.toLowerCase(#strings.replace(v.titles,'_','-'))}">
+                                <option th:each="t : ${titlesOptions}"
+                                        th:value="${t}" th:text="${t}" th:selected="${t == v.titles}">
+                                </option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <select name="status"
+                                    class="pill"
+                                    th:attr="form=${'f__' + v.id}"
+                                    th:classappend="${' pill--status-' + #strings.toLowerCase(#strings.replace(v.status,'_','-'))}">
+                                <option th:each="s : ${vehicleStatusOptions}"
+                                        th:value="${s}" th:text="${s}" th:selected="${s == v.status}">
+                                </option>
+                            </select>
+                        </td>
                     </tr>
 
-                    <!-- META / STATUS ROW -->
+                    <!-- META ROW: Notes + actions on the RIGHT -->
                     <tr class="vehicle-meta">
-                        <td colspan="6">
+                        <td colspan="8">
                             <form class="vehicle-meta__form"
                                   th:id="${'f__' + v.id}"
                                   th:action="@{/container-tracker/containers/{cid}/vehicles/{vid}/update(cid=${container.id},vid=${v.id})}"
                                   method="post">
 
-                                <div class="meta-grid">
-                                    <div>
-                                        <label>Paid</label>
-                                        <select name="paid"
-                                                class="pill"
-                                                th:classappend="${' pill--paid-' + #strings.toLowerCase(#strings.replace(v.paid,'_','-'))}">
-                                            <option th:each="p : ${paidOptions}" th:value="${p}" th:text="${p}" th:selected="${p == v.paid}"></option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label>Titles</label>
-                                        <select name="titles"
-                                                class="pill"
-                                                th:classappend="${' pill--titles-' + #strings.toLowerCase(#strings.replace(v.titles,'_','-'))}">
-                                            <option th:each="t : ${titlesOptions}" th:value="${t}" th:text="${t}" th:selected="${t == v.titles}"></option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label>Status</label>
-                                        <select name="status"
-                                                class="pill"
-                                                th:classappend="${' pill--status-' + #strings.toLowerCase(#strings.replace(v.status,'_','-'))}">
-                                            <option th:each="s : ${vehicleStatusOptions}" th:value="${s}" th:text="${s}" th:selected="${s == v.status}"></option>
-                                        </select>
-                                    </div>
-
+                                <div class="meta-line">
                                     <div class="meta-notes">
-                                        <label>Notes</label>
                                         <textarea name="notes"
                                                   class="notes-field"
                                                   rows="1"
@@ -142,7 +198,6 @@
                                             Delete
                                         </button>
                                     </div>
-
                                 </div>
                             </form>
                         </td>

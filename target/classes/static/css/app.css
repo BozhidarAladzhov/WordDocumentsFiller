@@ -895,3 +895,246 @@ button:hover, .btn:hover{
   box-shadow: 0 6px 14px rgba(22, 163, 74, .25);
 }
 
+/* Containers list table can be a bit narrower */
+.container.tracker .table{
+  min-width: 980px; /* малко повече заради Delete колона */
+}
+
+/* ===== Container Details (Details card) ===== */
+.details-card{
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  padding: 16px;
+}
+
+.details-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.details-actions{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.details-form{
+  margin: 0;
+}
+
+.details-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+}
+
+.details-grid label,
+.details-status label{
+  font-weight: 900;
+  font-size: .9rem;
+  color: var(--brand-dark);
+}
+
+.details-footer{
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  display:flex;
+  justify-content:flex-start;
+}
+
+.details-status{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  min-width: 260px;
+}
+
+@media (max-width: 980px){
+  .details-grid{ grid-template-columns: 1fr; }
+  .details-head{ align-items:flex-start; }
+  .details-actions{ width:100%; justify-content:flex-start; flex-wrap:wrap; }
+  .details-status{ min-width: 100%; }
+}
+
+.details-card{
+  box-shadow: 0 12px 30px rgba(15, 23, 42, .06);
+}
+
+/* =========================
+   Wide layout for Container Tracker
+========================= */
+
+.tracker--wide{
+  max-width: none;              /* махаме ограниченията */
+  width: 98%;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* ако имаш глобален .container с max-width */
+.container.tracker--wide{
+  max-width: none;
+}
+
+/* tables да ползват реалната ширина */
+.tracker--wide .table{
+  width: 100%;
+  min-width: unset;
+}
+
+.tracker--wide .vehicles-card{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Vehicle meta line: Notes + actions right */
+.vehicle-meta td{
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-top: 1px dashed var(--border);
+}
+
+.meta-line{
+  display:flex;
+  align-items:flex-end;
+  gap: 14px;
+}
+
+.meta-line .meta-notes{
+  flex: 1;
+  min-width: 320px;
+}
+
+.meta-line .meta-actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  justify-content:flex-end;
+  white-space: nowrap;
+}
+
+/* Make pills fit better inside table */
+.vehicle-row .pill{
+  width: 140px;
+}
+
+/* Responsive */
+@media (max-width: 1100px){
+  .meta-line{ flex-direction: column; align-items: stretch; }
+  .meta-line .meta-actions{ justify-content:flex-start; }
+  .vehicle-row .pill{ width: 100%; }
+}
+
+/* ===== Compact container details (one-line) ===== */
+
+.details-card--compact{
+  padding: 14px 16px 12px;
+}
+
+.details-row{
+  display:grid;
+  grid-template-columns:
+    minmax(220px, 1.2fr)   /* container */
+    minmax(180px, 1fr)     /* bol */
+    minmax(180px, 1fr)     /* carrier */
+    minmax(160px, .9fr)    /* eta */
+    minmax(180px, .9fr);   /* status */
+  gap: 14px;
+  align-items:end;
+}
+
+.details-row .field label{
+  margin-top: 0;
+  font-size: .8rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.details-row input,
+.details-row select{
+  height: 38px;
+}
+
+.field--status .pill{
+  width: 100%;
+}
+
+.details-footer--right{
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+/* Responsive */
+@media (max-width: 1200px){
+  .details-row{
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 720px){
+  .details-row{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Containers: Add Container compact row ===== */
+
+.addc-row{
+  display:grid;
+  grid-template-columns:
+    minmax(240px, 1.2fr)   /* container no */
+    minmax(220px, 1fr)     /* bol */
+    minmax(200px, 1fr)     /* carrier */
+    minmax(170px, .9fr);   /* eta */
+  gap: 14px;
+  align-items:end;
+}
+
+.addc-row .field label{
+  margin-top: 0;
+  font-size: .8rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.addc-row input{
+  height: 38px;
+}
+
+.addc-footer{
+  display:flex;
+  justify-content:flex-end;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+/* responsive */
+@media (max-width: 1200px){
+  .addc-row{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px){
+  .addc-row{ grid-template-columns: 1fr; }
+  .addc-footer{ justify-content:flex-start; }
+}
+
+.btn-sm--ghost{
+  background:#e2e8f0;
+  color:#0f172a;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+

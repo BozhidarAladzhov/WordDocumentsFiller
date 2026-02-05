@@ -71,6 +71,17 @@ public class VehicleService {
         vehicleRepository.delete(v);
     }
 
+    @Transactional
+    public Vehicle getVehicleInContainer(Long containerId, Long vehicleId) {
+        Vehicle v = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new IllegalArgumentException("Vehicle not found: " + vehicleId));
+
+        if (v.getContainer() == null || v.getContainer().getId() == null || !v.getContainer().getId().equals(containerId)) {
+            throw new IllegalArgumentException("Vehicle " + vehicleId + " does not belong to container " + containerId);
+        }
+        return v;
+    }
+
 
 
 

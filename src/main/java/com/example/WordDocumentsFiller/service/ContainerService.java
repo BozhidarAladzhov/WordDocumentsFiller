@@ -1,10 +1,12 @@
 package com.example.WordDocumentsFiller.service;
 
 import com.example.WordDocumentsFiller.entities.Container;
+import com.example.WordDocumentsFiller.entities.enums.ContainerStatus;
 import com.example.WordDocumentsFiller.repositories.ContainerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -31,5 +33,28 @@ public class ContainerService {
     public Container create(Container container) {
         return containerRepository.save(container);
     }
+
+    @Transactional
+    public void updateContainer(Long id,
+                                String bol,
+                                String carrier,
+                                LocalDate eta,
+                                ContainerStatus status) {
+
+        Container c = getById(id);
+        c.setBol(bol);
+        c.setCarrier(carrier);
+        c.setEta(eta);
+        c.setStatus(status);
+
+        containerRepository.save(c);
+    }
+
+    @Transactional
+    public void deleteContainer(Long id) {
+        // CascadeType.ALL + orphanRemoval=true върху vehicles => ще изтрие и vehicle-ите. :contentReference[oaicite:2]{index=2}
+        containerRepository.deleteById(id);
+    }
+
 
 }

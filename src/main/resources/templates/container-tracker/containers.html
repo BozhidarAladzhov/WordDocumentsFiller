@@ -9,36 +9,41 @@
 <body>
 <div th:replace="fragments/navbar :: main-nav"></div>
 
-<div class="container tools tracker">
+<div class="container tools tracker tracker--wide">
     <h1 style="text-align:left;margin-top:20px;">Container Tracker</h1>
 
     <div class="card">
         <h2 style="margin-top:0;">Add Container</h2>
 
-        <form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}">
-            <div class="grid">
-                <div>
+        <form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}" class="addc-form">
+
+            <div class="addc-row">
+                <div class="field">
                     <label>Container No</label>
                     <input th:field="*{containerNo}">
                 </div>
-                <div>
+
+                <div class="field">
                     <label>Bill of Lading</label>
-                    <input th:field="*{bol}">
+                    <input th:field="*{bol}" >
                 </div>
-                <div>
+
+                <div class="field">
                     <label>Carrier</label>
-                    <input th:field="*{carrier}">
+                    <input th:field="*{carrier}" >
                 </div>
-                <div>
+
+                <div class="field">
                     <label>ETA</label>
                     <input th:field="*{eta}" type="date">
                 </div>
             </div>
 
-            <div class="btn-row" style="margin-top:14px;">
-                <button type="submit">Add Container</button>
+            <div class="addc-footer">
+                <button type="submit" class="btn-sm btn-sm--save">Add Container</button>
             </div>
         </form>
+
     </div>
 
     <div style="height:14px;"></div>
@@ -50,18 +55,17 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Container</th>
                     <th>BOL</th>
                     <th>Carrier</th>
                     <th>ETA</th>
                     <th>Status</th>
                     <th>Open</th>
+                    <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="c : ${containers}">
-                    <td th:text="${c.id}"></td>
                     <td><span class="kbd" th:text="${c.containerNo}"></span></td>
                     <td th:text="${c.bol}"></td>
                     <td th:text="${c.carrier}"></td>
@@ -71,6 +75,14 @@
                         <a class="btn btn-ghost"
                            th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a>
                     </td>
+                    <td>
+                        <form th:action="@{/container-tracker/containers/{id}/delete(id=${c.id})}"
+                              method="post"
+                              onsubmit="return confirm('Delete this container? This will delete all vehicles inside it.');">
+                            <button type="submit" class="btn-sm btn-sm--danger">Delete</button>
+                        </form>
+                    </td>
+
                 </tr>
                 </tbody>
             </table>
