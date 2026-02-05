@@ -3,70 +3,79 @@
 <html lang="bg" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Vehicle LCL -> POD Rotterdam</title>
 
-    <link href="/css/app.css" rel="stylesheet" />
+    <link href="/css/app.css" rel="stylesheet"/>
 </head>
 
 <body>
 <div th:replace="fragments/navbar :: main-nav"></div>
 
 
-    <div class="container offer">
-        <h1>Motorcycle LCL -> POD Rotterdam</h1>
-        <form class="offer-form" method="post" th:action="@{/generate/NL/vehicles}">
+<div class="container offer">
+    <h1>Vehicle LCL -> POD Rotterdam</h1>
+    <form class="offer-form" method="post" th:action="@{/generate/NL/vehicles}">
 
 
-            <section class="offer-pane">
-                <h2 class="pane-title">Данни на клиента</h2>
-                <div class="column">
-                    <label>Дата на оферта:</label>
-                    <input name="date" required="" type="date" />
-                    <label>Мейл:</label>
-                    <input name="email" required="" type="email" />
-                    <label>Име и фамилия:</label>
-                    <input name="fullName" required="" type="text" />
-                    <label>Автомобил:</label>
-                    <input name="vehicle" required="" type="text" />
-                    <label>Дата на валидност:</label>
-                    <input name="validate" required="" type="date" />
-                </div>
-            </section>
-            <section class="offer-pane">
-                <h2 class="pane-title">Пристанища и цени</h2>
-                <div class="column">
-                    <label>Адрес за взимане:</label>
-                    <input name="pickUpAddress" required="" type="text" />
-                    <label>Товарно пристанище:</label>
-                    <select name="portOfLoading" required="">
-                        <option value="New York">New York</option>
-                        <option value="Savannah">Savannah</option>
-                        <option value="Miami">Miami</option>
-                        <option value="Indianapolis">Indianapolis</option>
-                        <option value="Houston">Houston</option>
-                        <option value="Los Angeles">Los Angeles</option>
-                        <option value="San Francisco">San Francisco</option>
-                    </select>
-                    <label>Разтоварно пристанище:</label>
-                    <select name="portOfDelivery" required="">
-                        <option value="Rotterdam">Rotterdam</option>
-                    </select>
-                    <label>Вътрешен транспорт в САЩ (USD):</label>
-                    <input name="domesticTransport" required="" type="text" />
-                    <label>Морски транспорт (USD):</label>
-                    <input name="oceanFreight" required="" type="text" />
-                    <label>Такса опасен товар (USD):</label>
-                    <input name="hazardousCargo" required="" type="text" />
-                    <label>Терминални разходи (EUR):</label>
-                    <input name="terminalHandling" required="" type="text" />
-                    <label>Вътрешен транспорт Ротердам - София (EUR): </label>
-                    <input name="inlandTransport" required="" type="text" />
-                </div>
-            </section>
-            <div class="offer-actions"><button type="submit">Генерирай офертата</button></div>
-        </form>
-    </div>
+        <section class="offer-pane">
+            <h2 class="pane-title">Данни на клиента</h2>
+            <div class="column">
+                <label>Дата на оферта:</label>
+                <input name="date" required="" type="date"/>
+                <label>Мейл:</label>
+                <input name="email" required="" type="email"/>
+                <label>Име и фамилия:</label>
+                <input name="fullName" required="" type="text"/>
+                <label>Автомобил:</label>
+                <input name="vehicle" required="" type="text"/>
+                <label>Дата на валидност:</label>
+                <input name="validate" required="" type="date"/>
+            </div>
+        </section>
+        <section class="offer-pane">
+            <h2 class="pane-title">Пристанища и цени</h2>
+            <div class="column">
+                <label>Адрес за взимане:</label>
+                <input name="pickUpAddress" required="" type="text"/>
+                <label>Товарно пристанище:</label>
+                <select name="portOfLoading" required="">
+                    <option value="New York">New York</option>
+                    <option value="Savannah">Savannah</option>
+                    <option value="Miami">Miami</option>
+                    <option value="Indianapolis">Indianapolis</option>
+                    <option value="Houston">Houston</option>
+                    <option value="Los Angeles">Los Angeles</option>
+                    <option value="San Francisco">San Francisco</option>
+                </select>
+                <label>Разтоварно пристанище:</label>
+                <select name="portOfDelivery" required="">
+                    <option value="Rotterdam">Rotterdam</option>
+                </select>
+                <label>Вътрешен транспорт в САЩ (USD):</label>
+                <input name="domesticTransport" required="" type="text"/>
+                <label>Морски транспорт (USD):</label>
+                <input name="oceanFreight" required="" type="text"/>
+                <label>Такса опасен товар (USD):</label>
+                <input name="hazardousCargo" required="" type="text"/>
+                <label>Терминални разходи (EUR):</label>
+                <input name="terminalHandling" required="" type="text"/>
+                <label>Вътрешен транспорт Ротердам - София (EUR): </label>
+                <input name="inlandTransport" required="" type="text"/>
+            </div>
+        </section>
+        <div class="offer-actions">
+            <button type="submit">Изтегли Word</button>
+
+            <button type="submit"
+                    formaction="/generate-pdf/NL/vehicles"
+                    formmethod="post"
+                    class="btn-pdf">
+            Изтегли PDF
+            </button>
+        </div>
+    </form>
+</div>
 </body>
 
 </html>

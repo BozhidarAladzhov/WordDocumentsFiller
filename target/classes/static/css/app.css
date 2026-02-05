@@ -1138,3 +1138,34 @@ button:hover, .btn:hover{
   justify-content:center;
 }
 
+.unp-actions{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+/* PDF button - червен и интуитивен */
+.btn-pdf{
+  background: #c62828;
+  color: #fff;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .12s ease, filter .12s ease, background .12s ease;
+}
+
+.btn-pdf:hover{
+  background: #b71c1c;
+  transform: translateY(-1px);
+  filter: drop-shadow(0 6px 16px rgba(198,40,40,.25));
+}
+
+.btn-pdf:active{
+  transform: translateY(0);
+  filter: none;
+}
+
+

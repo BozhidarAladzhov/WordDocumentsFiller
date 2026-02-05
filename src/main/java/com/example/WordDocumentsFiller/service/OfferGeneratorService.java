@@ -2,6 +2,7 @@ package com.example.WordDocumentsFiller.service;
 
 import com.example.WordDocumentsFiller.dto.OfferData;
 import org.apache.poi.xwpf.usermodel.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
@@ -15,6 +16,14 @@ import java.util.Map;
 
 @Service
 public class OfferGeneratorService {
+
+    @Value("${libreoffice.sofficePath:}")
+    private String sofficePath;
+
+
+    @Value("${offer.output-dir:${java.io.tmpdir}}")
+    private String outputDir;
+
 
     public void generateOffer(OfferData data, String templatePath, String outputPath) throws IOException {
 

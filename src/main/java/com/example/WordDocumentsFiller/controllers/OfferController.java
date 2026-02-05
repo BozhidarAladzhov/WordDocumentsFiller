@@ -2,6 +2,7 @@ package com.example.WordDocumentsFiller.controllers;
 
 import com.example.WordDocumentsFiller.dto.OfferData;
 import com.example.WordDocumentsFiller.service.OfferGeneratorService;
+import com.example.WordDocumentsFiller.service.OfferPdfService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,11 +22,13 @@ import java.io.IOException;
 public class OfferController {
 
     private final OfferGeneratorService offerGeneratorService;
+    private final OfferPdfService offerPdfService;
 
-    public OfferController(OfferGeneratorService offerGeneratorService) {
+
+    public OfferController(OfferGeneratorService offerGeneratorService, OfferPdfService offerPdfService) {
         this.offerGeneratorService = offerGeneratorService;
+        this.offerPdfService = offerPdfService;
     }
-
 
     @GetMapping("/offers")
     public String showOffers() {
@@ -76,6 +79,40 @@ public class OfferController {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                 .body(resource);
     }
+
+    @PostMapping("/generate-pdf/{destination}/{category}")
+    public ResponseEntity<InputStreamResource> generateOfferPdf(@ModelAttribute OfferData data,
+                                                                @PathVariable String destination,
+                                                                @PathVariable String category) throws Exception {
+
+        String docxTemplate;
+        if ("LCL".equalsIgnoreCase(category)) {
+            docxTemplate = "offer_template_" + destination + ".docx";
+        } else {
+            docxTemplate = "offer_template_" + destination + "_" + category + ".docx";
+        }
+
+        String fileNameBase = ("offer_" +
+                safeFilePart(data.getPortOfLoading(), "portOfLoading") + "_" +
+                safeFilePart(data.getPortOfDelivery(), "portOfDelivery") + "_" +
+                safeFilePart(data.getVehicle(), "vehicle"));
+
+        String pdfFileName = fileNameBase + ".pdf";
+
+        File tempPdf = new File(System.getProperty("java.io.tmpdir"), pdfFileName);
+
+        // тук НЕ пипаме Word flow – просто го ползваме вътрешно
+        offerPdfService.generateOfferPdf(data, docxTemplate, tempPdf.getAbsolutePath());
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(tempPdf));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + pdfFileName + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+    }
+
+
 
     private String safeFilePart(String v, String fallback) {
         if (v == null || v.isBlank()) return fallback;

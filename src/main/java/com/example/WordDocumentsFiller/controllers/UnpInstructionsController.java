@@ -2,6 +2,7 @@ package com.example.WordDocumentsFiller.controllers;
 
 import com.example.WordDocumentsFiller.dto.UnpData;
 import com.example.WordDocumentsFiller.service.UnpInstructionsGeneratorService;
+import com.example.WordDocumentsFiller.service.UnpPdfService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,9 +21,12 @@ import java.io.IOException;
 public class UnpInstructionsController {
 
     private final UnpInstructionsGeneratorService generatorService;
+    private final UnpPdfService unpPdfService;
 
-    public UnpInstructionsController(UnpInstructionsGeneratorService generatorService) {
+
+    public UnpInstructionsController(UnpInstructionsGeneratorService generatorService, UnpPdfService unpPdfService) {
         this.generatorService = generatorService;
+        this.unpPdfService = unpPdfService;
     }
 
     @GetMapping("/unp_instructions_form")
@@ -33,7 +37,7 @@ public class UnpInstructionsController {
     @GetMapping("/form/UNP")
     public String showUnpForm(Model model) {
         UnpData data = new UnpData();
-        data.setArrivalTime("09:00"); // default да ти е готово
+        data.setArrivalTime("09:00");
         model.addAttribute("unpData", data);
         return "unp_instructions_form";
     }
@@ -61,6 +65,30 @@ public class UnpInstructionsController {
                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                 .body(resource);
     }
+
+    @PostMapping("/generate-pdf/UNP")
+    public ResponseEntity<InputStreamResource> generateUnpPdf(@ModelAttribute UnpData data) throws Exception {
+
+        String docxTemplate = "UNP_instructions.docx";
+
+        String fileNameBase = "UNP_" +
+                safeFilePart(data.getTruck()) + "_" +
+                safeFilePart(data.getTrailer());
+
+        String pdfFileName = fileNameBase + ".pdf";
+
+        File tempPdf = new File(System.getProperty("java.io.tmpdir"), pdfFileName);
+
+        unpPdfService.generateUnpPdf(data, docxTemplate, tempPdf.getAbsolutePath());
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(tempPdf));
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + pdfFileName + "\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+    }
+
 
     private String safeFilePart(String v) {
         if (v == null || v.isBlank()) return "NA";

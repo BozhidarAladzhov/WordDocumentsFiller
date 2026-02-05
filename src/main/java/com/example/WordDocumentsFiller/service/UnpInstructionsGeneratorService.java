@@ -25,7 +25,7 @@ public class UnpInstructionsGeneratorService {
 
         XWPFDocument document = new XWPFDocument(templateStream);
 
-        // arrivalDate: input yyyy-MM-dd -> output dd.MM.yyyy (по-подходящо за BG)
+
         String formattedArrivalDate = formatDate(data.getArrivalDate(), "yyyy-MM-dd", "dd.MM.yyyy");
 
         Map<String, String> replacements = new HashMap<>();
@@ -44,7 +44,7 @@ public class UnpInstructionsGeneratorService {
             }
         }
 
-        // Tables (ако някога добавиш таблица в UNP docx)
+        // Tables
         for (XWPFTable table : document.getTables()) {
             for (XWPFTableRow row : table.getRows()) {
                 for (XWPFTableCell cell : row.getTableCells()) {
@@ -74,7 +74,7 @@ public class UnpInstructionsGeneratorService {
         return LocalDate.parse(date, input).format(output);
     }
 
-    // Същата идея като при OfferGeneratorService – работи и когато placeholder-а е split-нат на няколко runs. :contentReference[oaicite:4]{index=4}
+
     private void replacePlaceholderSplitRuns(XWPFParagraph paragraph, String placeholder, String value) {
         List<XWPFRun> runs = paragraph.getRuns();
         if (runs == null || runs.isEmpty()) return;

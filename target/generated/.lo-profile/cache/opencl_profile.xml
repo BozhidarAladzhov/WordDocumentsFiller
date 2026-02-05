@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profile>
+ <version>LibreOffice v1</version>
+ <device>
+  <type>opencl</type>
+  <name>Quadro P620</name>
+  <driver>516.40</driver>
+  <time>100334</time>
+  <errors>false</errors>
+ </device>
+ <device>
+  <type>opencl</type>
+  <name>Intel(R) UHD Graphics 630</name>
+  <driver>30.0.101.1631</driver>
+  <time>18277</time>
+  <errors>false</errors>
+ </device>
+ <device>
+  <type>native</type>
+  <time>2380800</time>
+  <errors>false</errors>
+ </device>
+</profile>
