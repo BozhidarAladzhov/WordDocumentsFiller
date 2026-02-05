@@ -4,6 +4,7 @@ import com.example.WordDocumentsFiller.entities.Container;
 import com.example.WordDocumentsFiller.entities.enums.ContainerStatus;
 import com.example.WordDocumentsFiller.repositories.ContainerRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +21,9 @@ public class ContainerService {
 
     @Transactional()
     public List<Container> getAll() {
-        return containerRepository.findAll();
+        return containerRepository.findAll(
+                Sort.by(Sort.Direction.ASC, "eta")
+        );
     }
 
     @Transactional()
