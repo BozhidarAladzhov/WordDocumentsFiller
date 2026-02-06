@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Заявка за транспорт</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools unp">
+    <h1>Заявка за транспорт</h1>
+
+    <form class="unp-form" th:action="@{/generate/TRUCK_ORDER}" th:object="${transportData}" method="post">
+
+        <div class="field">
+            <label>Транспортна фирма</label>
+            <input type="text" th:field="*{transportCompany}" required />
+        </div>
+
+        <div class="field">
+            <label>ЕИК/ДДС номер</label>
+            <input type="text" th:field="*{transportCompanyVAT}" required />
+        </div>
+
+        <div class="field">
+            <label>Дата (на заявката)</label>
+            <input type="date" th:field="*{date}" required />
+        </div>
+
+        <div class="field">
+            <label>Камион (латиница)</label>
+            <input type="text" th:field="*{truck}" required />
+        </div>
+
+        <div class="field" style="grid-column: 1 / -1;">
+            <label>Адрес за товарене</label>
+
+            <select th:field="*{loadingAddress}" required>
+                <option value="">-- избери адрес --</option>
+
+                <option value="Auto America B.V. Bosland 8, 3258 AC, Den Bommel, Netherlands">
+                    Auto America B.V. Bosland 8, 3258 AC, Den Bommel, Netherlands
+                </option>
+
+                <option value="Auto America B.V. Hermelijnweg 27 - 29, 4877 AE Etten-Leur, Netherlands">
+                    Auto America B.V. Hermelijnweg 27 - 29, 4877 AE Etten-Leur, Netherlands
+                </option>
+
+                <option value="ICTL Holland B.V. Wattweg 25, 4622 RA, Bergen op Zoom, Netherlands">
+                    ICTL Holland B.V. Wattweg 25, 4622 RA, Bergen op Zoom, Netherlands
+                </option>
+
+                <option value="ICTL Holland B.V. Oostplaatseweg 2A 3241LV Middelharnis, Netherlands">
+                    ICTL Holland B.V. Oostplaatseweg 2A 3241LV Middelharnis, Netherlands
+                </option>
+
+                <option value="Marlog B.V. Smoorstraat 24, 4705 AA Roosendaal, Netherlands">
+                    Marlog B.V. Smoorstraat 24, 4705 AA Roosendaal, Netherlands
+                </option>
+
+                <option value="Marlog B.V. Siriusstraat 23 5015 BT Tilburg, Netherlands">
+                    Marlog B.V. Siriusstraat 23 5015 BT Tilburg, Netherlands
+                </option>
+
+                <option value="NL Shipping Metaalweg 6, 4794 TA Heijningen, Netherlands">
+                    NL Shipping Metaalweg 6, 4794 TA Heijningen, Netherlands
+                </option>
+
+                <option value="MSL Shipping Henri Blomjousstraat 25, 5048 AG Tilburg, Netherlands">
+                    MSL Shipping Henri Blomjousstraat 25, 5048 AG Tilburg, Netherlands
+                </option>
+
+                <option value="PVL Car Logistics Zuideinde 10, 2991 LK Barendrecht, Netherlands">
+                    PVL Car Logistics Zuideinde 10, 2991 LK Barendrecht, Netherlands
+                </option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Дата на товарене</label>
+            <input type="date" th:field="*{dateOfLoading}" required />
+        </div>
+
+        <div class="field">
+            <label>Дата на доставка</label>
+            <input type="date" th:field="*{dateOfDelivery}" required />
+        </div>
+
+        <div class="field">
+            <label>Брой автомобили (1–9)</label>
+            <select th:field="*{vehiclesCount}" required>
+                <option value="">-- избери --</option>
+                <option th:each="i : ${#numbers.sequence(1,9)}"
+                        th:value="${i}"
+                        th:text="${i}">
+                </option>
+            </select>
+        </div>
+
+        <div class="field" style="grid-column: 1 / -1;">
+            <label>Списък автомобили (vehiclesList) – copy/paste</label>
+            <textarea th:field="*{vehiclesList}" rows="10" placeholder="VIN / марка / модел / бележки..."></textarea>
+        </div>
+
+        <div class="field" style="grid-column: 1 / -1;">
+            <label>Навло / Цена (EUR)</label>
+            <input type="text" th:field="*{price}" required placeholder="например: 1250" />
+        </div>
+
+        <div class="unp-actions">
+            <button type="submit">Изтегли Word</button>
+
+            <button type="submit"
+                    formaction="/generate-pdf/TRUCK_ORDER"
+                    formmethod="post"
+                    class="btn-pdf">
+                Изтегли PDF
+            </button>
+        </div>
+
+    </form>
+</div>
+
+</body>
+</html>
