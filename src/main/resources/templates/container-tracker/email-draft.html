@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Email Draft</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools">
+    <div class="tracker-topbar">
+        <div>
+            <h1 class="tracker-title">Уведомление за пристигане</h1>
+            <div class="hint">
+                Контейнер: <span class="kbd" th:text="${container.containerNo}">CNT</span>
+                &nbsp;|&nbsp;
+                Автомобил: <span th:text="${vehicle.description}">Description</span>
+                <span class="kbd" th:text="${vehicle.vin}">VIN</span>
+                &nbsp;|&nbsp;
+                Собственик: <span th:text="${vehicle.ownerName}">Owner</span>
+                &nbsp;|&nbsp;
+                Телефон: <span th:text="${vehicle.phone}">Phone</span>
+                &nbsp;|&nbsp;
+                Имейл: <span th:text="${vehicle.email}">Email</span>
+            </div>
+        </div>
+
+        <div class="tracker-actions email-draft-actions">
+            <button type="button" class="btn-ghost btn-copy btn-copy--mail" onclick="copyMail()">Копирай мейл адрес</button>
+            <button type="button" class="btn-ghost btn-copy btn-copy--subject" onclick="copySubject()">Копирай subject</button>
+            <button type="button" class="btn-ghost btn-copy btn-copy--draft" onclick="copyDraft()">Копирай текст</button>
+            <a class="btn btn-ghost"
+               th:href="@{/container-tracker/containers/{id}(id=${container.id})}">Назад</a>
+        </div>
+    </div>
+
+        <div id="resultBox" class="resultBox" style="display:block;">
+        <pre id="draftPreview" th:text="${draftText}" style="margin:0; white-space:pre-wrap;"></pre>
+        <div id="copiedToast" class="copied">✅ Текстът е копиран!</div>
+    </div>
+    <textarea id="mailValue" style="position:absolute; left:-9999px; top:-9999px;"
+              th:text="${mailText}"></textarea>
+    <textarea id="subjectValue" style="position:absolute; left:-9999px; top:-9999px;"
+              th:text="${subjectText}"></textarea>
+    <textarea id="draftPlain" style="position:absolute; left:-9999px; top:-9999px;"
+              th:text="${draftText}"></textarea>
+</div>
+
+<script>
+    async function copyFromId(id) {
+        const el = document.getElementById(id);
+        const text = el ? (el.value || "") : "";
+
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch (e) {
+            if (el) {
+                el.style.position = "static";
+                el.style.width = "100%";
+                el.focus();
+                el.select();
+                document.execCommand("copy");
+                el.style.position = "absolute";
+                el.style.left = "-9999px";
+                el.style.top = "-9999px";
+            }
+        }
+
+        const toast = document.getElementById("copiedToast");
+        if (toast) {
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 2000);
+        }
+    }
+
+    function copyMail() { copyFromId("mailValue"); }
+    function copySubject() { copyFromId("subjectValue"); }
+    function copyDraft() { copyFromId("draftPlain"); }
+</script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

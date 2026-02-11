@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <title>Container Tracker - Containers</title>
@@ -69,7 +69,7 @@
                     <td><span class="kbd" th:text="${c.containerNo}"></span></td>
                     <td th:text="${c.bol}"></td>
                     <td th:text="${c.carrier}"></td>
-                    <td th:text="${c.eta}"></td>
+                    <td th:text="${c.eta != null ? #temporals.format(c.eta, 'dd.MM.yyyy') : ''}"></td>
                     <td><span class="badge info" th:text="${c.status}"></span></td>
                     <td>
                         <a class="btn btn-ghost"
@@ -90,6 +90,6 @@
 
     </div>
 </div>
+    <script src="/js/app.js"></script>
 </body>
-
 </html>

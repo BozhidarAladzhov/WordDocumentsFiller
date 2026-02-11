@@ -143,6 +143,52 @@ public class ContainerTrackerController {
         return "unloading";
     }
 
+    @GetMapping("/containers/{containerId}/vehicles/{vehicleId}/email-draft")
+    public String emailDraft(@PathVariable Long containerId,
+                             @PathVariable Long vehicleId,
+                             Model model) {
+        Container container = containerService.getById(containerId);
+        Vehicle vehicle = vehicleService.getVehicleInContainer(containerId, vehicleId);
+
+        String containerNo = safeText(container.getContainerNo());
+        String description = safeText(vehicle.getDescription());
+        String vin = safeText(vehicle.getVin());
+        String vehicleLine = (description.isBlank() ? "" : description + "  ") + "VIN: " + vin;
+        String subjectText = (description.isBlank() ? "" : description + " ") + "VIN: " + vin;
+        String mailText = safeText(vehicle.getEmail());
+
+        String draftText = String.join("\n",
+                "Здравейте,",
+                "",
+                "Пишем ви във връзка с пристигането на контейнер: " + containerNo,
+                "Номинирани сме като получатели и следва да обработим контейнера.",
+                "От Autobidmaster ни предоставиха вашите данни, като собственик на автомобил:",
+                vehicleLine,
+                "",
+                "Моля да ни изпратите следните документи и информация.",
+                "",
+                "Фактура или договор с който е закупен автомобил.",
+                "Фактура за морски транспорт.",
+                "ЕОРИ номер.",
+                "Къде ще обмитявате автомобила ?",
+                "",
+                "Поздрави,",
+                "Божидар"
+        );
+
+        model.addAttribute("container", container);
+        model.addAttribute("vehicle", vehicle);
+        model.addAttribute("draftText", draftText);
+        model.addAttribute("subjectText", subjectText);
+        model.addAttribute("mailText", mailText);
+
+        return "container-tracker/email-draft";
+    }
+
+    private static String safeText(String value) {
+        return value == null ? "" : value.trim();
+    }
+
 
 
 
