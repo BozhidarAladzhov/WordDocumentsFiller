@@ -76,10 +76,15 @@ public class ContainerTrackerController {
     public String updateContainer(@PathVariable Long id,
                                   @RequestParam(required = false) String bol,
                                   @RequestParam(required = false) String carrier,
+                                  @RequestParam(required = false) String vesselName,
+                                  @RequestParam(required = false) String pol,
+                                  @RequestParam(required = false) String pod,
+                                  @RequestParam(required = false) String seal,
+                                  @RequestParam(required = false) String shippedOnBoard,
                                   @RequestParam(required = false) LocalDate eta,
                                   @RequestParam ContainerStatus status) {
 
-        containerService.updateContainer(id, bol, carrier, eta, status);
+        containerService.updateContainer(id, bol, carrier, vesselName, pol, pod, seal, shippedOnBoard, eta, status);
         return "redirect:/container-tracker/containers/" + id;
     }
 

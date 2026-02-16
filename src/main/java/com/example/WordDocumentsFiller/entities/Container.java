@@ -27,6 +27,21 @@ public class Container {
     @Column(length = 64)
     private String carrier;
 
+    @Column(name = "vessel_name", length = 128)
+    private String vesselName;
+
+    @Column(length = 64)
+    private String pol;
+
+    @Column(length = 64)
+    private String pod;
+
+    @Column(length = 64)
+    private String seal;
+
+    @Column(name = "shipped_on_board", length = 64)
+    private String shippedOnBoard;
+
     private LocalDate eta;
 
     @Enumerated(EnumType.STRING)
@@ -56,6 +71,21 @@ public class Container {
 
     public String getCarrier() { return carrier; }
     public void setCarrier(String carrier) { this.carrier = carrier; }
+
+    public String getVesselName() { return vesselName; }
+    public void setVesselName(String vesselName) { this.vesselName = vesselName; }
+
+    public String getPol() { return pol; }
+    public void setPol(String pol) { this.pol = pol; }
+
+    public String getPod() { return pod; }
+    public void setPod(String pod) { this.pod = pod; }
+
+    public String getSeal() { return seal; }
+    public void setSeal(String seal) { this.seal = seal; }
+
+    public String getShippedOnBoard() { return shippedOnBoard; }
+    public void setShippedOnBoard(String shippedOnBoard) { this.shippedOnBoard = shippedOnBoard; }
 
     public LocalDate getEta() { return eta; }
     public void setEta(LocalDate eta) { this.eta = eta; }

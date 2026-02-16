@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>HBL Form</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools hbl">
+    <h1>Спедиторски коносамент</h1>
+
+    <form class="hbl-form" th:action="@{/generate/HBL}" th:object="${hblData}" method="post">
+        <div class="hbl-parties">
+            <section class="hbl-party-col">
+                <h3>Buyer</h3>
+
+                <div class="field">
+                    <label>Buyer (existing search)</label>
+                    <input id="buyerSearch" type="text" list="buyerList" placeholder="Type name/address...">
+                    <datalist id="buyerList">
+                        <option th:each="p : ${buyerParties}"
+                                th:value="${p.name + ' | ' + p.address + ' | ' + p.town + ' | ' + p.country}"
+                                th:attr="data-id=${p.id},data-name=${p.name},data-address=${p.address},data-town=${p.town},data-country=${p.country}">
+                        </option>
+                    </datalist>
+                    <input id="buyerIdInput" type="hidden" th:field="*{buyerId}">
+                </div>
+
+                <div class="field">
+                    <label>Buyer Name</label>
+                    <input id="buyerNameInput" type="text" th:field="*{buyerName}" />
+                </div>
+
+                <div class="field">
+                    <label>Buyer Address</label>
+                    <input id="buyerAddressInput" type="text" th:field="*{buyerAddress}" />
+                </div>
+
+                <div class="field">
+                    <label>Buyer Town</label>
+                    <input id="buyerTownInput" type="text" th:field="*{buyerTown}" />
+                </div>
+
+                <div class="field">
+                    <label>Buyer Country</label>
+                    <input id="buyerCountryInput" type="text" th:field="*{buyerCountry}" />
+                </div>
+            </section>
+
+            <section class="hbl-party-col">
+                <h3>Seller</h3>
+
+                <div class="field">
+                    <label>Seller (existing search)</label>
+                    <input id="sellerSearch" type="text" list="sellerList" placeholder="Type name/address...">
+                    <datalist id="sellerList">
+                        <option th:each="p : ${sellerParties}"
+                                th:value="${p.name + ' | ' + p.address + ' | ' + p.town + ' | ' + p.country}"
+                                th:attr="data-id=${p.id},data-name=${p.name},data-address=${p.address},data-town=${p.town},data-country=${p.country}">
+                        </option>
+                    </datalist>
+                    <input id="sellerIdInput" type="hidden" th:field="*{sellerId}">
+                </div>
+
+                <div class="field">
+                    <label>Seller Name</label>
+                    <input id="sellerNameInput" type="text" th:field="*{sellerName}" />
+                </div>
+
+                <div class="field">
+                    <label>Seller Address</label>
+                    <input id="sellerAddressInput" type="text" th:field="*{sellerAddress}" />
+                </div>
+
+                <div class="field">
+                    <label>Seller Town</label>
+                    <input id="sellerTownInput" type="text" th:field="*{sellerTown}" />
+                </div>
+
+                <div class="field">
+                    <label>Seller Country</label>
+                    <input id="sellerCountryInput" type="text" th:field="*{sellerCountry}" />
+                </div>
+            </section>
+        </div>
+
+        <div class="field">
+            <label>Vessel Name</label>
+            <input type="text" th:field="*{carrier}" />
+        </div>
+
+        <div class="field">
+            <label>POL</label>
+            <input type="text" th:field="*{pol}" />
+        </div>
+
+        <div class="field">
+            <label>POD</label>
+            <input type="text" th:field="*{pod}" />
+        </div>
+
+        <div class="field">
+            <label>Container</label>
+            <input type="text" th:field="*{container}" />
+        </div>
+
+        <div class="field">
+            <label>Seal</label>
+            <input type="text" th:field="*{seal}" />
+        </div>
+
+        <div class="field">
+            <label>Description</label>
+            <input type="text" th:field="*{description}" />
+        </div>
+
+        <div class="field">
+            <label>VIN</label>
+            <input type="text" th:field="*{vin}" />
+        </div>
+
+        <div class="field">
+            <label>KGS</label>
+            <input type="text" th:field="*{kgs}" />
+        </div>
+
+        <div class="field">
+            <label>Total KGS</label>
+            <input type="text" th:field="*{totalKgs}" />
+        </div>
+
+        <div class="field">
+            <label>Shipped on board</label>
+            <input type="text" th:field="*{dateOnBoard}" />
+        </div>
+
+        <div class="field">
+            <label>Date Of Issue</label>
+            <input type="text" th:field="*{dateOfIssue}" />
+        </div>
+
+        <div class="field">
+            <label>Order</label>
+            <input type="text" th:field="*{order}" />
+        </div>
+
+        <div class="field">
+            <label>Term</label>
+            <select th:field="*{term}">
+                <option value="PREPAID">PREPAID</option>
+                <option value="COLLECT">COLLECT</option>
+            </select>
+        </div>
+
+        <div class="hbl-actions">
+            <button type="submit">Download Word</button>
+            <button type="submit"
+                    formaction="/generate-pdf/HBL"
+                    formmethod="post"
+                    class="btn-pdf">
+                Download PDF
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+    function bindPartySearch(searchId, listId, hiddenId, nameId, addressId, townId, countryId) {
+        var searchInput = document.getElementById(searchId);
+        var list = document.getElementById(listId);
+        var hiddenIdInput = document.getElementById(hiddenId);
+        var nameInput = document.getElementById(nameId);
+        var addressInput = document.getElementById(addressId);
+        var townInput = document.getElementById(townId);
+        var countryInput = document.getElementById(countryId);
+        if (!searchInput || !list || !hiddenIdInput || !nameInput || !addressInput || !townInput || !countryInput) {
+            return;
+        }
+
+        function findMatchedOption() {
+            var value = searchInput.value;
+            var options = list.querySelectorAll('option');
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) {
+                    return options[i];
+                }
+            }
+            return null;
+        }
+
+        searchInput.addEventListener('input', function () {
+            var option = findMatchedOption();
+            if (!option) {
+                hiddenIdInput.value = '';
+                return;
+            }
+            hiddenIdInput.value = option.getAttribute('data-id') || '';
+            nameInput.value = option.getAttribute('data-name') || '';
+            addressInput.value = option.getAttribute('data-address') || '';
+            townInput.value = option.getAttribute('data-town') || '';
+            countryInput.value = option.getAttribute('data-country') || '';
+        });
+
+        [nameInput, addressInput, townInput, countryInput].forEach(function (input) {
+            input.addEventListener('input', function () {
+                if (hiddenIdInput.value) {
+                    hiddenIdInput.value = '';
+                }
+            });
+        });
+    }
+
+    bindPartySearch('sellerSearch', 'sellerList', 'sellerIdInput', 'sellerNameInput', 'sellerAddressInput', 'sellerTownInput', 'sellerCountryInput');
+    bindPartySearch('buyerSearch', 'buyerList', 'buyerIdInput', 'buyerNameInput', 'buyerAddressInput', 'buyerTownInput', 'buyerCountryInput');
+</script>
+</body>
+</html>

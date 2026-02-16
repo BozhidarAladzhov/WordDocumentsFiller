@@ -41,12 +41,22 @@ public class ContainerService {
     public void updateContainer(Long id,
                                 String bol,
                                 String carrier,
+                                String vesselName,
+                                String pol,
+                                String pod,
+                                String seal,
+                                String shippedOnBoard,
                                 LocalDate eta,
                                 ContainerStatus status) {
 
         Container c = getById(id);
         c.setBol(bol);
         c.setCarrier(carrier);
+        c.setVesselName(vesselName);
+        c.setPol(pol);
+        c.setPod(pod);
+        c.setSeal(seal);
+        c.setShippedOnBoard(shippedOnBoard);
         c.setEta(eta);
         c.setStatus(status);
 

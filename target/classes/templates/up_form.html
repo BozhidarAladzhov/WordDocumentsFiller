@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>UP Form</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools hbl">
+    <h1>Уведомително писмо</h1>
+
+    <form class="hbl-form" th:action="@{/generate/UP}" th:object="${upData}" method="post">
+        <div class="hbl-parties" style="grid-template-columns: 1fr;">
+            <section class="hbl-party-col" style="max-width:none;">
+                <h3>Клиент</h3>
+
+                <div class="field" style="margin-bottom:12px;">
+                    <label>Клиент (existing search)</label>
+                    <input id="upClientSearch" type="text" list="upClientList" placeholder="Търси по име/адрес...">
+                    <datalist id="upClientList">
+                        <option th:each="c : ${upClients}"
+                                th:value="${c.name + ' | ' + c.address + ' | ' + c.town + ' | ' + c.country}"
+                                th:attr="data-id=${c.id},data-name=${c.name},data-address=${c.address},data-town=${c.town},data-country=${c.country},data-eori=${c.eori}">
+                        </option>
+                    </datalist>
+                    <input id="upClientIdInput" type="hidden" th:field="*{clientId}">
+                </div>
+
+                <div class="grid">
+                    <div class="field">
+                        <label>Име</label>
+                        <input id="upBuyerName" type="text" th:field="*{buyerName}" />
+                    </div>
+
+                    <div class="field">
+                        <label>Адрес</label>
+                        <input id="upBuyerAddress" type="text" th:field="*{buyerAddress}" />
+                    </div>
+
+                    <div class="field">
+                        <label>Град</label>
+                        <input id="upBuyerTown" type="text" th:field="*{buyerTown}" />
+                    </div>
+
+                    <div class="field">
+                        <label>Държава</label>
+                        <input id="upBuyerCountry" type="text" th:field="*{buyerCountry}" />
+                    </div>
+
+                    <div class="field" style="grid-column: 1 / -1;">
+                        <label>EORI</label>
+                        <input id="upBuyerEori" type="text" th:field="*{eori}" />
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="field">
+            <label>MBL</label>
+            <input type="text" th:field="*{mbl}" />
+        </div>
+
+        <div class="field">
+            <label>Order</label>
+            <input type="text" th:field="*{order}" />
+        </div>
+
+        <div class="field">
+            <label>Container</label>
+            <input type="text" th:field="*{container}" />
+        </div>
+
+        <div class="field">
+            <label>Description</label>
+            <input type="text" th:field="*{description}" />
+        </div>
+
+        <div class="field">
+            <label>Description BG</label>
+            <input type="text" th:field="*{descriptionBg}" />
+        </div>
+
+        <div class="field">
+            <label>VIN</label>
+            <input type="text" th:field="*{vin}" />
+        </div>
+
+        <div class="field">
+            <label>Date</label>
+            <input type="text" th:field="*{date}" />
+        </div>
+
+        <div class="hbl-actions">
+            <button type="submit">Download Word</button>
+            <button type="submit"
+                    formaction="/generate-pdf/UP"
+                    formmethod="post"
+                    class="btn-pdf">
+                Download PDF
+            </button>
+        </div>
+    </form>
+</div>
+
+<script src="/js/app.js"></script>
+<script>
+    (function() {
+        var searchInput = document.getElementById('upClientSearch');
+        var list = document.getElementById('upClientList');
+        var hiddenId = document.getElementById('upClientIdInput');
+        var nameInput = document.getElementById('upBuyerName');
+        var addressInput = document.getElementById('upBuyerAddress');
+        var townInput = document.getElementById('upBuyerTown');
+        var countryInput = document.getElementById('upBuyerCountry');
+        var eoriInput = document.getElementById('upBuyerEori');
+
+        if (!searchInput || !list || !hiddenId || !nameInput || !addressInput || !townInput || !countryInput || !eoriInput) {
+            return;
+        }
+
+        function findMatchedOption() {
+            var value = searchInput.value;
+            var options = list.querySelectorAll('option');
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === value) {
+                    return options[i];
+                }
+            }
+            return null;
+        }
+
+        searchInput.addEventListener('input', function () {
+            var option = findMatchedOption();
+            if (!option) {
+                hiddenId.value = '';
+                return;
+            }
+            hiddenId.value = option.getAttribute('data-id') || '';
+            nameInput.value = option.getAttribute('data-name') || '';
+            addressInput.value = option.getAttribute('data-address') || '';
+            townInput.value = option.getAttribute('data-town') || '';
+            countryInput.value = option.getAttribute('data-country') || '';
+            eoriInput.value = option.getAttribute('data-eori') || '';
+        });
+
+        [nameInput, addressInput, townInput, countryInput, eoriInput].forEach(function (input) {
+            input.addEventListener('input', function () {
+                if (hiddenId.value) {
+                    hiddenId.value = '';
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>

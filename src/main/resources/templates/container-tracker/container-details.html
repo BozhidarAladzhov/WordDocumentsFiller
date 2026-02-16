@@ -70,6 +70,33 @@
 
             </div>
 
+            <div class="details-row" style="margin-top:12px;">
+                <div class="field">
+                    <label>Vessel Name (HBL)</label>
+                    <input name="vesselName" th:value="${container.vesselName}">
+                </div>
+
+                <div class="field">
+                    <label>POL (HBL)</label>
+                    <input name="pol" th:value="${container.pol}">
+                </div>
+
+                <div class="field">
+                    <label>POD (HBL)</label>
+                    <input name="pod" th:value="${container.pod}">
+                </div>
+
+                <div class="field">
+                    <label>Seal (HBL)</label>
+                    <input name="seal" th:value="${container.seal}">
+                </div>
+
+                <div class="field">
+                    <label>Shipped On Board (HBL)</label>
+                    <input name="shippedOnBoard" th:value="${container.shippedOnBoard}">
+                </div>
+            </div>
+
             <!-- FOOTER ACTIONS -->
             <div class="details-footer details-footer--right">
                 <button type="submit" class="btn-sm btn-sm--save">Save</button>
@@ -192,7 +219,17 @@
 
                                         <a class="btn-sm btn-sm--ghost"
                                            th:href="@{/container-tracker/containers/{cid}/vehicles/{vid}/email-draft(cid=${container.id},vid=${v.id})}">
-                                            Имейл драфт
+                                            Email draft
+                                        </a>
+
+                                        <a class="btn-sm btn-sm--ghost"
+                                           th:href="@{/form/HBL(containerId=${container.id},vehicleId=${v.id})}">
+                                            HBL
+                                        </a>
+
+                                        <a class="btn-sm btn-sm--ghost"
+                                           th:href="@{/form/UP(containerId=${container.id},vehicleId=${v.id})}">
+                                            UP
                                         </a>
 
                                         <button type="submit"

@@ -1,0 +1,15 @@
+com\example\WordDocumentsFiller\entities\UpClient.class
+com\example\WordDocumentsFiller\service\HblGeneratorService.class
+com\example\WordDocumentsFiller\service\UpPdfService.class
+com\example\WordDocumentsFiller\controllers\UpController.class
+com\example\WordDocumentsFiller\entities\Party.class
+com\example\WordDocumentsFiller\controllers\HblController.class
+com\example\WordDocumentsFiller\service\UpClientService.class
+com\example\WordDocumentsFiller\dto\HblData.class
+com\example\WordDocumentsFiller\service\PartyService.class
+com\example\WordDocumentsFiller\service\HblPdfService.class
+com\example\WordDocumentsFiller\repositories\PartyRepository.class
+com\example\WordDocumentsFiller\service\UpGeneratorService.class
+com\example\WordDocumentsFiller\repositories\UpClientRepository.class
+com\example\WordDocumentsFiller\dto\UpData.class
+com\example\WordDocumentsFiller\entities\enums\PartyType.class
