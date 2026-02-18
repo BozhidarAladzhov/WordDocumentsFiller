@@ -54,6 +54,9 @@ public class Container {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @Column(nullable = false)
+    private boolean archived = false;
+
     @OneToMany(mappedBy = "container", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vehicle> vehicles = new ArrayList<>();
 
@@ -98,6 +101,9 @@ public class Container {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public boolean isArchived() { return archived; }
+    public void setArchived(boolean archived) { this.archived = archived; }
 
     public List<Vehicle> getVehicles() { return vehicles; }
 }

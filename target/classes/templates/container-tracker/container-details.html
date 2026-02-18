@@ -18,10 +18,20 @@
            th:href="@{/container-tracker/containers/{id}/unloading(id=${container.id})}">
             Unloading
         </a>
-
-
         <div class="tracker-actions">
-            <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">← Back</a>
+            <form th:if="${!container.archived}"
+                  th:action="@{/container-tracker/containers/{id}/archive(id=${container.id})}"
+                  method="post"
+                  onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
+                <button type="submit" class="btn-sm">Archive</button>
+            </form>
+            <form th:if="${container.archived}"
+                  th:action="@{/container-tracker/containers/{id}/unarchive(id=${container.id})}"
+                  method="post">
+                <button type="submit" class="btn-sm">Unarchive</button>
+            </form>
+            <a class="btn btn-ghost" th:if="${!container.archived}" th:href="@{/container-tracker/containers}">← Back</a>
+            <a class="btn btn-ghost" th:if="${container.archived}" th:href="@{/container-tracker/archive}">← Back</a>
         </div>
     </div>
 

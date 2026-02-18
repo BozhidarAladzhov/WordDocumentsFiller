@@ -20,9 +20,16 @@ public class ContainerService {
     }
 
     @Transactional()
-    public List<Container> getAll() {
-        return containerRepository.findAll(
+    public List<Container> getActive() {
+        return containerRepository.findByArchivedFalse(
                 Sort.by(Sort.Direction.ASC, "eta")
+        );
+    }
+
+    @Transactional()
+    public List<Container> getArchived() {
+        return containerRepository.findByArchivedTrue(
+                Sort.by(Sort.Direction.DESC, "eta")
         );
     }
 
@@ -34,6 +41,7 @@ public class ContainerService {
 
     @Transactional
     public Container create(Container container) {
+        container.setArchived(false);
         return containerRepository.save(container);
     }
 
@@ -66,6 +74,20 @@ public class ContainerService {
     @Transactional
     public void deleteContainer(Long id) {
         containerRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void archiveContainer(Long id) {
+        Container c = getById(id);
+        c.setArchived(true);
+        containerRepository.save(c);
+    }
+
+    @Transactional
+    public void unarchiveContainer(Long id) {
+        Container c = getById(id);
+        c.setArchived(false);
+        containerRepository.save(c);
     }
 
 

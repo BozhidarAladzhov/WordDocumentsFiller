@@ -2,57 +2,20 @@
 <html lang="bg" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Container Tracker - Containers</title>
+    <title>Container Tracker - Archive</title>
     <link rel="stylesheet" href="/css/app.css">
-
 </head>
 <body>
 <div th:replace="fragments/navbar :: main-nav"></div>
 
 <div class="container tools tracker tracker--wide">
-    <h1 style="text-align:left;margin-top:20px;">Container Tracker</h1>
+    <h1 style="text-align:left;margin-top:20px;">Container Archive</h1>
     <div class="tracker-actions" style="margin-bottom:12px;">
-        <a class="btn btn-ghost" th:href="@{/container-tracker/archive}">Archive</a>
+        <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">Active Containers</a>
     </div>
 
     <div class="card">
-        <h2 style="margin-top:0;">Add Container</h2>
-
-        <form th:action="@{/container-tracker/containers}" method="post" th:object="${newContainer}" class="addc-form">
-
-            <div class="addc-row">
-                <div class="field">
-                    <label>Container No</label>
-                    <input th:field="*{containerNo}">
-                </div>
-
-                <div class="field">
-                    <label>Bill of Lading</label>
-                    <input th:field="*{bol}" >
-                </div>
-
-                <div class="field">
-                    <label>Carrier</label>
-                    <input th:field="*{carrier}" >
-                </div>
-
-                <div class="field">
-                    <label>ETA</label>
-                    <input th:field="*{eta}" type="date">
-                </div>
-            </div>
-
-            <div class="addc-footer">
-                <button type="submit" class="btn-sm btn-sm--save">Add Container</button>
-            </div>
-        </form>
-
-    </div>
-
-    <div style="height:14px;"></div>
-
-    <div class="card">
-        <h2 style="margin-top:0;">Containers</h2>
+        <h2 style="margin-top:0;">Archived Containers</h2>
 
         <div class="table-wrap">
             <table class="table">
@@ -64,26 +27,28 @@
                     <th>ETA</th>
                     <th>Status</th>
                     <th>Open</th>
-                    <th>Archive</th>
+                    <th>Unarchive</th>
                     <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
+                <tr th:if="${#lists.isEmpty(containers)}">
+                    <td colspan="8">No archived containers.</td>
+                </tr>
                 <tr th:each="c : ${containers}">
                     <td><span class="kbd" th:text="${c.containerNo}"></span></td>
                     <td th:text="${c.bol}"></td>
                     <td th:text="${c.carrier}"></td>
                     <td th:text="${c.eta != null ? #temporals.format(c.eta, 'dd.MM.yyyy') : ''}"></td>
-                    <td><span class="badge info" th:text="${c.status}"></span></td>
+                    <td><span class="badge warn" th:text="${c.status}"></span></td>
                     <td>
                         <a class="btn btn-ghost"
                            th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a>
                     </td>
                     <td>
-                        <form th:action="@{/container-tracker/containers/{id}/archive(id=${c.id})}"
-                              method="post"
-                              onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
-                            <button type="submit" class="btn-sm">Archive</button>
+                        <form th:action="@{/container-tracker/containers/{id}/unarchive(id=${c.id})}"
+                              method="post">
+                            <button type="submit" class="btn-sm">Unarchive</button>
                         </form>
                     </td>
                     <td>
@@ -93,14 +58,13 @@
                             <button type="submit" class="btn-sm btn-sm--danger">Delete</button>
                         </form>
                     </td>
-
                 </tr>
                 </tbody>
             </table>
         </div>
-
     </div>
 </div>
-    <script src="/js/app.js"></script>
+
+<script src="/js/app.js"></script>
 </body>
 </html>

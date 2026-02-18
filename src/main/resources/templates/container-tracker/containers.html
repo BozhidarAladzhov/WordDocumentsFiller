@@ -11,6 +11,9 @@
 
 <div class="container tools tracker tracker--wide">
     <h1 style="text-align:left;margin-top:20px;">Container Tracker</h1>
+    <div class="tracker-actions" style="margin-bottom:12px;">
+        <a class="btn btn-ghost" th:href="@{/container-tracker/archive}">Archive</a>
+    </div>
 
     <div class="card">
         <h2 style="margin-top:0;">Add Container</h2>
@@ -61,6 +64,7 @@
                     <th>ETA</th>
                     <th>Status</th>
                     <th>Open</th>
+                    <th>Archive</th>
                     <th>Delete</th>
                 </tr>
                 </thead>
@@ -74,6 +78,13 @@
                     <td>
                         <a class="btn btn-ghost"
                            th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a>
+                    </td>
+                    <td>
+                        <form th:action="@{/container-tracker/containers/{id}/archive(id=${c.id})}"
+                              method="post"
+                              onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
+                            <button type="submit" class="btn-sm">Archive</button>
+                        </form>
                     </td>
                     <td>
                         <form th:action="@{/container-tracker/containers/{id}/delete(id=${c.id})}"

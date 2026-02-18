@@ -36,9 +36,15 @@ public class ContainerTrackerController {
 
     @GetMapping("/containers")
     public String containers(Model model) {
-        model.addAttribute("containers", containerService.getAll());
+        model.addAttribute("containers", containerService.getActive());
         model.addAttribute("newContainer", new Container());
         return "container-tracker/containers";
+    }
+
+    @GetMapping("/archive")
+    public String archive(Model model) {
+        model.addAttribute("containers", containerService.getArchived());
+        return "container-tracker/archive";
     }
 
     @PostMapping("/containers")
@@ -49,8 +55,23 @@ public class ContainerTrackerController {
 
     @PostMapping("/containers/{id}/delete")
     public String deleteContainer(@PathVariable Long id) {
+        Container container = containerService.getById(id);
         containerService.deleteContainer(id);
+        return container.isArchived()
+                ? "redirect:/container-tracker/archive"
+                : "redirect:/container-tracker/containers";
+    }
+
+    @PostMapping("/containers/{id}/archive")
+    public String archiveContainer(@PathVariable Long id) {
+        containerService.archiveContainer(id);
         return "redirect:/container-tracker/containers";
+    }
+
+    @PostMapping("/containers/{id}/unarchive")
+    public String unarchiveContainer(@PathVariable Long id) {
+        containerService.unarchiveContainer(id);
+        return "redirect:/container-tracker/archive";
     }
 
 
