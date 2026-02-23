@@ -109,8 +109,6 @@
 
             <!-- FOOTER ACTIONS -->
             <div class="details-footer details-footer--right">
-                <button type="submit" class="btn-sm btn-sm--save">Save</button>
-
                 <button type="submit"
                         class="btn-sm btn-sm--danger"
                         th:formaction="@{/container-tracker/containers/{id}/delete(id=${container.id})}"
@@ -225,8 +223,6 @@
                                     </div>
 
                                     <div class="meta-actions">
-                                        <button type="submit" class="btn-sm btn-sm--save">Save</button>
-
                                         <a class="btn-sm btn-sm--ghost"
                                            th:href="@{/container-tracker/containers/{cid}/vehicles/{vid}/email-draft(cid=${container.id},vid=${v.id})}">
                                             Email draft

@@ -25,6 +25,11 @@ public class VehicleService {
         return vehicleRepository.findByContainerIdOrderByIdDesc(containerId);
     }
 
+    @Transactional()
+    public List<Vehicle> getAllWithContainer() {
+        return vehicleRepository.findAllWithContainerOrderByContainerNoAndIdDesc();
+    }
+
     @Transactional
     public Vehicle addToContainer(Container container, Vehicle vehicle) {
         vehicle.setContainer(container);

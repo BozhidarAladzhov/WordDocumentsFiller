@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Container Tracker - All Vehicles</title>
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools tracker tracker--wide">
+    <h1 style="text-align:left;margin-top:20px;">All Vehicles</h1>
+    <div class="tracker-actions" style="margin-bottom:12px;">
+        <a class="btn btn-ghost" th:href="@{/container-tracker/containers}">Active Containers</a>
+        <a class="btn btn-ghost" th:href="@{/container-tracker/archive}">Archive</a>
+    </div>
+
+    <div class="card">
+        <h2 style="margin-top:0;">Vehicles List</h2>
+
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Container</th>
+                    <th>Vehicle</th>
+                    <th>VIN</th>
+                    <th>Owner</th>
+                    <th>Phone</th>
+                    <th>Title Status</th>
+                    <th>Paid Status</th>
+                    <th>ETA</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(vehicles)}">
+                    <td colspan="8">No vehicles found.</td>
+                </tr>
+                <tr th:each="v, stat : ${vehicles}"
+                    th:with="prev=${stat.index > 0 ? vehicles[stat.index - 1] : null}"
+                    th:classappend="${(v.container != null && containerVehicleCounts[v.container.id] != null && containerVehicleCounts[v.container.id] > 1 ? ' same-container-row' : '') + (stat.index > 0 && ((prev.container == null && v.container != null) || (prev.container != null && v.container == null) || (prev.container != null && v.container != null && prev.container.id != v.container.id)) ? ' container-group-start' : '')}">
+                    <td>
+                        <a th:if="${v.container != null}" class="btn-sm btn-sm--ghost"
+                           th:href="@{/container-tracker/containers/{id}(id=${v.container.id})}">
+                            <span class="kbd" th:text="${v.container.containerNo}"></span>
+                        </a>
+                        <span th:if="${v.container == null}">-</span>
+                    </td>
+                    <td th:text="${v.description}"></td>
+                    <td><span class="kbd" th:text="${v.vin}"></span></td>
+                    <td th:text="${v.ownerName}"></td>
+                    <td th:text="${v.phone}"></td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${v.titles != null && v.titles.name() == 'RECEIVED' ? ' good' : ' bad'}"
+                              th:text="${v.titles}"></span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${v.paid != null && v.paid.name() == 'PAID' ? ' good' : ' bad'}"
+                              th:text="${v.paid}"></span>
+                    </td>
+                    <td th:text="${(v.eta != null ? #temporals.format(v.eta, 'dd.MM.yyyy') : (v.container != null && v.container.eta != null ? #temporals.format(v.container.eta, 'dd.MM.yyyy') : ''))}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

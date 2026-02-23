@@ -35,14 +35,20 @@
                 <tr th:if="${#lists.isEmpty(containers)}">
                     <td colspan="8">No archived containers.</td>
                 </tr>
-                <tr th:each="c : ${containers}">
+                <tr th:each="c : ${containers}"
+                    class="js-open-details-row"
+                    th:attr="data-details-url=@{/container-tracker/containers/{id}(id=${c.id})}">
                     <td><span class="kbd" th:text="${c.containerNo}"></span></td>
                     <td th:text="${c.bol}"></td>
                     <td th:text="${c.carrier}"></td>
                     <td th:text="${c.eta != null ? #temporals.format(c.eta, 'dd.MM.yyyy') : ''}"></td>
-                    <td><span class="badge warn" th:text="${c.status}"></span></td>
                     <td>
-                        <a class="btn btn-ghost"
+                        <span class="badge"
+                              th:classappend="${c.status != null && c.status.name() == 'DELIVERED' ? ' good' : (c.status != null && c.status.name() == 'ON_HOLD' ? ' bad' : (c.status != null && c.status.name() == 'CUSTOMS' ? ' info' : ' warn'))}"
+                              th:text="${c.status}"></span>
+                    </td>
+                    <td>
+                        <a class="btn-sm btn-sm--ghost"
                            th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a>
                     </td>
                     <td>

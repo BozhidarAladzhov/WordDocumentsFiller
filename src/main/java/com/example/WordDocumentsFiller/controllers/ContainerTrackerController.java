@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -45,6 +46,18 @@ public class ContainerTrackerController {
     public String archive(Model model) {
         model.addAttribute("containers", containerService.getArchived());
         return "container-tracker/archive";
+    }
+
+    @GetMapping("/vehicles")
+    public String vehicles(Model model) {
+        var vehicles = vehicleService.getAllWithContainer();
+        Map<Long, Long> containerVehicleCounts = vehicles.stream()
+                .filter(v -> v.getContainer() != null && v.getContainer().getId() != null)
+                .collect(Collectors.groupingBy(v -> v.getContainer().getId(), Collectors.counting()));
+
+        model.addAttribute("vehicles", vehicles);
+        model.addAttribute("containerVehicleCounts", containerVehicleCounts);
+        return "container-tracker/vehicles";
     }
 
     @PostMapping("/containers")
