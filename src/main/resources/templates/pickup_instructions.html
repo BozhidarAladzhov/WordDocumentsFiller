@@ -142,8 +142,12 @@
             resultBox.style.display = "block";
         }
 
-        function copyGeneratedText() {
-            navigator.clipboard.writeText(plainTextOut.value);
+        async function copyGeneratedText() {
+            await window.copyToClipboard({
+                html: resultText.innerHTML,
+                text: plainTextOut.value,
+                fallbackTextarea: plainTextOut
+            });
             copiedToast.style.display = "block";
             setTimeout(() => copiedToast.style.display = "none", 1500);
         }

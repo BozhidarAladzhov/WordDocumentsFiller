@@ -223,6 +223,84 @@ function initOpenDetailsOnDoubleClick() {
   }
 }
 
+function normalizeClipboardText(text) {
+  return String(text == null ? "" : text).replace(/\r\n/g, "\n");
+}
+
+function textFromHtml(html) {
+  var box = document.createElement("div");
+  box.innerHTML = String(html == null ? "" : html);
+  return normalizeClipboardText(box.innerText || box.textContent || "");
+}
+
+async function copyToClipboard(options) {
+  var opts = options || {};
+  var html = opts.html == null ? "" : String(opts.html);
+  var text = normalizeClipboardText(opts.text);
+  var fallbackTextarea = opts.fallbackTextarea || null;
+
+  if (!text && html) {
+    text = textFromHtml(html);
+  }
+
+  if (!text && !html) return false;
+
+  try {
+    if (html && navigator.clipboard && window.ClipboardItem && typeof navigator.clipboard.write === "function") {
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([text], { type: "text/plain" })
+        })
+      ]);
+      return true;
+    }
+  } catch (e) {
+    // Continue with plain-text fallback.
+  }
+
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (e2) {
+    // Continue with legacy fallback.
+  }
+
+  if (fallbackTextarea) {
+    fallbackTextarea.value = text;
+    var originalPosition = fallbackTextarea.style.position;
+    var originalLeft = fallbackTextarea.style.left;
+    var originalTop = fallbackTextarea.style.top;
+    var originalWidth = fallbackTextarea.style.width;
+
+    fallbackTextarea.style.position = "fixed";
+    fallbackTextarea.style.left = "-9999px";
+    fallbackTextarea.style.top = "-9999px";
+    fallbackTextarea.style.width = "1px";
+    fallbackTextarea.focus();
+    fallbackTextarea.select();
+
+    var copied = false;
+    try {
+      copied = document.execCommand("copy");
+    } catch (e3) {
+      copied = false;
+    }
+
+    fallbackTextarea.style.position = originalPosition;
+    fallbackTextarea.style.left = originalLeft;
+    fallbackTextarea.style.top = originalTop;
+    fallbackTextarea.style.width = originalWidth;
+    return copied;
+  }
+
+  return false;
+}
+
+window.copyToClipboard = copyToClipboard;
+
 document.addEventListener("DOMContentLoaded", function () {
   initAllDateInputs();
   initStatusPills();

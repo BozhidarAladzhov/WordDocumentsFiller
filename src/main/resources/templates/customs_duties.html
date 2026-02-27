@@ -73,34 +73,25 @@
             document.getElementById("copiedToast").style.display = "none";
         }
 
-        function copyText() {
+        async function copyText() {
             const text = document.getElementById("plainTextOut").value;
+            const html = document.getElementById("resultText").innerHTML;
+            const ta = document.getElementById("plainTextOut");
 
             if (!text) {
                 alert("Първо генерирай текста.");
                 return;
             }
 
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById("copiedToast");
-                toast.style.display = "block";
-                setTimeout(() => toast.style.display = "none", 2000);
-            }).catch(() => {
-                // fallback за браузъри без permission
-                const ta = document.getElementById("plainTextOut");
-                ta.style.position = "static";
-                ta.style.left = "0";
-                ta.style.width = "100%";
-                ta.focus();
-                ta.select();
-                document.execCommand("copy");
-                ta.style.position = "absolute";
-                ta.style.left = "-9999px";
-
-                const toast = document.getElementById("copiedToast");
-                toast.style.display = "block";
-                setTimeout(() => toast.style.display = "none", 2000);
+            await window.copyToClipboard({
+                html: html,
+                text: text,
+                fallbackTextarea: ta
             });
+
+            const toast = document.getElementById("copiedToast");
+            toast.style.display = "block";
+            setTimeout(() => toast.style.display = "none", 2000);
         }
     </script>
 
