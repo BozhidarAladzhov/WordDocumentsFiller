@@ -22,7 +22,7 @@ public class VehicleService {
 
     @Transactional()
     public List<Vehicle> getByContainerId(Long containerId) {
-        return vehicleRepository.findByContainerIdOrderByIdDesc(containerId);
+        return vehicleRepository.findByContainerIdOrderByIdAsc(containerId);
     }
 
     @Transactional()

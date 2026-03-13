@@ -49,6 +49,20 @@
 </div>
 
 <script>
+    function escapeHtml(text) {
+        return String(text == null ? "" : text)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function plainToClipboardHtml(text) {
+        const normalized = String(text == null ? "" : text).replace(/\r\n/g, "\n");
+        return "<div>" + escapeHtml(normalized).replace(/\n/g, "<br>") + "</div>";
+    }
+
     async function copyFromId(id) {
         const el = document.getElementById(id);
         const text = el ? (el.value || "") : "";
@@ -65,11 +79,11 @@
     }
 
     async function copyDraft() {
-        const draftPreview = document.getElementById("draftPreview");
         const draftPlain = document.getElementById("draftPlain");
+        const plainText = draftPlain ? (draftPlain.value || "") : "";
         await window.copyToClipboard({
-            html: draftPreview ? draftPreview.innerHTML : "",
-            text: draftPlain ? draftPlain.value : "",
+            html: plainToClipboardHtml(plainText),
+            text: plainText,
             fallbackTextarea: draftPlain
         });
 

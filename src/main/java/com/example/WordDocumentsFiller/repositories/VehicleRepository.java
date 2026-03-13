@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
-    List<Vehicle> findByContainerIdOrderByIdDesc(Long containerId);
+    List<Vehicle> findByContainerIdOrderByIdAsc(Long containerId);
 
     @Query("""
            select v
