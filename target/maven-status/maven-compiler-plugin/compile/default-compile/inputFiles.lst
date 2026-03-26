@@ -1,4 +1,5 @@
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\ContainerTrackerController.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\GraphMailController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\HblController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\HomeController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\InstrumentsController.java
@@ -6,6 +7,8 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\TransportRequestController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\UnpInstructionsController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\UpController.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\GraphMailDraft.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\GraphTokenSession.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\HblData.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OfferData.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\TransportRequestData.java
@@ -27,6 +30,9 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositorie
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\UpClientRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\VehicleRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\ContainerService.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\GraphMailProperties.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\GraphMailService.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\GraphMailSignatureService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\HblGeneratorService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\HblPdfService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\LibreOfficePdfConverter.java

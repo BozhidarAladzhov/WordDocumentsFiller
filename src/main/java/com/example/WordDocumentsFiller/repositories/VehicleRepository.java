@@ -16,6 +16,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
            select v
            from Vehicle v
            join fetch v.container c
+           where c.archived = false
            order by
              case when coalesce(v.eta, c.eta) is null then 1 else 0 end,
              coalesce(v.eta, c.eta) asc,

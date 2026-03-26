@@ -49,6 +49,7 @@ public class ContainerService {
     public void updateContainer(Long id,
                                 String bol,
                                 String carrier,
+                                String trackingLink,
                                 String vesselName,
                                 String pol,
                                 String pod,
@@ -60,6 +61,7 @@ public class ContainerService {
         Container c = getById(id);
         c.setBol(bol);
         c.setCarrier(carrier);
+        c.setTrackingLink(trackingLink);
         c.setVesselName(vesselName);
         c.setPol(pol);
         c.setPod(pod);

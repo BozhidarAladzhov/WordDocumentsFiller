@@ -611,6 +611,20 @@ button:hover, .btn:hover{
   background:var(--surface);
 }
 
+.container-link{
+  text-decoration:none;
+}
+
+.container-link .kbd{
+  color:#93c5fd;
+  border-color:rgba(125, 211, 252, .55);
+}
+
+.container-link:hover .kbd{
+  background:var(--surface-2);
+  box-shadow:0 0 0 1px rgba(125, 211, 252, .35);
+}
+
 /* detail layout: 2 колони */
 .tracker-split{
   display:grid;
@@ -1148,6 +1162,7 @@ select.pill--status-customs{
     minmax(220px, 1.2fr)   /* container */
     minmax(180px, 1fr)     /* bol */
     minmax(180px, 1fr)     /* carrier */
+    minmax(240px, 1.2fr)   /* tracking link */
     minmax(160px, .9fr)    /* eta */
     minmax(180px, .9fr);   /* status */
   gap: 14px;
@@ -1242,6 +1257,25 @@ select.pill--status-customs{
   justify-content:center;
 }
 
+.titles-toggle{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.titles-toggle__btn{
+  min-width:64px;
+}
+
+.titles-toggle__btn.is-active{
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+}
+
+.container-titles-select{
+  width: 96px;
+  min-width: 96px;
+}
+
 .unp-actions{
   display: flex;
   gap: 12px;
@@ -1276,6 +1310,15 @@ select.pill--status-customs{
 .email-draft-actions{
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.email-draft-row{
+  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+}
+
+#emailDraftForm textarea{
+  min-height: 320px;
+  resize: vertical;
 }
 .btn-copy{
   border: 1px solid var(--border);

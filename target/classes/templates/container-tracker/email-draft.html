@@ -9,7 +9,7 @@
 <body>
 <div th:replace="fragments/navbar :: main-nav"></div>
 
-<div class="container tools">
+<div class="container tools tracker tracker--wide">
     <div class="tracker-topbar">
         <div>
             <h1 class="tracker-title">Уведомление за пристигане</h1>
@@ -28,76 +28,93 @@
         </div>
 
         <div class="tracker-actions email-draft-actions">
-            <button type="button" class="btn-ghost btn-copy btn-copy--mail" onclick="copyMail()">Копирай мейл адрес</button>
-            <button type="button" class="btn-ghost btn-copy btn-copy--subject" onclick="copySubject()">Копирай subject</button>
-            <button type="button" class="btn-ghost btn-copy btn-copy--draft" onclick="copyDraft()">Копирай текст</button>
             <a class="btn btn-ghost"
                th:href="@{/container-tracker/containers/{id}(id=${container.id})}">Назад</a>
         </div>
     </div>
 
-        <div id="resultBox" class="resultBox" style="display:block;">
-        <pre id="draftPreview" th:text="${draftText}" style="margin:0; white-space:pre-wrap;"></pre>
-        <div id="copiedToast" class="copied">✅ Текстът е копиран!</div>
+    <div th:if="${mailStatus == 'sent'}" class="copied" style="display:block; margin-bottom:12px;">Имейлът е изпратен успешно през Outlook.</div>
+    <div th:if="${mailStatus == 'connected'}" class="copied" style="display:block; margin-bottom:12px;">Outlook акаунтът е свързан успешно.</div>
+    <div th:if="${mailStatus == 'graphNotConfigured' || mailStatus == 'graphError' || mailStatus == 'graphStateInvalid'}"
+         class="hint"
+         style="margin-bottom:12px; color:#fecaca;">
+        Microsoft Graph не е настроен коректно или връзката с Outlook не успя.
     </div>
-    <textarea id="mailValue" style="position:absolute; left:-9999px; top:-9999px;"
-              th:text="${mailText}"></textarea>
-    <textarea id="subjectValue" style="position:absolute; left:-9999px; top:-9999px;"
-              th:text="${subjectText}"></textarea>
-    <textarea id="draftPlain" style="position:absolute; left:-9999px; top:-9999px;"
-              th:text="${draftText}"></textarea>
+
+    <form id="emailDraftForm"
+          class="details-card details-card--compact"
+          method="post"
+          th:action="@{/container-tracker/containers/{cid}/vehicles/{vid}/email-draft/send(cid=${container.id},vid=${vehicle.id})}">
+
+        <div class="details-row email-draft-row">
+            <div class="field">
+                <label>To</label>
+                <input id="mailTo" name="to" th:value="${mailTo}" type="email" required>
+            </div>
+
+            <div class="field">
+                <label>Cc</label>
+                <input id="mailCc" name="cc" th:value="${mailCc}" placeholder="cars@freeline.bg">
+            </div>
+        </div>
+
+        <div class="details-row email-draft-row" style="margin-top:12px;">
+            <div class="field" style="grid-column: 1 / -1;">
+                <label>Subject</label>
+                <input id="mailSubject" name="subject" th:value="${mailSubject}" required>
+            </div>
+        </div>
+
+        <div class="details-row email-draft-row" style="margin-top:12px;">
+            <div class="field" style="grid-column: 1 / -1;">
+                <label>Body</label>
+                <textarea id="mailBody" name="body" rows="14" style="width:100%;" th:text="${mailBody}"></textarea>
+            </div>
+        </div>
+
+        <div class="details-footer details-footer--right">
+            <div style="width:100%; display:flex; justify-content:center;">
+                <button th:if="${graphConfigured}" type="submit" class="btn-sm btn-sm--save"
+                        th:text="${graphConnected ? 'Изпрати през Outlook' : 'Свържи Outlook и изпрати'}">
+                    Изпрати през Outlook
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="section-divider"></div>
+
+    <div class="details-card details-card--compact">
+        <h2 class="section-head" style="margin-top:0;">Preview</h2>
+        <div class="hint" style="margin-bottom:12px;">
+            <strong>To:</strong> <span id="previewTo" th:text="${mailTo}"></span><br>
+            <strong>Cc:</strong> <span id="previewCc" th:text="${mailCc}"></span><br>
+            <strong>Subject:</strong> <span id="previewSubject" th:text="${mailSubject}"></span>
+        </div>
+        <div id="resultBox" class="resultBox" style="display:block;">
+            <pre id="draftPreview" th:text="${mailBody}" style="margin:0; white-space:pre-wrap;"></pre>
+        </div>
+    </div>
 </div>
 
 <script>
-    function escapeHtml(text) {
-        return String(text == null ? "" : text)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+    function syncPreview() {
+        document.getElementById("previewTo").textContent = document.getElementById("mailTo").value || "";
+        document.getElementById("previewCc").textContent = document.getElementById("mailCc").value || "";
+        document.getElementById("previewSubject").textContent = document.getElementById("mailSubject").value || "";
+        document.getElementById("draftPreview").textContent = document.getElementById("mailBody").value || "";
     }
 
-    function plainToClipboardHtml(text) {
-        const normalized = String(text == null ? "" : text).replace(/\r\n/g, "\n");
-        return "<div>" + escapeHtml(normalized).replace(/\n/g, "<br>") + "</div>";
-    }
-
-    async function copyFromId(id) {
-        const el = document.getElementById(id);
-        const text = el ? (el.value || "") : "";
-        await window.copyToClipboard({
-            text: text,
-            fallbackTextarea: el
+    document.addEventListener("DOMContentLoaded", function () {
+        ["mailTo", "mailCc", "mailSubject", "mailBody"].forEach(function (id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener("input", syncPreview);
+            el.addEventListener("change", syncPreview);
         });
-
-        const toast = document.getElementById("copiedToast");
-        if (toast) {
-            toast.style.display = "block";
-            setTimeout(() => toast.style.display = "none", 2000);
-        }
-    }
-
-    async function copyDraft() {
-        const draftPlain = document.getElementById("draftPlain");
-        const plainText = draftPlain ? (draftPlain.value || "") : "";
-        await window.copyToClipboard({
-            html: plainToClipboardHtml(plainText),
-            text: plainText,
-            fallbackTextarea: draftPlain
-        });
-
-        const toast = document.getElementById("copiedToast");
-        if (toast) {
-            toast.style.display = "block";
-            setTimeout(() => toast.style.display = "none", 2000);
-        }
-    }
-
-    function copyMail() { copyFromId("mailValue"); }
-    function copySubject() { copyFromId("subjectValue"); }
+        syncPreview();
+    });
 </script>
-    <script th:src="@{/js/app.js}" src="/js/app.js"></script>
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
 </body>
 </html>
-

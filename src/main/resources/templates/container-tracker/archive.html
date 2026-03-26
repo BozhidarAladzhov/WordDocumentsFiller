@@ -38,7 +38,19 @@
                 <tr th:each="c : ${containers}"
                     class="js-open-details-row"
                     th:attr="data-details-url=@{/container-tracker/containers/{id}(id=${c.id})}">
-                    <td><span class="kbd" th:text="${c.containerNo}"></span></td>
+                    <td>
+                        <a th:if="${c.trackingLink != null && !#strings.isEmpty(#strings.trim(c.trackingLink))}"
+                           th:href="${c.trackingLink}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           class="container-link"
+                           onclick="event.stopPropagation();">
+                            <span class="kbd" th:text="${c.containerNo}"></span>
+                        </a>
+                        <span th:if="${c.trackingLink == null || #strings.isEmpty(#strings.trim(c.trackingLink))}"
+                              class="kbd"
+                              th:text="${c.containerNo}"></span>
+                    </td>
                     <td th:text="${c.bol}"></td>
                     <td th:text="${c.carrier}"></td>
                     <td th:text="${c.eta != null ? #temporals.format(c.eta, 'dd.MM.yyyy') : ''}"></td>

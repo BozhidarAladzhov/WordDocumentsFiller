@@ -87,6 +87,27 @@ public class VehicleService {
         return v;
     }
 
+    @Transactional
+    public void updateTitlesForContainer(Long containerId, TitlesStatus titles) {
+        List<Vehicle> vehicles = vehicleRepository.findByContainerIdOrderByIdAsc(containerId);
+        for (Vehicle vehicle : vehicles) {
+            vehicle.setTitles(titles);
+        }
+        vehicleRepository.saveAll(vehicles);
+    }
+
+    @Transactional
+    public boolean areAllTitlesReceived(Long containerId) {
+        List<Vehicle> vehicles = vehicleRepository.findByContainerIdOrderByIdAsc(containerId);
+        return !vehicles.isEmpty() && vehicles.stream()
+                .allMatch(v -> v.getTitles() == TitlesStatus.RECEIVED);
+    }
+
+    @Transactional
+    public TitlesStatus getContainerTitlesStatus(Long containerId) {
+        return areAllTitlesReceived(containerId) ? TitlesStatus.RECEIVED : TitlesStatus.MISSING;
+    }
+
 
 
 

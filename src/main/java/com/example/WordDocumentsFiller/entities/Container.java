@@ -27,6 +27,9 @@ public class Container {
     @Column(length = 64)
     private String carrier;
 
+    @Column(name = "tracking_link", length = 2048)
+    private String trackingLink;
+
     @Column(name = "vessel_name", length = 128)
     private String vesselName;
 
@@ -74,6 +77,9 @@ public class Container {
 
     public String getCarrier() { return carrier; }
     public void setCarrier(String carrier) { this.carrier = carrier; }
+
+    public String getTrackingLink() { return trackingLink; }
+    public void setTrackingLink(String trackingLink) { this.trackingLink = trackingLink; }
 
     public String getVesselName() { return vesselName; }
     public void setVesselName(String vesselName) { this.vesselName = vesselName; }

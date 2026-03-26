@@ -238,6 +238,7 @@ async function copyToClipboard(options) {
   var html = opts.html == null ? "" : String(opts.html);
   var text = normalizeClipboardText(opts.text);
   var fallbackTextarea = opts.fallbackTextarea || null;
+  var richHtmlElement = opts.richHtmlElement || null;
 
   if (!text && html) {
     text = textFromHtml(html);
@@ -268,6 +269,39 @@ async function copyToClipboard(options) {
     // Continue with legacy fallback.
   }
 
+  if (html) {
+    var richSource = richHtmlElement;
+    var cleanupRichSource = null;
+
+    if (!richSource) {
+      richSource = document.createElement("div");
+      richSource.setAttribute("contenteditable", "true");
+      richSource.style.position = "fixed";
+      richSource.style.left = "-9999px";
+      richSource.style.top = "-9999px";
+      richSource.style.whiteSpace = "pre-wrap";
+      richSource.innerHTML = html;
+      document.body.appendChild(richSource);
+      cleanupRichSource = function () {
+        if (richSource && richSource.parentNode) richSource.parentNode.removeChild(richSource);
+      };
+    }
+
+    try {
+      var selection = window.getSelection();
+      var range = document.createRange();
+      range.selectNodeContents(richSource);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      var richCopied = document.execCommand("copy");
+      selection.removeAllRanges();
+      if (cleanupRichSource) cleanupRichSource();
+      if (richCopied) return true;
+    } catch (e3) {
+      if (cleanupRichSource) cleanupRichSource();
+    }
+  }
+
   if (fallbackTextarea) {
     fallbackTextarea.value = text;
     var originalPosition = fallbackTextarea.style.position;
@@ -285,7 +319,7 @@ async function copyToClipboard(options) {
     var copied = false;
     try {
       copied = document.execCommand("copy");
-    } catch (e3) {
+    } catch (e4) {
       copied = false;
     }
 
