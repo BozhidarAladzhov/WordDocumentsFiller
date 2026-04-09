@@ -1538,3 +1538,23 @@ input:focus, select:focus, textarea:focus{
 .table tr.container-group-start td{
   border-top: 2px solid rgba(125, 211, 252, .55);
 }
+
+.procredit-form{
+  margin-top: 18px;
+}
+
+.procredit-message{
+  margin-top: 18px;
+}
+
+.procredit-message--error{
+  background: rgba(239, 68, 68, .14);
+  border: 1px solid rgba(239, 68, 68, .40);
+  color: #fecaca;
+}
+
+.procredit-message--success{
+  background: rgba(34, 197, 94, .14);
+  border: 1px solid rgba(34, 197, 94, .40);
+  color: #bbf7d0;
+}

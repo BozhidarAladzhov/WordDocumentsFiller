@@ -164,8 +164,6 @@
     const unloadTime = data.unloadTime || "";
     const containerNo = data.containerNo;
 
-    linesHtml.push(`Здравейте,<br><br>`);
-    linesTxt.push(`Здравейте,\n`);
 
     linesHtml.push(`<strong>Моля да организирате разтоварване както следва:</strong><br>`);
     linesTxt.push(`*Моля да организирате разтоварване както следва:*\n`);
@@ -194,32 +192,30 @@
       linesTxt.push(`\n*${n}) ${carLabel}*\n`);
 
       if (v.canPickup) {
-        linesHtml.push(`╰─➤ Може да го предавате.<br>`);
-        linesTxt.push(`╰─➤ Може да го предавате.\n`);
+        linesHtml.push(`🔰 Може да го предавате.<br>`);
+        linesTxt.push(`🔰 Може да го предавате.\n`);
       } else {
-        linesHtml.push(`╰─➤ Моля <strong>НЕ предавайте</strong>, клиента още не си е заплатил разходите.<br>`);
-        linesTxt.push(`╰─➤ Моля *НЕ предавайте*, клиента още не си е заплатил разходите.\n`);
+        linesHtml.push(`🔰 Моля <strong>НЕ предавайте</strong>, клиента още не си е заплатил разходите.<br>`);
+        linesTxt.push(`🔰 Моля *НЕ предавайте*, клиента още не си е заплатил разходите.\n`);
       }
 
       if (v.clientPickup) {
-        linesHtml.push(`╰─➤ Клиентът ще си я вземе.<br>`);
-        linesTxt.push(`╰─➤ Клиентът ще си я вземе.\n`);
+        linesHtml.push(`🔰 Клиентът ще си я вземе.<br>`);
+        linesTxt.push(`🔰 Клиентът ще си я вземе.\n`);
       } else {
-        linesHtml.push(`╰─➤ Ние ще изпратим платформа да я вземе.<br>`);
-        linesTxt.push(`╰─➤ Ние ще изпратим платформа да я вземе.\n`);
+        linesHtml.push(`🔰 Ние ще изпратим платформа да я вземе.<br>`);
+        linesTxt.push(`🔰 Ние ще изпратим платформа да я вземе.\n`);
       }
 
       if (v.hasDocs) {
-        linesHtml.push(`╰─➤ Има оригинални документи за предаване при взимане.<br>`);
-        linesTxt.push(`╰─➤ Има оригинални документи за предаване при взимане.\n`);
+        linesHtml.push(`🔰 Има оригинални документи за предаване при взимане.<br>`);
+        linesTxt.push(`🔰 Има оригинални документи за предаване при взимане.\n`);
       } else {
-        linesHtml.push(`╰─➤ Няма оригинални документи за взимане.<br>`);
-        linesTxt.push(`╰─➤ Няма оригинални документи за взимане.\n`);
+        linesHtml.push(`🔰 Няма оригинални документи за взимане.<br>`);
+        linesTxt.push(`🔰 Няма оригинални документи за взимане.\n`);
       }
     });
 
-    linesHtml.push(`<br><br>Поздрави,<br>Божидар<br>`);
-    linesTxt.push(`\n\nПоздрави,\nБожидар\n`);
 
     const bodyHtml = linesHtml.join("");
     const previewHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#f3f6fb;">${bodyHtml}</div>`;

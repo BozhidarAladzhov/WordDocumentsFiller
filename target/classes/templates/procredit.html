@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Прокредит</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools">
+    <h1>Прокредит</h1>
+
+    <section class="card">
+        <h2>Генериране на масово плащане</h2>
+        <p class="hint">Качи входен .xlsx файл. Обработват се само редовете с Country = BG и Currency = EUR.</p>
+        <p class="hint">Редовете се групират по Carrier. При различен IBAN или Address за един и същи Carrier обработката спира с грешка.</p>
+
+        <form id="procreditForm" class="procredit-form" enctype="multipart/form-data">
+            <label for="procreditFile">Входен Excel файл</label>
+            <input id="procreditFile" type="file" name="file"
+                   accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+
+            <div class="btn-row">
+                <button type="submit" id="procreditSubmit">Генерирай файл</button>
+            </div>
+        </form>
+
+        <div id="procreditMessage" class="resultBox procredit-message"></div>
+    </section>
+</div>
+
+<script>
+    (function () {
+        const form = document.getElementById("procreditForm");
+        const fileInput = document.getElementById("procreditFile");
+        const submitButton = document.getElementById("procreditSubmit");
+        const messageBox = document.getElementById("procreditMessage");
+
+        function showMessage(text, isError) {
+            messageBox.textContent = text;
+            messageBox.style.display = "block";
+            messageBox.classList.toggle("procredit-message--error", !!isError);
+            messageBox.classList.toggle("procredit-message--success", !isError);
+        }
+
+        function hideMessage() {
+            messageBox.style.display = "none";
+            messageBox.textContent = "";
+            messageBox.classList.remove("procredit-message--error", "procredit-message--success");
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            hideMessage();
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showMessage("Избери входен Excel файл.", true);
+                return;
+            }
+
+            const formData = new FormData(form);
+            submitButton.disabled = true;
+            submitButton.textContent = "Обработване...";
+
+            try {
+                const response = await fetch("/procredit/generate", {
+                    method: "POST",
+                    body: formData,
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    showMessage(errorText || "Възникна грешка при обработката на файла.", true);
+                    return;
+                }
+
+                const blob = await response.blob();
+                const disposition = response.headers.get("Content-Disposition") || "";
+                const match = disposition.match(/filename="([^"]+)"/i);
+                const fileName = match ? match[1] : "procredit_payments.xls";
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+
+                showMessage("Файлът е генериран и изтеглен успешно.", false);
+            } catch (error) {
+                showMessage("Възникна грешка при връзката със сървъра.", true);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Генерирай файл";
+            }
+        });
+    }());
+</script>
+
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>
