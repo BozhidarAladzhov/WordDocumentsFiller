@@ -1194,6 +1194,49 @@ select.pill--status-customs{
   border-top: 1px dashed var(--border);
 }
 
+.details-footer--container-actions{
+  display:grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items:center;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+.details-footer--container-actions .btn--unloading{
+  grid-column: 2;
+  justify-self:center;
+}
+
+.details-footer--container-actions .btn-sm--danger{
+  grid-column: 3;
+  justify-self:end;
+}
+
+.btn--unloading{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  min-width: 240px;
+  height: 44px;
+  padding: 0 22px;
+  background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+  border-color:#0f766e !important;
+  color:#ffffff !important;
+  font-size: .98rem;
+  font-weight: 900;
+  letter-spacing: .1px;
+  text-decoration:none;
+  box-shadow: 0 10px 22px rgba(15, 118, 110, .24);
+}
+
+.btn--unloading:hover{
+  background: linear-gradient(135deg, #115e59, #0d9488);
+  box-shadow: 0 10px 22px rgba(15, 118, 110, .24);
+}
+
 /* Responsive */
 @media (max-width: 1200px){
   .details-row{
@@ -1203,6 +1246,14 @@ select.pill--status-customs{
 @media (max-width: 720px){
   .details-row{
     grid-template-columns: 1fr;
+  }
+  .details-footer--container-actions{
+    grid-template-columns: 1fr;
+  }
+  .details-footer--container-actions .btn--unloading,
+  .details-footer--container-actions .btn-sm--danger{
+    grid-column: 1;
+    justify-self:stretch;
   }
 }
 
@@ -1543,6 +1594,38 @@ input:focus, select:focus, textarea:focus{
   margin-top: 18px;
 }
 
+.procredit-notice{
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(125, 211, 252, .55);
+  border-left: 5px solid #38bdf8;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(14, 165, 233, .18), rgba(14, 165, 233, .08));
+  color: #edf8ff;
+  box-shadow: 0 12px 24px rgba(2, 8, 23, .22);
+}
+
+.procredit-notice__title{
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.procredit-notice ul{
+  margin: 0;
+  padding-left: 20px;
+}
+
+.procredit-notice li{
+  margin: 7px 0;
+  line-height: 1.55;
+}
+
+.procredit-notice strong{
+  color: #ffffff;
+}
+
 .procredit-message{
   margin-top: 18px;
 }
@@ -1557,4 +1640,52 @@ input:focus, select:focus, textarea:focus{
   background: rgba(34, 197, 94, .14);
   border: 1px solid rgba(34, 197, 94, .40);
   color: #bbf7d0;
+}
+
+/* Vehicle action buttons */
+.meta-actions .btn-sm--arrival{
+  background:#dbeafe;
+  border-color:#60a5fa;
+  color:#1e3a8a;
+}
+
+.meta-actions .btn-sm--hbl{
+  background:#dcfce7;
+  border-color:#4ade80;
+  color:#14532d;
+}
+
+.meta-actions .btn-sm--notification{
+  background:#fef3c7;
+  border-color:#f59e0b;
+  color:#78350f;
+}
+
+.meta-actions .btn-sm--arrival:hover,
+.meta-actions .btn-sm--hbl:hover,
+.meta-actions .btn-sm--notification:hover{
+  filter:brightness(.98);
+}
+
+/* Destructive and archive actions */
+.btn-danger,
+.btn-sm--danger{
+  background:#dc2626 !important;
+  border-color:#991b1b !important;
+  color:#ffffff !important;
+}
+
+.btn-danger:hover,
+.btn-sm--danger:hover{
+  background:#b91c1c !important;
+}
+
+.btn--archive{
+  background:#ede9fe !important;
+  border-color:#a78bfa !important;
+  color:#4c1d95 !important;
+}
+
+.btn--archive:hover{
+  background:#ddd6fe !important;
 }

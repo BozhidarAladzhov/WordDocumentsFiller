@@ -15,8 +15,14 @@
 
     <section class="card">
         <h2>Генериране на масово плащане</h2>
-        <p class="hint">Качи входен .xlsx файл. Обработват се само редовете с Country = BG и Currency = EUR.</p>
-        <p class="hint">Редовете се групират по Carrier. При различен IBAN или Address за един и същи Carrier обработката спира с грешка.</p>
+        <div class="procredit-notice" role="note" aria-label="Важни условия за обработка">
+            <div class="procredit-notice__title">Важно преди генериране</div>
+            <ul>
+                <li>Качи входен <strong>.xlsx</strong> файл.</li>
+                <li>Обработват се само редове с <strong>Country = BG</strong> и <strong>Currency = EUR</strong>.</li>
+                <li>Редовете се групират по <strong>Carrier</strong>. Ако един и същи Carrier има различен <strong>IBAN</strong> или <strong>Address</strong>, обработката спира с грешка.</li>
+            </ul>
+        </div>
 
         <form id="procreditForm" class="procredit-form" enctype="multipart/form-data">
             <label for="procreditFile">Входен Excel файл</label>

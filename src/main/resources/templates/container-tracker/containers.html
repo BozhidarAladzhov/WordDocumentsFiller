@@ -13,7 +13,7 @@
     <h1 style="text-align:left;margin-top:20px;">Container Tracker</h1>
     <div class="tracker-actions" style="margin-bottom:12px;">
         <a class="btn btn-ghost" th:href="@{/container-tracker/vehicles}">All Vehicles</a>
-        <a class="btn btn-ghost" th:href="@{/container-tracker/archive}">Archive</a>
+        <a class="btn btn-ghost btn--archive" th:href="@{/container-tracker/archive}">Archive</a>
     </div>
 
     <div class="card">
@@ -122,7 +122,7 @@
                         <form th:action="@{/container-tracker/containers/{id}/archive(id=${c.id})}"
                               method="post"
                               onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
-                            <button type="submit" class="btn-sm">Archive</button>
+                            <button type="submit" class="btn-sm btn--archive">Archive</button>
                         </form>
                     </td>
                     <td>

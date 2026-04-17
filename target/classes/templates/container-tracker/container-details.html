@@ -14,16 +14,12 @@
             <h1 class="tracker-title" th:text="'Container: ' + ${container.containerNo}">Container</h1>
         </div>
 
-        <a class="btn btn-ghost"
-           th:href="@{/container-tracker/containers/{id}/unloading(id=${container.id})}">
-            Unloading
-        </a>
         <div class="tracker-actions">
             <form th:if="${!container.archived}"
                   th:action="@{/container-tracker/containers/{id}/archive(id=${container.id})}"
                   method="post"
                   onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
-                <button type="submit" class="btn-sm">Archive</button>
+                <button type="submit" class="btn-sm btn--archive">Archive</button>
             </form>
             <form th:if="${container.archived}"
                   th:action="@{/container-tracker/containers/{id}/unarchive(id=${container.id})}"
@@ -113,7 +109,12 @@
             </div>
 
             <!-- FOOTER ACTIONS -->
-            <div class="details-footer details-footer--right">
+            <div class="details-footer details-footer--container-actions">
+                <a class="btn-sm btn--unloading"
+                   th:href="@{/container-tracker/containers/{id}/unloading(id=${container.id})}">
+                    Unloading instructions
+                </a>
+
                 <button type="submit"
                         class="btn-sm btn-sm--danger"
                         th:formaction="@{/container-tracker/containers/{id}/delete(id=${container.id})}"
@@ -228,19 +229,19 @@
                                     </div>
 
                                     <div class="meta-actions">
-                                        <a class="btn-sm btn-sm--ghost"
+                                        <a class="btn-sm btn-sm--ghost btn-sm--arrival"
                                            th:href="@{/container-tracker/containers/{cid}/vehicles/{vid}/email-draft(cid=${container.id},vid=${v.id})}">
-                                            Email draft
+                                            Arrival email
                                         </a>
 
-                                        <a class="btn-sm btn-sm--ghost"
+                                        <a class="btn-sm btn-sm--ghost btn-sm--hbl"
                                            th:href="@{/form/HBL(containerId=${container.id},vehicleId=${v.id})}">
-                                            HBL
+                                            House bill of lading
                                         </a>
 
-                                        <a class="btn-sm btn-sm--ghost"
+                                        <a class="btn-sm btn-sm--ghost btn-sm--notification"
                                            th:href="@{/form/UP(containerId=${container.id},vehicleId=${v.id})}">
-                                            UP
+                                            Notification letter
                                         </a>
 
                                         <button type="submit"
