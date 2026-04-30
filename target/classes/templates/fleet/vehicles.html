@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Автопарк</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools tracker tracker--wide">
+    <div class="fleet-header">
+        <div>
+            <h1 style="text-align:left;margin:20px 0 6px;">Автопарк</h1>
+        </div>
+        <div class="fleet-header-actions">
+            <button type="button" class="btn btn-ghost" onclick="openFleetContactsDialog()">Контакти</button>
+            <button type="button" class="btn" onclick="openFleetAddDialog()">+ Добави автомобил</button>
+        </div>
+    </div>
+
+    <div class="fleet-stats">
+        <div class="fleet-stat">
+            <span class="fleet-stat__label">Активни</span>
+            <strong th:text="${dashboard.activeVehicleCount}">0</strong>
+        </div>
+        <button type="button" class="fleet-stat fleet-stat--danger fleet-stat--button" onclick="openFleetInfoDialog('fleetOverdueDialog')">
+            <span class="fleet-stat__label">Просрочени</span>
+            <strong th:text="${#lists.size(dashboard.overdueItems)}">0</strong>
+        </button>
+        <button type="button" class="fleet-stat fleet-stat--warn fleet-stat--button" onclick="openFleetInfoDialog('fleetUpcomingDialog')">
+            <span class="fleet-stat__label">Следващи 30 дни</span>
+            <strong th:text="${#lists.size(dashboard.upcomingItems)}">0</strong>
+        </button>
+    </div>
+
+    <div class="card">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Автомобили</h2>
+        </div>
+
+        <div class="table-wrap">
+            <table class="table fleet-table">
+                <thead>
+                <tr>
+                    <th>Рег. номер</th>
+                    <th>Автомобил</th>
+                    <th>Статус</th>
+                    <th>Ползвател</th>
+                    <th>Най-близък срок</th>
+                    <th>Досие</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(vehicleItems)}">
+                    <td colspan="6">Няма въведени автомобили.</td>
+                </tr>
+                <tr th:each="item : ${vehicleItems}">
+                    <td th:text="${item.vehicle.registrationNumber}"></td>
+                    <td th:text="${item.vehicle.makeModel}"></td>
+                    <td th:text="${item.vehicle.status.displayName}"></td>
+                    <td>
+                        <div th:text="${item.vehicle.vehicleUserName}"></div>
+                        <div class="hint" th:text="${item.vehicle.vehicleUserEmail}"></div>
+                    </td>
+                    <td>
+                        <div th:if="${item.nextDeadlineDate != null}" class="fleet-deadline" th:classappend="${item.overdue ? ' fleet-deadline--overdue' : ''}">
+                            <strong th:text="${item.nextDeadlineLabel}"></strong>
+                            <span th:text="${#temporals.format(item.nextDeadlineDate, 'dd.MM.yyyy')}"></span>
+                        </div>
+                        <span th:if="${item.nextDeadlineDate == null}" class="hint">Няма зададен срок</span>
+                    </td>
+                    <td><a class="btn-sm btn-sm--ghost" th:href="@{/fleet/vehicles/{id}(id=${item.vehicle.id})}">Отвори</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<dialog id="fleetAddDialog" class="fleet-modal">
+    <div class="fleet-modal__content">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Добави автомобил</h2>
+            <button type="button" class="btn-ghost" onclick="closeFleetAddDialog()">Затвори</button>
+        </div>
+
+        <form th:action="@{/fleet/vehicles}" method="post" th:object="${newVehicle}">
+            <div class="grid">
+                <div class="field">
+                    <label>Рег. номер</label>
+                    <input th:field="*{registrationNumber}" required>
+                </div>
+                <div class="field">
+                    <label>Марка / модел</label>
+                    <input th:field="*{makeModel}" required>
+                </div>
+                <div class="field">
+                    <label>VIN</label>
+                    <input th:field="*{vin}">
+                </div>
+                <div class="field">
+                    <label>Статус</label>
+                    <select th:field="*{status}">
+                        <option th:each="status : ${statusOptions}" th:value="${status}" th:text="${status.displayName}"></option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Ползвател</label>
+                    <input th:field="*{vehicleUserName}">
+                </div>
+                <div class="field">
+                    <label>Email ползвател</label>
+                    <input type="email" th:field="*{vehicleUserEmail}">
+                </div>
+                <div class="field">
+                    <label>Отговорник автопарк</label>
+                    <input th:field="*{fleetManagerName}">
+                </div>
+                <div class="field">
+                    <label>Email отговорник</label>
+                    <input type="email" th:field="*{fleetManagerEmail}">
+                </div>
+            </div>
+            <div style="margin-top:14px;">
+                <button type="submit" class="btn-sm btn-sm--save">Запази</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<dialog id="fleetContactsDialog" class="fleet-modal fleet-modal--wide">
+    <div class="fleet-modal__content">
+        <div class="fleet-section-head">
+            <div>
+                <h2 style="margin:0;">Контакти</h2>
+                <p class="hint" style="margin:6px 0 0;">Име, телефон и категория с управление от едно място.</p>
+            </div>
+            <button type="button" class="btn-ghost" onclick="closeFleetContactsDialog()">Затвори</button>
+        </div>
+
+        <div class="card fleet-contacts-card">
+            <div class="fleet-section-head">
+                <h3 style="margin:0;">Добави контакт</h3>
+            </div>
+            <form th:action="@{/fleet/contacts}" method="post" th:object="${newFleetContact}">
+                <div class="fleet-inline-form fleet-inline-form--contacts">
+                    <div class="field">
+                        <label>Име</label>
+                        <input th:field="*{name}" required>
+                    </div>
+                    <div class="field">
+                        <label>Телефон</label>
+                        <input th:field="*{phone}" required>
+                    </div>
+                    <div class="field">
+                        <label>Категория</label>
+                        <input th:field="*{category}" required>
+                    </div>
+                    <div class="field fleet-contact-form__actions">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-sm btn-sm--save">Добави</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-wrap" style="margin-top:16px;">
+            <table class="table fleet-table">
+                <thead>
+                <tr>
+                    <th>Име</th>
+                    <th>Телефон</th>
+                    <th>Категория</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(fleetContacts)}">
+                    <td colspan="4">Няма въведени контакти.</td>
+                </tr>
+                <th:block th:each="contact : ${fleetContacts}">
+                    <tr>
+                        <td th:text="${contact.name}"></td>
+                        <td th:text="${contact.phone}"></td>
+                        <td th:text="${contact.category}"></td>
+                        <td>
+                            <div class="fleet-row-actions">
+                                <button type="button"
+                                        class="btn-sm btn-sm--ghost"
+                                        th:attr="onclick=|toggleFleetContactEditRow(${contact.id})|">
+                                    Редакция
+                                </button>
+                                <button type="button"
+                                        class="btn-sm btn-sm--danger"
+                                        th:attr="onclick=|openFleetContactDeleteDialog(${contact.id}, '${#strings.escapeJavaScript(contact.name)}')|">
+                                    Изтрий
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:id="${'fleetContactEditRow-' + contact.id}" style="display:none;">
+                        <td colspan="4">
+                            <form th:action="@{/fleet/contacts/{id}/update(id=${contact.id})}" method="post">
+                                <div class="fleet-inline-form fleet-inline-form--contacts">
+                                    <div class="field">
+                                        <label>Име</label>
+                                        <input name="name" th:value="${contact.name}" required>
+                                    </div>
+                                    <div class="field">
+                                        <label>Телефон</label>
+                                        <input name="phone" th:value="${contact.phone}" required>
+                                    </div>
+                                    <div class="field">
+                                        <label>Категория</label>
+                                        <input name="category" th:value="${contact.category}" required>
+                                    </div>
+                                    <div class="field fleet-contact-form__actions">
+                                        <label>&nbsp;</label>
+                                        <div class="fleet-row-actions">
+                                            <button type="submit" class="btn-sm btn-sm--save">Запази</button>
+                                            <button type="button"
+                                                    class="btn-sm btn-sm--ghost"
+                                                    th:attr="onclick=|toggleFleetContactEditRow(${contact.id}, false)|">
+                                                Затвори
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="fleetContactDeleteDialog" class="fleet-modal fleet-modal--confirm">
+    <div class="fleet-modal__content fleet-modal__content--confirm">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Потвърди изтриване</h2>
+            <button type="button" class="btn-ghost" onclick="closeFleetContactDeleteDialog()">Затвори</button>
+        </div>
+        <form id="fleetContactDeleteForm" method="post">
+            <div class="fleet-confirm-copy">
+                <p id="fleetContactDeleteText">Сигурен ли си?</p>
+                <p class="fleet-confirm-copy__warning">Това е второ потвърждение срещу неволно изтриване.</p>
+                <div class="fleet-confirm-actions">
+                    <button type="submit" class="btn-sm fleet-confirm-btn fleet-confirm-btn--continue">Изтрий</button>
+                    <button type="button" class="btn-sm fleet-confirm-btn fleet-confirm-btn--close" onclick="closeFleetContactDeleteDialog()">Откажи</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<dialog id="fleetOverdueDialog" class="fleet-modal">
+    <div class="fleet-modal__content">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Просрочени</h2>
+            <button type="button" class="btn-ghost" onclick="closeFleetInfoDialog('fleetOverdueDialog')">Затвори</button>
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Автомобил</th>
+                    <th>Срок</th>
+                    <th>Дата</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(dashboard.overdueItems)}">
+                    <td colspan="3">Няма просрочени срокове.</td>
+                </tr>
+                <tr th:each="item : ${dashboard.overdueItems}">
+                    <td th:text="${item.registrationNumber}"></td>
+                    <td th:text="${item.deadlineType}"></td>
+                    <td th:text="${#temporals.format(item.dueDate, 'dd.MM.yyyy')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</dialog>
+
+<dialog id="fleetUpcomingDialog" class="fleet-modal">
+    <div class="fleet-modal__content">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Следващи 30 дни</h2>
+            <button type="button" class="btn-ghost" onclick="closeFleetInfoDialog('fleetUpcomingDialog')">Затвори</button>
+        </div>
+        <div class="table-wrap">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Автомобил</th>
+                    <th>Срок</th>
+                    <th>Дата</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(dashboard.upcomingItems)}">
+                    <td colspan="3">Няма наближаващи срокове.</td>
+                </tr>
+                <tr th:each="item : ${dashboard.upcomingItems}">
+                    <td th:text="${item.registrationNumber}"></td>
+                    <td th:text="${item.deadlineType}"></td>
+                    <td th:text="${#temporals.format(item.dueDate, 'dd.MM.yyyy')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</dialog>
+
+<script>
+    function openFleetAddDialog() {
+        const dialog = document.getElementById("fleetAddDialog");
+        if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetAddDialog() {
+        const dialog = document.getElementById("fleetAddDialog");
+        if (dialog) dialog.close();
+    }
+
+    function openFleetInfoDialog(id) {
+        const dialog = document.getElementById(id);
+        if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetInfoDialog(id) {
+        const dialog = document.getElementById(id);
+        if (dialog) dialog.close();
+    }
+
+    function openFleetContactsDialog() {
+        const dialog = document.getElementById("fleetContactsDialog");
+        if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetContactsDialog() {
+        const dialog = document.getElementById("fleetContactsDialog");
+        if (dialog) dialog.close();
+    }
+
+    function toggleFleetContactEditRow(contactId, forceState) {
+        const row = document.getElementById("fleetContactEditRow-" + contactId);
+        if (!row) return;
+
+        const shouldShow = typeof forceState === "boolean"
+            ? forceState
+            : row.style.display === "none";
+
+        row.style.display = shouldShow ? "table-row" : "none";
+    }
+
+    function openFleetContactDeleteDialog(contactId, contactName) {
+        const dialog = document.getElementById("fleetContactDeleteDialog");
+        const form = document.getElementById("fleetContactDeleteForm");
+        const text = document.getElementById("fleetContactDeleteText");
+        if (!dialog || !form) return;
+
+        form.action = "/fleet/contacts/" + contactId + "/delete";
+        if (text) {
+            text.textContent = contactName
+                ? 'Изтрий контакт "' + contactName + '"?'
+                : "Изтрий този контакт?";
+        }
+
+        if (typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetContactDeleteDialog() {
+        const dialog = document.getElementById("fleetContactDeleteDialog");
+        if (dialog) dialog.close();
+    }
+</script>
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

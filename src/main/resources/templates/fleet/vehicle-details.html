@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Автомобил</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools tracker tracker--wide">
+    <div class="tracker-actions" style="margin-top:20px;margin-bottom:12px;">
+        <a class="btn btn-ghost" th:href="@{/fleet/vehicles}">Към автопарка</a>
+    </div>
+
+    <div class="fleet-dossier-head">
+        <div>
+            <h1 style="text-align:left;margin:0;" th:text="${vehicle.registrationNumber + ' - ' + vehicle.makeModel}">Автомобил</h1>
+        </div>
+        <div class="fleet-header-actions">
+            <button type="button" class="btn-sm btn-sm--ghost" onclick="openFleetCoreDialog()">Редакция на основни данни</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Основни данни</h2>
+        </div>
+        <div class="fleet-summary-grid fleet-summary-grid--compact">
+            <div class="fleet-summary-item">
+                <span class="fleet-summary-item__label">Рег. номер</span>
+                <strong th:text="${vehicle.registrationNumber}"></strong>
+            </div>
+            <div class="fleet-summary-item">
+                <span class="fleet-summary-item__label">Марка / модел</span>
+                <strong th:text="${vehicle.makeModel}"></strong>
+            </div>
+            <div class="fleet-summary-item">
+                <span class="fleet-summary-item__label">VIN</span>
+                <strong th:text="${vehicle.vin}"></strong>
+            </div>
+            <div class="fleet-summary-item">
+                <span class="fleet-summary-item__label">Статус</span>
+                <strong th:text="${vehicle.status.displayName}"></strong>
+            </div>
+            <div class="fleet-summary-item">
+                <span class="fleet-summary-item__label">Ползвател</span>
+                <strong th:text="${vehicle.vehicleUserName}"></strong>
+                <span class="hint" th:text="${vehicle.vehicleUserEmail}"></span>
+            </div>
+            <div class="fleet-summary-item">
+                <span class="fleet-summary-item__label">Отговорник автопарк</span>
+                <strong th:text="${vehicle.fleetManagerName}"></strong>
+                <span class="hint" th:text="${vehicle.fleetManagerEmail}"></span>
+            </div>
+        </div>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <form id="fleetVehicleDetailsForm" th:action="@{/fleet/vehicles/{id}/update(id=${vehicle.id})}" method="post" th:object="${vehicle}">
+        <div class="card">
+            <div class="fleet-section-head">
+                <h2 style="margin:0;">Ключови срокове</h2>
+            </div>
+            <div class="fleet-deadlines">
+                <div class="card fleet-deadline-card"
+                     th:classappend="${vehicle.liabilityInsuranceExpiresOn == null ? 'fleet-deadline-card--missing' : ''}">
+                    <h3 style="margin-top:0;">Гражданска отговорност</h3>
+                    <div class="grid fleet-form-grid fleet-form-grid--insurance">
+                        <div class="field">
+                            <label>Валидна до</label>
+                            <input type="date" th:field="*{liabilityInsuranceExpiresOn}">
+                        </div>
+                        <div class="field">
+                            <label>Застраховател</label>
+                            <input th:field="*{liabilityInsurer}">
+                        </div>
+                        <div class="field">
+                            <label>Цена</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{liabilityPrice}">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Начин на плащане</label>
+                            <select th:field="*{liabilityPaymentPlan}" data-payment-plan="liability">
+                                <option th:each="plan : ${paymentPlanOptions}" th:value="${plan}" th:text="${plan.displayName}"></option>
+                            </select>
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="1">
+                            <label>Падеж вноска 1</label>
+                            <input type="date" th:field="*{liabilityInstallment1DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="1">
+                            <label>Цена вноска 1</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{liabilityInstallment1Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="liability" data-installment="1">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{liabilityInstallment1Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="2">
+                            <label>Падеж вноска 2</label>
+                            <input type="date" th:field="*{liabilityInstallment2DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="2">
+                            <label>Цена вноска 2</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{liabilityInstallment2Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="liability" data-installment="2">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{liabilityInstallment2Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="3">
+                            <label>Падеж вноска 3</label>
+                            <input type="date" th:field="*{liabilityInstallment3DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="3">
+                            <label>Цена вноска 3</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{liabilityInstallment3Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="liability" data-installment="3">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{liabilityInstallment3Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="4">
+                            <label>Падеж вноска 4</label>
+                            <input type="date" th:field="*{liabilityInstallment4DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="liability" data-installment="4">
+                            <label>Цена вноска 4</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{liabilityInstallment4Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="liability" data-installment="4">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{liabilityInstallment4Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card fleet-deadline-card"
+                     th:classappend="${vehicle.cascoInsuranceExpiresOn == null ? 'fleet-deadline-card--missing' : ''}">
+                    <h3 style="margin-top:0;">Каско</h3>
+                    <div class="grid fleet-form-grid fleet-form-grid--insurance">
+                        <div class="field">
+                            <label>Валидна до</label>
+                            <input type="date" th:field="*{cascoInsuranceExpiresOn}">
+                        </div>
+                        <div class="field">
+                            <label>Застраховател</label>
+                            <input th:field="*{cascoInsurer}">
+                        </div>
+                        <div class="field">
+                            <label>Цена</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{cascoPrice}">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>Начин на плащане</label>
+                            <select th:field="*{cascoPaymentPlan}" data-payment-plan="casco">
+                                <option th:each="plan : ${paymentPlanOptions}" th:value="${plan}" th:text="${plan.displayName}"></option>
+                            </select>
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="1">
+                            <label>Падеж вноска 1</label>
+                            <input type="date" th:field="*{cascoInstallment1DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="1">
+                            <label>Цена вноска 1</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{cascoInstallment1Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="casco" data-installment="1">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{cascoInstallment1Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="2">
+                            <label>Падеж вноска 2</label>
+                            <input type="date" th:field="*{cascoInstallment2DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="2">
+                            <label>Цена вноска 2</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{cascoInstallment2Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="casco" data-installment="2">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{cascoInstallment2Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="3">
+                            <label>Падеж вноска 3</label>
+                            <input type="date" th:field="*{cascoInstallment3DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="3">
+                            <label>Цена вноска 3</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{cascoInstallment3Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="casco" data-installment="3">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{cascoInstallment3Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="4">
+                            <label>Падеж вноска 4</label>
+                            <input type="date" th:field="*{cascoInstallment4DueOn}">
+                        </div>
+                        <div class="field" data-installment-group="casco" data-installment="4">
+                            <label>Цена вноска 4</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{cascoInstallment4Price}">
+                            </div>
+                        </div>
+                        <div class="field field--checkbox field--checkbox-inline" data-installment-group="casco" data-installment="4">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" th:field="*{cascoInstallment4Paid}">
+                                <span>Paid</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card fleet-deadline-card"
+                     th:classappend="${vehicle.technicalInspectionExpiresOn == null ? 'fleet-deadline-card--missing' : ''}">
+                    <h3 style="margin-top:0;">ГТП</h3>
+                    <div class="grid fleet-form-grid fleet-form-grid--mini">
+                        <div class="field">
+                            <label>Валидно до</label>
+                            <input type="date" th:field="*{technicalInspectionExpiresOn}">
+                        </div>
+                        <div class="field">
+                            <label>Цена</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{technicalInspectionPrice}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card fleet-deadline-card"
+                     th:classappend="${vehicle.vignetteExpiresOn == null ? 'fleet-deadline-card--missing' : ''}">
+                    <h3 style="margin-top:0;">Винетка</h3>
+                    <div class="grid fleet-form-grid fleet-form-grid--mini">
+                        <div class="field">
+                            <label>Валидна до</label>
+                            <input type="date" th:field="*{vignetteExpiresOn}">
+                        </div>
+                        <div class="field">
+                            <label>Цена</label>
+                            <div class="money-input">
+                                <span class="money-input__prefix">EUR</span>
+                                <input class="money-input__field" type="number" min="0" step="0.01" th:field="*{vignettePrice}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height:18px;"></div>
+
+        <div class="card">
+            <h2 style="margin-top:0;">Гуми</h2>
+            <div class="fleet-tires">
+                <div class="fleet-tire-row" data-tire-row>
+                    <div class="fleet-tire-row__toggle">
+                        <input type="checkbox" th:field="*{summerTiresActive}" data-tire-toggle>
+                        <label style="margin:0;">Летни</label>
+                    </div>
+                    <div class="field">
+                        <label>Марка</label>
+                        <input th:field="*{summerTiresBrand}">
+                    </div>
+                    <div class="field">
+                        <label>Размер</label>
+                        <input th:field="*{summerTiresSize}">
+                    </div>
+                    <div class="field">
+                        <label>DOT</label>
+                        <input th:field="*{summerTiresDot}">
+                    </div>
+                </div>
+
+                <div class="fleet-tire-row" data-tire-row>
+                    <div class="fleet-tire-row__toggle">
+                        <input type="checkbox" th:field="*{winterTiresActive}" data-tire-toggle>
+                        <label style="margin:0;">Зимни</label>
+                    </div>
+                    <div class="field">
+                        <label>Марка</label>
+                        <input th:field="*{winterTiresBrand}">
+                    </div>
+                    <div class="field">
+                        <label>Размер</label>
+                        <input th:field="*{winterTiresSize}">
+                    </div>
+                    <div class="field">
+                        <label>DOT</label>
+                        <input th:field="*{winterTiresDot}">
+                    </div>
+                </div>
+
+                <div class="fleet-tire-row" data-tire-row>
+                    <div class="fleet-tire-row__toggle">
+                        <input type="checkbox" th:field="*{allSeasonTiresActive}" data-tire-toggle>
+                        <label style="margin:0;">Всесезонни</label>
+                    </div>
+                    <div class="field">
+                        <label>Марка</label>
+                        <input th:field="*{allSeasonTiresBrand}">
+                    </div>
+                    <div class="field">
+                        <label>Размер</label>
+                        <input th:field="*{allSeasonTiresSize}">
+                    </div>
+                    <div class="field">
+                        <label>DOT</label>
+                        <input th:field="*{allSeasonTiresDot}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height:18px;"></div>
+
+    </form>
+
+    <div style="height:18px;"></div>
+
+    <div class="card">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Ремонти и обслужване</h2>
+        </div>
+        <div class="table-wrap">
+            <table class="table fleet-table">
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Километри</th>
+                    <th>Описание</th>
+                    <th>Изпълнител</th>
+                    <th>Бележка</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr id="maintenanceFormRow" style="display:none;">
+                    <td colspan="6">
+                        <form th:action="@{/fleet/vehicles/{id}/maintenance(id=${vehicle.id})}" method="post" th:object="${newMaintenanceRecord}">
+                            <div class="fleet-inline-form">
+                                <div class="field">
+                                    <label>Дата</label>
+                                    <input type="date" th:field="*{serviceDate}" required>
+                                </div>
+                                <div class="field">
+                                    <label>Километри</label>
+                                    <input type="number" min="0" step="1" th:field="*{mileageKm}">
+                                </div>
+                                <div class="field">
+                                    <label>Описание</label>
+                                    <input th:field="*{description}" required>
+                                </div>
+                                <div class="field">
+                                    <label>Изпълнител</label>
+                                    <input th:field="*{vendorName}">
+                                </div>
+                                <div class="field fleet-inline-form__wide">
+                                    <label>Бележка</label>
+                                    <input th:field="*{note}">
+                                </div>
+                            </div>
+                            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+                                <button type="submit" class="btn-sm btn-sm--save">Запази реда</button>
+                                <button type="button" class="btn-sm btn-sm--ghost" onclick="toggleMaintenanceForm(false)">Отказ</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(maintenanceRecords)}">
+                    <td colspan="6">Още няма въведени ремонти и обслужвания.</td>
+                </tr>
+                <tr th:each="record : ${maintenanceRecords}">
+                    <td th:text="${record.serviceDate != null ? #temporals.format(record.serviceDate, 'dd.MM.yyyy') : ''}"></td>
+                    <td th:text="${record.mileageKm != null ? record.mileageKm + ' km' : ''}"></td>
+                    <td th:text="${record.description}"></td>
+                    <td th:text="${record.vendorName}"></td>
+                    <td th:text="${record.note}"></td>
+                    <td>
+                        <div class="fleet-row-actions">
+                            <button type="button" class="btn-sm btn-sm--ghost" th:attr="onclick=|toggleMaintenanceEditRow(${record.id})|">Редакция</button>
+                            <form th:action="@{/fleet/vehicles/{id}/maintenance/{recordId}/delete(id=${vehicle.id},recordId=${record.id})}" method="post">
+                                <button type="submit" class="btn-sm btn-sm--danger">Изтрий</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:each="record : ${maintenanceRecords}" th:id="'maintenanceEditRow-' + ${record.id}" style="display:none;">
+                    <td colspan="6">
+                        <form th:action="@{/fleet/vehicles/{id}/maintenance/{recordId}/update(id=${vehicle.id},recordId=${record.id})}" method="post">
+                            <div class="fleet-inline-form">
+                                <div class="field">
+                                    <label>Дата</label>
+                                    <input type="date" name="serviceDate" th:value="${record.serviceDate}">
+                                </div>
+                                <div class="field">
+                                    <label>Километри</label>
+                                    <input type="number" min="0" step="1" name="mileageKm" th:value="${record.mileageKm}">
+                                </div>
+                                <div class="field">
+                                    <label>Описание</label>
+                                    <input name="description" th:value="${record.description}" required>
+                                </div>
+                                <div class="field">
+                                    <label>Изпълнител</label>
+                                    <input name="vendorName" th:value="${record.vendorName}">
+                                </div>
+                                <div class="field fleet-inline-form__wide">
+                                    <label>Бележка</label>
+                                    <input name="note" th:value="${record.note}">
+                                </div>
+                            </div>
+                            <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+                                <button type="submit" class="btn-sm btn-sm--save">Запази промените</button>
+                                <button type="button" class="btn-sm btn-sm--ghost" th:attr="onclick=|toggleMaintenanceEditRow(${record.id}, false)|">Отказ</button>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="btn-sm btn-sm--ghost" onclick="toggleMaintenanceForm()">Добави ред</button>
+    </div>
+
+    <div style="height:18px;"></div>
+
+    <div class="card">
+        <div class="fleet-section-head">
+            <div>
+                <h2 style="margin:0;">История и предстоящи дейности</h2>
+            </div>
+            <button type="button" class="btn-sm btn-sm--save" onclick="openFleetEventDialog()">Ново събитие</button>
+        </div>
+
+        <div class="fleet-event-list">
+            <div class="fleet-event-card" th:if="${#lists.isEmpty(events)}">
+                <div>
+                    <strong>Няма активни събития</strong>
+                    <div class="hint">Добави час за преглед, обслужване или друго напомняне от бутона горе.</div>
+                </div>
+            </div>
+
+            <div class="fleet-event-card" th:each="event : ${events}">
+                <div class="fleet-event-card__main">
+                    <div class="fleet-event-card__top">
+                        <span class="fleet-event-pill" th:text="${event.type.displayName}"></span>
+                        <span class="hint" th:text="${event.scheduledOn != null ? #temporals.format(event.scheduledOn, 'dd.MM.yyyy') : ''}"></span>
+                    </div>
+                    <strong th:text="${event.title}"></strong>
+                    <div class="fleet-event-meta">
+                        <span th:if="${event.vendor != null}" th:text="${'Изпълнител: ' + event.vendor}"></span>
+                        <span th:if="${event.contactPhone != null}" th:text="${'Телефон: ' + event.contactPhone}"></span>
+                        <span th:if="${event.location != null}" th:text="${'Локация: ' + event.location}"></span>
+                    </div>
+                </div>
+                <div class="fleet-event-card__actions">
+                    <button type="button"
+                            class="btn-sm btn-sm--save"
+                            th:attr="onclick=|openFleetEventConfirmDialog(${event.id}, '${#strings.escapeJavaScript(event.title)}')|">
+                        Извършено
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<dialog id="fleetEventDialog" class="fleet-modal fleet-modal--wide">
+    <div class="fleet-modal__content">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Ново събитие</h2>
+            <button type="button" class="btn-ghost" onclick="closeFleetEventDialog()">Затвори</button>
+        </div>
+
+        <form th:action="@{/fleet/vehicles/{id}/events(id=${vehicle.id})}" method="post" th:object="${newEvent}">
+            <div class="grid fleet-form-grid fleet-form-grid--event">
+                <div class="field">
+                    <label>Тип</label>
+                    <select th:field="*{type}">
+                        <option th:each="type : ${eventTypeOptions}" th:value="${type}" th:text="${type.displayName}"></option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Планирана дата</label>
+                    <input type="date" th:field="*{scheduledOn}" required>
+                </div>
+                <div class="field fleet-field--wide">
+                    <label>Заглавие / описание</label>
+                    <textarea th:field="*{title}" rows="4" required></textarea>
+                </div>
+                <div class="field">
+                    <label>Изпълнител</label>
+                    <input th:field="*{vendor}">
+                </div>
+                <div class="field">
+                    <label>Телефон за връзка</label>
+                    <input th:field="*{contactPhone}">
+                </div>
+                <div class="field fleet-field--wide">
+                    <label>Локация</label>
+                    <input th:field="*{location}">
+                </div>
+            </div>
+
+            <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;">
+                <button type="button" class="btn-sm btn-sm--ghost" onclick="closeFleetEventDialog()">Отказ</button>
+                <button type="submit" class="btn-sm btn-sm--save">Запази събитието</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<dialog id="fleetEventConfirmDialog" class="fleet-modal fleet-modal--confirm">
+    <div class="fleet-modal__content fleet-modal__content--confirm">
+
+        <div class="fleet-confirm-copy">
+            <strong id="fleetEventConfirmTitle">Събитието е изпълнено?</strong>
+            <p class="fleet-confirm-copy__warning">Преди да продължиш, попълни резултата от събитието в съответната графа. След потвърждение ще бъде премахнато от списъка.</p>
+        </div>
+        <form id="fleetEventConfirmForm" method="post">
+            <div class="fleet-confirm-actions">
+                <button type="submit" class="btn-sm fleet-confirm-btn fleet-confirm-btn--continue">Продължи</button>
+                <button type="button" class="btn-sm fleet-confirm-btn fleet-confirm-btn--close" onclick="closeFleetEventConfirmDialog()">Затвори</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<dialog id="fleetCoreDialog" class="fleet-modal">
+    <div class="fleet-modal__content">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Редакция на основни данни</h2>
+            <button type="button" class="btn-ghost" onclick="closeFleetCoreDialog()">Затвори</button>
+        </div>
+        <form th:action="@{/fleet/vehicles/{id}/update-core(id=${vehicle.id})}" method="post" th:object="${vehicle}">
+            <div class="grid fleet-form-grid fleet-form-grid--core">
+                <div class="field">
+                    <label>Рег. номер</label>
+                    <input th:field="*{registrationNumber}" required>
+                </div>
+                <div class="field">
+                    <label>Марка / модел</label>
+                    <input th:field="*{makeModel}" required>
+                </div>
+                <div class="field">
+                    <label>VIN</label>
+                    <input th:field="*{vin}">
+                </div>
+                <div class="field">
+                    <label>Статус</label>
+                    <select th:field="*{status}">
+                        <option th:each="status : ${statusOptions}" th:value="${status}" th:text="${status.displayName}"></option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Ползвател</label>
+                    <input th:field="*{vehicleUserName}">
+                </div>
+                <div class="field">
+                    <label>Email ползвател</label>
+                    <input type="email" th:field="*{vehicleUserEmail}">
+                </div>
+                <div class="field">
+                    <label>Отговорник автопарк</label>
+                    <input th:field="*{fleetManagerName}">
+                </div>
+                <div class="field">
+                    <label>Email отговорник</label>
+                    <input type="email" th:field="*{fleetManagerEmail}">
+                </div>
+            </div>
+            <div style="margin-top:14px;">
+                <button type="submit" class="btn-sm btn-sm--save">Запази основните данни</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<script th:inline="javascript">
+    function syncFleetTireRows() {
+        document.querySelectorAll("[data-tire-row]").forEach((row) => {
+            const toggle = row.querySelector("[data-tire-toggle]");
+            if (!toggle) return;
+            row.classList.toggle("is-active", !!toggle.checked);
+        });
+    }
+
+    function syncPaymentPlans() {
+        document.querySelectorAll("[data-payment-plan]").forEach((select) => {
+            const group = select.getAttribute("data-payment-plan");
+            const value = select.value;
+            let visibleCount = 0;
+
+            if (value === "FULL") visibleCount = 0;
+            if (value === "TWO_INSTALLMENTS") visibleCount = 2;
+            if (value === "FOUR_INSTALLMENTS") visibleCount = 4;
+
+            document.querySelectorAll('[data-installment-group="' + group + '"]').forEach((field) => {
+                const installment = Number(field.getAttribute("data-installment"));
+                field.style.display = installment <= visibleCount ? "" : "none";
+            });
+        });
+    }
+
+    function syncDeadlineCards() {
+        document.querySelectorAll(".fleet-deadline-card").forEach((card) => {
+            const mainDateInput = card.querySelector('input[type="date"]');
+            if (!mainDateInput) return;
+            const hasValue = !!(mainDateInput.value || "").trim();
+            card.classList.toggle("fleet-deadline-card--missing", !hasValue);
+        });
+    }
+
+    function syncInstallmentStates() {
+        const seen = new Set();
+
+        document.querySelectorAll("[data-installment-group][data-installment]").forEach((field) => {
+            const group = field.getAttribute("data-installment-group");
+            const installment = field.getAttribute("data-installment");
+            const key = group + ":" + installment;
+            if (seen.has(key)) return;
+            seen.add(key);
+
+            const fields = Array.from(document.querySelectorAll(
+                '[data-installment-group="' + group + '"][data-installment="' + installment + '"]'
+            ));
+
+            let dueInput = null;
+            let priceInput = null;
+            let paidInput = null;
+
+            fields.forEach((item) => {
+                const input = item.querySelector("input");
+                if (!input) return;
+                if (input.type === "date") dueInput = input;
+                else if (input.type === "checkbox") paidInput = input;
+                else priceInput = input;
+            });
+
+            const hasDueDate = !!(dueInput && (dueInput.value || "").trim());
+            const hasPrice = !!(priceInput && (priceInput.value || "").trim());
+            const isPaid = !!(paidInput && paidInput.checked);
+            const stateClass = hasDueDate && hasPrice
+                ? (isPaid ? "field--state-paid" : "field--state-unpaid")
+                : "";
+
+            fields.forEach((item) => {
+                item.classList.remove("field--state-paid", "field--state-unpaid");
+                if (stateClass) item.classList.add(stateClass);
+            });
+        });
+    }
+
+    function openFleetCoreDialog() {
+        const dialog = document.getElementById("fleetCoreDialog");
+        if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetCoreDialog() {
+        const dialog = document.getElementById("fleetCoreDialog");
+        if (dialog) dialog.close();
+    }
+
+    function openFleetEventDialog() {
+        const dialog = document.getElementById("fleetEventDialog");
+        if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetEventDialog() {
+        const dialog = document.getElementById("fleetEventDialog");
+        if (dialog) dialog.close();
+    }
+
+    function openFleetEventConfirmDialog(eventId, title) {
+        const dialog = document.getElementById("fleetEventConfirmDialog");
+        const form = document.getElementById("fleetEventConfirmForm");
+        const titleNode = document.getElementById("fleetEventConfirmTitle");
+        if (!dialog || !form) return;
+
+        form.action = "/fleet/vehicles/" + [[${vehicle.id}]] + "/events/" + eventId + "/complete";
+        if (titleNode) {
+            titleNode.textContent = title
+                ? 'Маркирай "' + title + '" като извършено?'
+                : "Маркирай събитието като извършено?";
+        }
+
+        if (typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeFleetEventConfirmDialog() {
+        const dialog = document.getElementById("fleetEventConfirmDialog");
+        if (dialog) dialog.close();
+    }
+
+    function toggleMaintenanceForm(forceState) {
+        const row = document.getElementById("maintenanceFormRow");
+        if (!row) return;
+
+        const shouldShow = typeof forceState === "boolean"
+            ? forceState
+            : row.style.display === "none";
+
+        row.style.display = shouldShow ? "table-row" : "none";
+    }
+
+    function toggleMaintenanceEditRow(recordId, forceState) {
+        const row = document.getElementById("maintenanceEditRow-" + recordId);
+        if (!row) return;
+
+        const shouldShow = typeof forceState === "boolean"
+            ? forceState
+            : row.style.display === "none";
+
+        row.style.display = shouldShow ? "table-row" : "none";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        syncFleetTireRows();
+        syncPaymentPlans();
+        syncDeadlineCards();
+        syncInstallmentStates();
+        document.querySelectorAll("[data-tire-toggle]").forEach((toggle) => {
+            toggle.addEventListener("change", syncFleetTireRows);
+        });
+        document.querySelectorAll("[data-payment-plan]").forEach((select) => {
+            select.addEventListener("change", syncPaymentPlans);
+            select.addEventListener("change", syncInstallmentStates);
+        });
+        document.querySelectorAll(".fleet-deadline-card input[type='date']").forEach((input) => {
+            input.addEventListener("input", syncDeadlineCards);
+            input.addEventListener("change", syncDeadlineCards);
+            input.addEventListener("blur", syncDeadlineCards);
+            if (input.closest("[data-installment-group]")) {
+                input.addEventListener("input", syncInstallmentStates);
+                input.addEventListener("change", syncInstallmentStates);
+                input.addEventListener("blur", syncInstallmentStates);
+            }
+        });
+        document.querySelectorAll("[data-installment-group] input[type='number'], [data-installment-group] input[type='checkbox']").forEach((input) => {
+            input.addEventListener("input", syncInstallmentStates);
+            input.addEventListener("change", syncInstallmentStates);
+            input.addEventListener("blur", syncInstallmentStates);
+        });
+    });
+</script>
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+</body>
+</html>

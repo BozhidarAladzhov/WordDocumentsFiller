@@ -102,46 +102,62 @@ function getControlsForForm(form) {
   return controls;
 }
 
-function buildFormData(form, controls) {
-  var formData = new FormData();
+var autoSaveMap = new WeakMap();
+var autoSaveForms = [];
+
+function ensureAutoSaveState(form) {
+  var state = autoSaveMap.get(form);
+  if (!state) {
+    state = { timerId: null, inFlight: false, queued: false, dirty: false };
+    autoSaveMap.set(form, state);
+  }
+  return state;
+}
+
+function buildUrlEncodedData(controls) {
+  var params = new URLSearchParams();
   for (var i = 0; i < controls.length; i += 1) {
     var c = controls[i];
     if (c.disabled || !c.name) continue;
 
     if (c.type === "checkbox") {
-      if (c.checked) formData.append(c.name, c.value || "on");
+      if (c.checked) params.append(c.name, c.value || "on");
       continue;
     }
     if (c.type === "radio") {
-      if (c.checked) formData.set(c.name, c.value || "");
+      if (c.checked) params.set(c.name, c.value || "");
       continue;
     }
-    formData.set(c.name, c.value == null ? "" : c.value);
+    params.set(c.name, c.value == null ? "" : c.value);
   }
-  return formData;
+  return params;
 }
 
-var autoSaveMap = new WeakMap();
-
 function triggerAutoSave(form, controls) {
-  var state = autoSaveMap.get(form);
-  if (!state) {
-    state = { timerId: null, inFlight: false, queued: false };
-    autoSaveMap.set(form, state);
-  }
+  var state = ensureAutoSaveState(form);
   if (state.inFlight) {
     state.queued = true;
     return;
   }
 
-  var formData = buildFormData(form, controls);
+  var formData = buildUrlEncodedData(controls);
   state.inFlight = true;
 
   fetch(form.action, {
     method: "POST",
     body: formData,
+    keepalive: true,
     credentials: "same-origin",
-    headers: { "X-Requested-With": "XMLHttpRequest" }
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+      "X-Requested-With": "XMLHttpRequest"
+    }
+  }).then(function (response) {
+    if (!response || !response.ok) {
+      state.dirty = true;
+      throw new Error("Auto-save failed");
+    }
+    state.dirty = false;
   }).catch(function () {
     // Keep editing uninterrupted; user can still click Save manually.
   }).finally(function () {
@@ -154,11 +170,7 @@ function triggerAutoSave(form, controls) {
 }
 
 function scheduleAutoSave(form, controls, delayMs) {
-  var state = autoSaveMap.get(form);
-  if (!state) {
-    state = { timerId: null, inFlight: false, queued: false };
-    autoSaveMap.set(form, state);
-  }
+  var state = ensureAutoSaveState(form);
   if (state.timerId) clearTimeout(state.timerId);
   state.timerId = setTimeout(function () {
     state.timerId = null;
@@ -166,9 +178,59 @@ function scheduleAutoSave(form, controls, delayMs) {
   }, delayMs);
 }
 
+function flushPendingAutoSaves() {
+  for (var i = 0; i < autoSaveForms.length; i += 1) {
+    var form = autoSaveForms[i];
+    if (!form) continue;
+
+    var state = autoSaveMap.get(form);
+    if (!state) continue;
+
+    if (state.timerId) {
+      clearTimeout(state.timerId);
+      state.timerId = null;
+    }
+
+    if (!state.dirty) continue;
+
+    var controls = getControlsForForm(form);
+    var params = buildUrlEncodedData(controls);
+
+    try {
+      if (navigator.sendBeacon) {
+        var blob = new Blob([params.toString()], {
+          type: "application/x-www-form-urlencoded;charset=UTF-8"
+        });
+        navigator.sendBeacon(form.action, blob);
+        state.dirty = false;
+        continue;
+      }
+    } catch (e) {
+      // Fall through to keepalive fetch.
+    }
+
+    try {
+      fetch(form.action, {
+        method: "POST",
+        body: params,
+        keepalive: true,
+        credentials: "same-origin",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      });
+      state.dirty = false;
+    } catch (e2) {
+      // Ignore unload-time failures.
+    }
+  }
+}
+
 function bindAutoSaveForForm(form) {
   if (!form || form.dataset.autosaveBound === "1") return;
   form.dataset.autosaveBound = "1";
+  autoSaveForms.push(form);
 
   var controls = getControlsForForm(form);
   for (var i = 0; i < controls.length; i += 1) {
@@ -177,23 +239,39 @@ function bindAutoSaveForForm(form) {
     var type = (c.type || "").toLowerCase();
 
     c.addEventListener("change", function () {
+      ensureAutoSaveState(form).dirty = true;
+      if (type === "date" || type === "checkbox" || tag === "SELECT") {
+        triggerAutoSave(form, controls);
+        return;
+      }
       scheduleAutoSave(form, controls, 120);
     });
 
+    if (tag === "INPUT" && type === "date") {
+      c.addEventListener("input", function () {
+        ensureAutoSaveState(form).dirty = true;
+        scheduleAutoSave(form, controls, 120);
+      });
+    }
+
     if (tag === "INPUT" && type !== "date" && type !== "checkbox" && type !== "radio") {
       c.addEventListener("input", function () {
+        ensureAutoSaveState(form).dirty = true;
         scheduleAutoSave(form, controls, 700);
       });
       c.addEventListener("blur", function () {
+        ensureAutoSaveState(form).dirty = true;
         scheduleAutoSave(form, controls, 120);
       });
     }
 
     if (tag === "TEXTAREA") {
       c.addEventListener("input", function () {
+        ensureAutoSaveState(form).dirty = true;
         scheduleAutoSave(form, controls, 700);
       });
       c.addEventListener("blur", function () {
+        ensureAutoSaveState(form).dirty = true;
         scheduleAutoSave(form, controls, 120);
       });
     }
@@ -208,6 +286,11 @@ function initContainerTrackerAutoSave() {
   for (var i = 0; i < vehicleForms.length; i += 1) {
     bindAutoSaveForForm(vehicleForms[i]);
   }
+}
+
+function initFleetVehicleAutoSave() {
+  var fleetVehicleForm = document.getElementById("fleetVehicleDetailsForm");
+  if (fleetVehicleForm) bindAutoSaveForForm(fleetVehicleForm);
 }
 
 function initOpenDetailsOnDoubleClick() {
@@ -339,8 +422,12 @@ document.addEventListener("DOMContentLoaded", function () {
   initAllDateInputs();
   initStatusPills();
   initContainerTrackerAutoSave();
+  initFleetVehicleAutoSave();
   initOpenDetailsOnDoubleClick();
 });
+
+window.addEventListener("beforeunload", flushPendingAutoSaves);
+window.addEventListener("pagehide", flushPendingAutoSaves);
 
 document.addEventListener("pointerdown", function (event) {
   var input = event.target.closest('input[type="date"]');

@@ -92,13 +92,70 @@
 
         <div id="resultBox" class="resultBox">
             <p id="resultText"></p>
+            <div class="hint">Copy: Viber-friendly text is generated so bold formatting is preserved on paste.</div>
             <div id="copiedToast" class="copied">✅ Copied!</div>
         </div>
 
         <textarea id="plainTextOut" style="position:absolute; left:-9999px;"></textarea>
+        <div id="richCopyOut" contenteditable="true" style="position:absolute; left:-9999px; top:-9999px; white-space:pre-wrap;"></div>
     </div>
 
     <script>
+        function escapeHtml(str) {
+            return String(str || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function addInstructionLine(linesHtml, linesText, icon, label, value) {
+            const safeValue = value || "";
+            linesHtml.push(`${icon} <strong>${escapeHtml(label)}:</strong> ${escapeHtml(safeValue)}<br>`);
+            linesText.push(`${icon} *${label}:* ${safeValue}\n`);
+        }
+
+        function buildTexts(data) {
+            const linesHtml = [];
+            const linesText = [];
+
+            linesHtml.push(`<strong>${escapeHtml(data.place)}</strong><br>`);
+            linesText.push(`*${data.place}*\n`);
+
+            addInstructionLine(linesHtml, linesText, "\uD83D\uDE98", "Vehicle", data.vehicle);
+            addInstructionLine(linesHtml, linesText, "\uD83C\uDFAB", "VIN", data.vin);
+
+            if (data.place !== "Private address") {
+                addInstructionLine(linesHtml, linesText, "\uD83D\uDD0E", data.lotStockLabel, data.lotStockValue);
+                if (data.pinValue) {
+                    addInstructionLine(linesHtml, linesText, "\uD83D\uDD0E", data.pinLabel, data.pinValue);
+                }
+            }
+
+            addInstructionLine(
+                linesHtml,
+                linesText,
+                data.place === "Private address" ? "\uD83C\uDFE0" : "\uD83D\uDCCD",
+                data.locationLabel,
+                data.locationValue
+            );
+
+            if (data.place === "Private address") {
+                addInstructionLine(linesHtml, linesText, "\uD83D\uDC64", "Contact", data.contact);
+                addInstructionLine(linesHtml, linesText, "\uD83D\uDCDE", "Phone", data.phone);
+                addInstructionLine(linesHtml, linesText, "\uD83D\uDCE6", "Items in the car", data.itemsInCar);
+            }
+
+            addInstructionLine(linesHtml, linesText, "\uD83D\uDD4B", "To terminal", data.toTerminal);
+            addInstructionLine(linesHtml, linesText, "\uD83D\uDCCB", "Special requirements", data.specialReq || "None");
+
+            const bodyHtml = linesHtml.join("");
+            const previewHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827;">${bodyHtml}</div>`;
+            const copyHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827;">${bodyHtml}</div>`;
+            return { html: previewHtml, copyHtml: copyHtml, text: linesText.join("") };
+        }
+
         function handlePlaceChange() {
             const place = document.getElementById("place").value;
 
@@ -113,39 +170,38 @@
 
         function generateText() {
             const place = document.getElementById("place").value;
-            const lines = [];
 
-            lines.push(`<strong>${place}</strong><br>`);
-            lines.push(`🚘 <strong>Vehicle:</strong> ${vehicle.value}<br>`);
-            lines.push(`🎫 <strong>VIN:</strong> ${vin.value}<br>`);
+            const built = buildTexts({
+                place,
+                vehicle: vehicle.value,
+                vin: vin.value,
+                lotStockLabel: lotStockLabel.textContent,
+                lotStockValue: lotStockValue.value,
+                pinLabel: pinLabel.textContent,
+                pinValue: pinValue.value,
+                locationLabel: locationLabel.textContent,
+                locationValue: locationValue.value,
+                contact: contact.value,
+                phone: phone.value,
+                itemsInCar: itemsInCar.value,
+                toTerminal: toTerminal.value,
+                specialReq: specialReq.value
+            });
 
-            if (place !== "Private address") {
-                lines.push(`🔎 <strong>${lotStockLabel.textContent}:</strong> ${lotStockValue.value}<br>`);
-                if (pinValue.value) {
-                    lines.push(`🔎 <strong>${pinLabel.textContent}:</strong> ${pinValue.value}<br>`);
-                }
-            }
-
-            lines.push(`${place === "Private address" ? "🏠" : "📍"} <strong>${locationLabel.textContent}:</strong> ${locationValue.value}<br>`);
-
-            if (place === "Private address") {
-                lines.push(`👤 <strong>Contact:</strong> ${contact.value}<br>`);
-                lines.push(`📞 <strong>Phone:</strong> ${phone.value}<br>`);
-                lines.push(`📦 <strong>Items in the car:</strong> ${itemsInCar.value}<br>`);
-            }
-
-            lines.push(`🕋 <strong>To terminal:</strong> ${toTerminal.value}<br>`);
-            lines.push(`📋 <strong>Special requirements:</strong> ${specialReq.value || "None"}<br>`);
-
-            resultText.innerHTML = lines.join("");
-            plainTextOut.value = resultText.innerText;
+            resultText.innerHTML = built.html;
+            richCopyOut.innerHTML = built.copyHtml;
+            plainTextOut.value = built.text;
             resultBox.style.display = "block";
+            copiedToast.style.display = "none";
         }
 
         async function copyGeneratedText() {
+            if (resultBox.style.display !== "block") generateText();
+
+            const text = plainTextOut.value || "";
+
             await window.copyToClipboard({
-                html: resultText.innerHTML,
-                text: plainTextOut.value,
+                text,
                 fallbackTextarea: plainTextOut
             });
             copiedToast.style.display = "block";

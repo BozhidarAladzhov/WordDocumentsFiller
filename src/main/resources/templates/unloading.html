@@ -62,7 +62,7 @@
 
   <div id="resultBox" class="resultBox">
     <p id="resultText"></p>
-    <div class="hint">Копиране: генерира се rich text, за да се запази bold форматирането при paste в приложения като Viber, Gmail, Outlook и Word.</div>
+    <div class="hint">Копиране: генерира се Viber-friendly текст, за да се запази bold форматирането при paste.</div>
     <div id="copiedToast" class="copied">Текстът е копиран.</div>
   </div>
 
@@ -218,7 +218,7 @@
 
 
     const bodyHtml = linesHtml.join("");
-    const previewHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#f3f6fb;">${bodyHtml}</div>`;
+    const previewHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827;">${bodyHtml}</div>`;
     const copyHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827;">${bodyHtml}</div>`;
     return { html: previewHtml, copyHtml: copyHtml, text: linesTxt.join("") };
   }
