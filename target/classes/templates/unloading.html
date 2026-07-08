@@ -53,7 +53,8 @@
       <div class="btn-row">
         <button type="button" class="btn-ghost" onclick="addVehicle()">+ Добави автомобил</button>
         <button type="button" onclick="generateText()">Генерирай</button>
-        <button type="button" class="btn-secondary" onclick="copyGeneratedText()">Копирай текста</button>
+        <button type="button" class="btn-secondary" onclick="copyGeneratedText()">Копирай за Viber</button>
+        <button type="button" class="btn-secondary" onclick="copyGeneratedTextForOutlook()">Копирай за Outlook</button>
       </div>
     </div>
 
@@ -219,8 +220,8 @@
 
     const bodyHtml = linesHtml.join("");
     const previewHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827;">${bodyHtml}</div>`;
-    const copyHtml = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827;">${bodyHtml}</div>`;
-    return { html: previewHtml, copyHtml: copyHtml, text: linesTxt.join("") };
+    const copyHtmlOutlook = `<div style="font-family:Arial, Helvetica, sans-serif; font-size:14px; line-height:1.5; color:#111827; mso-line-height-rule:exactly;">${bodyHtml}</div>`;
+    return { html: previewHtml, copyHtmlOutlook: copyHtmlOutlook, text: linesTxt.join("") };
   }
 
   function generateText() {
@@ -238,7 +239,7 @@
     const built = buildTexts({ date: unloadDate, unloadTime, containerNo, hasInspection, vehicles });
 
     document.getElementById("resultText").innerHTML = built.html;
-    document.getElementById("richCopyOut").innerHTML = built.copyHtml;
+    document.getElementById("richCopyOut").innerHTML = built.copyHtmlOutlook;
     document.getElementById("plainTextOut").value = built.text;
     document.getElementById("resultBox").style.display = "block";
     document.getElementById("copiedToast").style.display = "none";
@@ -251,6 +252,25 @@
     const ta = document.getElementById("plainTextOut");
 
     await window.copyToClipboard({ text, fallbackTextarea: ta });
+
+    const toast = document.getElementById("copiedToast");
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 2000);
+  }
+
+  async function copyGeneratedTextForOutlook() {
+    if (document.getElementById("resultBox").style.display !== "block") generateText();
+
+    const text = document.getElementById("plainTextOut").value || "";
+    const ta = document.getElementById("plainTextOut");
+    const rich = document.getElementById("richCopyOut");
+
+    await window.copyToClipboard({
+      html: rich.innerHTML,
+      text,
+      fallbackTextarea: ta,
+      richHtmlElement: rich
+    });
 
     const toast = document.getElementById("copiedToast");
     toast.style.display = "block";

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Canada Vehicle Details</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+    <style>
+        .canada-vehicle-page {
+            margin-top: 20px;
+        }
+
+        .canada-vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .canada-vehicle-header__title {
+            margin: 0;
+            font-size: 1.8rem;
+            line-height: 1.1;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .canada-vehicle-header__vin {
+            font: inherit;
+            color: var(--text);
+        }
+
+        .canada-vehicle-card {
+            padding: 16px 18px;
+        }
+
+        .canada-vehicle-section + .canada-vehicle-section {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        .canada-vehicle-section__head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .canada-vehicle-section__head h2 {
+            margin: 0;
+            font-size: .98rem;
+        }
+
+        .canada-vehicle-section__head--center {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .canada-vehicle-section__head--center h2 {
+            font-size: 1.18rem;
+            font-weight: 800;
+        }
+
+        .canada-vehicle-grid {
+            display: grid;
+            gap: 10px 12px;
+        }
+
+        .canada-vehicle-grid--triple {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .canada-vehicle-grid--status {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .canada-vehicle-grid .field {
+            min-width: 0;
+        }
+
+        .canada-vehicle-grid label {
+            margin-top: 0;
+            margin-bottom: 4px;
+            font-size: .8rem;
+        }
+
+        .canada-vehicle-grid input,
+        .canada-vehicle-grid select,
+        .canada-vehicle-grid textarea {
+            width: 100%;
+            margin-top: 0;
+            padding: 7px 10px;
+            font-size: .9rem;
+            box-sizing: border-box;
+        }
+
+        .canada-vehicle-grid input,
+        .canada-vehicle-grid select {
+            min-height: 40px;
+            height: 40px;
+        }
+
+        .canada-vehicle-grid textarea {
+            min-height: 88px;
+            resize: vertical;
+        }
+
+        .canada-vehicle-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .canada-vehicle-actions__group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .canada-vehicle-file-note {
+            margin: 0 0 10px;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .canada-vehicle-grid select.pill {
+            padding-top: 0;
+            padding-bottom: 0;
+            line-height: 1.2;
+        }
+
+        .canada-vehicle-upload-form {
+            display: grid;
+            gap: 10px;
+            justify-items: center;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+
+        .canada-vehicle-upload-form .field {
+            min-width: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .canada-vehicle-upload-form input[type="file"] {
+            min-height: 40px;
+            padding: 6px 10px;
+            width: 100%;
+        }
+
+        .canada-vehicle-mail-preview {
+            display: grid;
+            gap: 8px;
+            margin: 14px 0;
+            padding: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.24);
+            border-radius: 8px;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.1), rgba(14, 165, 233, 0.08));
+        }
+
+        .canada-vehicle-mail-preview p {
+            margin: 0;
+            font-size: .84rem;
+            color: #1e3a5f;
+            word-break: break-word;
+        }
+
+        .canada-vehicle-mail-preview pre {
+            margin: 0;
+            padding: 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(59, 130, 246, 0.18);
+            font-family: inherit;
+            font-size: .84rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--text);
+        }
+
+        .canada-vehicle-mail-status {
+            margin: 12px auto 0;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: .82rem;
+            text-align: center;
+            max-width: 420px;
+        }
+
+        .canada-vehicle-mail-status--success {
+            background: rgba(15, 123, 108, 0.12);
+            color: #0f7b6c;
+            border: 1px solid rgba(15, 123, 108, 0.24);
+        }
+
+        .canada-vehicle-mail-status--error {
+            background: rgba(194, 65, 12, 0.12);
+            color: #c2410c;
+            border: 1px solid rgba(194, 65, 12, 0.24);
+        }
+
+        .canada-vehicle-send-audit {
+            margin: 12px auto 0;
+            padding: 8px 10px;
+            border: 1px solid rgba(15, 123, 108, 0.24);
+            border-radius: 8px;
+            background: rgba(15, 123, 108, 0.12);
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .canada-vehicle-send-audit p {
+            margin: 0;
+            font-size: .8rem;
+            color: #0f7b6c;
+        }
+
+        .canada-vehicle-payment-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 360px));
+            gap: 10px;
+            margin-top: 14px;
+            justify-content: center;
+        }
+
+        .canada-vehicle-payment-item {
+            display: grid;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            width: min(100%, 460px);
+            justify-items: center;
+            text-align: center;
+        }
+
+        .canada-vehicle-payment-item__name {
+            margin: 0;
+            color: var(--text);
+            font-size: .92rem;
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .canada-vehicle-payment-item__meta {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: .82rem;
+        }
+
+        .canada-vehicle-payment-item__actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: nowrap;
+            justify-content: center;
+        }
+
+        @media (max-width: 980px) {
+            .canada-vehicle-grid--triple,
+            .canada-vehicle-grid--status,
+            .canada-vehicle-upload-form {
+                grid-template-columns: 1fr;
+            }
+
+            .canada-vehicle-payment-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools tracker tracker--wide canada-vehicle-page">
+    <div class="canada-vehicle-header">
+        <h1 class="canada-vehicle-header__title">
+            <span th:text="${vehicle.vehicleName != null && !#strings.isEmpty(vehicle.vehicleName) ? vehicle.vehicleName : 'Canada Vehicle'}">Canada Vehicle</span>
+            <span class="canada-vehicle-header__vin" th:text="${vehicle.vin}">VIN</span>
+        </h1>
+
+        <a class="btn btn-ghost" th:href="@{/canada-vehicles}">Back</a>
+    </div>
+
+    <div class="details-card details-card--compact canada-vehicle-card">
+        <form id="canadaVehicleDetailsForm" th:action="@{/canada-vehicles/{id}/update(id=${vehicle.id})}" method="post" th:object="${vehicle}">
+            <div class="canada-vehicle-section">
+                <div class="canada-vehicle-grid canada-vehicle-grid--triple">
+                    <div class="field">
+                        <label>Client</label>
+                        <input th:field="*{clientName}">
+                    </div>
+
+                    <div class="field">
+                        <label>Vehicle</label>
+                        <input th:field="*{vehicleName}">
+                    </div>
+
+                    <div class="field">
+                        <label>VIN</label>
+                        <input th:field="*{vin}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="canada-vehicle-section">
+                <div class="canada-vehicle-grid canada-vehicle-grid--triple">
+                    <div class="field">
+                        <label>Container</label>
+                        <input th:field="*{containerNo}">
+                    </div>
+
+                    <div class="field">
+                        <label>ETA</label>
+                        <input type="date"
+                               name="eta"
+                               id="eta"
+                               th:value="${vehicle.eta != null ? #temporals.format(vehicle.eta, 'yyyy-MM-dd') : ''}">
+                    </div>
+
+                    <div class="field">
+                        <label>Tracking Link</label>
+                        <input th:field="*{trackingLink}" placeholder="https://...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="canada-vehicle-section">
+                <div class="canada-vehicle-grid canada-vehicle-grid--status">
+                    <div class="field">
+                        <label>Талон</label>
+                        <select th:field="*{talonStatus}" class="pill">
+                            <option th:each="status : ${talonStatusOptions}" th:value="${status}" th:text="${status}"></option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Invoice</label>
+                        <input th:field="*{invoiceNumber}">
+                    </div>
+
+                    <div class="field">
+                        <label>Amount (USD)</label>
+                        <input type="number" step="0.01" th:field="*{amount}">
+                    </div>
+
+                    <div class="field">
+                        <label>Payment Date</label>
+                        <input type="date"
+                               name="paymentDate"
+                               id="paymentDate"
+                               th:value="${vehicle.paymentDate != null ? #temporals.format(vehicle.paymentDate, 'yyyy-MM-dd') : ''}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="canada-vehicle-section">
+                <div class="canada-vehicle-actions">
+                    <div class="canada-vehicle-actions__group">
+                        <button type="button"
+                                class="btn-sm btn-sm--danger"
+                                onclick="openCanadaVehicleDeleteDialog()">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canada-vehicle-section">
+                <div class="canada-vehicle-section__head">
+                    <h2>Notes</h2>
+                </div>
+
+                <div class="canada-vehicle-grid">
+                    <div class="field">
+                        <textarea th:field="*{notes}" class="notes-field" rows="4" placeholder="Internal notes..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card canada-vehicle-card" style="margin-top:16px;">
+        <div class="canada-vehicle-section__head canada-vehicle-section__head--center">
+            <h2>Payment Orders</h2>
+        </div>
+
+
+        <div th:if="${paymentOrderMailSuccess}" class="canada-vehicle-mail-status canada-vehicle-mail-status--success" th:text="${paymentOrderMailSuccess}">
+            Payment order email sent.
+        </div>
+        <div th:if="${paymentOrderMailError}" class="canada-vehicle-mail-status canada-vehicle-mail-status--error" th:text="${paymentOrderMailError}">
+            Mail error.
+        </div>
+        <div class="canada-vehicle-send-audit" th:if="${vehicle.paymentOrdersSentAt != null}">
+            <p>
+                <strong>Sent:</strong>
+                <span th:text="${#temporals.format(vehicle.paymentOrdersSentAt, 'dd.MM.yyyy HH:mm')}">08.07.2026 11:00</span>
+                <span th:if="${vehicle.paymentOrdersSentTo != null && !#strings.isEmpty(vehicle.paymentOrdersSentTo)}">
+                    · <strong>To:</strong>
+                    <span th:text="${vehicle.paymentOrdersSentTo}">recipient@example.com</span>
+                </span>
+            </p>
+        </div>
+
+        <form th:action="@{/canada-vehicles/{id}/payment-orders(id=${vehicle.id})}"
+              method="post"
+              enctype="multipart/form-data"
+              class="canada-vehicle-upload-form">
+            <div class="field">
+                <label>Attach Files</label>
+                <input type="file" name="files" multiple accept=".pdf,image/*">
+            </div>
+
+            <div class="field">
+                <button type="submit" class="btn-sm btn-sm--save">Upload</button>
+            </div>
+        </form>
+
+        <div class="canada-vehicle-payment-list" th:if="${!#lists.isEmpty(paymentOrders)}">
+            <div class="canada-vehicle-payment-item" th:each="paymentOrder : ${paymentOrders}">
+                <div>
+                    <p class="canada-vehicle-payment-item__name" th:text="${paymentOrder.originalFileName}">document.pdf</p>
+                    <p class="canada-vehicle-payment-item__meta"
+                       th:text="${#temporals.format(paymentOrder.uploadedAt, 'dd.MM.yyyy HH:mm')} + ' · ' + paymentOrder.fileSizeBytes + ' bytes'">
+                        meta
+                    </p>
+                </div>
+
+                <div class="canada-vehicle-payment-item__actions">
+                    <a class="btn-sm btn-sm--ghost"
+                       th:href="@{/canada-vehicles/{id}/payment-orders/{paymentOrderId}/download(id=${vehicle.id},paymentOrderId=${paymentOrder.id})}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        Open
+                    </a>
+                    <form th:action="@{/canada-vehicles/{id}/payment-orders/{paymentOrderId}/delete(id=${vehicle.id},paymentOrderId=${paymentOrder.id})}"
+                          method="post">
+                        <button type="submit"
+                                class="btn-sm btn-sm--danger"
+                                onclick="return confirm('Delete this payment order?');">
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <p class="hint" th:if="${#lists.isEmpty(paymentOrders)}" style="margin-top:14px;">No payment orders uploaded yet.</p>
+
+        <div class="canada-vehicle-mail-preview">
+            <p><strong>Mail Status:</strong> <span th:text="${paymentOrderMailConfigured} ? 'Configured' : 'Not configured'">Configured</span></p>
+            <p><strong>To:</strong> <span th:text="${#strings.isEmpty(paymentOrderMailTo) ? '-' : paymentOrderMailTo}">recipient@example.com</span></p>
+            <p><strong>CC:</strong> <span th:text="${#strings.isEmpty(paymentOrderMailCc) ? '-' : paymentOrderMailCc}">cc@example.com</span></p>
+            <p><strong>Subject:</strong> <span th:text="${paymentOrderMailSubject}">Payment orders - Vehicle - VIN</span></p>
+            <pre th:text="${paymentOrderMailBody}">Mail body preview</pre>
+        </div>
+
+        <div class="canada-vehicle-section" style="margin-top:16px;">
+            <div class="canada-vehicle-actions">
+                <div class="canada-vehicle-actions__group">
+                    <form th:action="@{/canada-vehicles/{id}/payment-orders/send(id=${vehicle.id})}" method="post">
+                        <button type="submit"
+                                class="btn-sm btn-sm--save"
+                                th:disabled="${#lists.isEmpty(paymentOrders) or !paymentOrderMailConfigured}">
+                            Изпрати
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <p class="hint" style="margin:8px 0 0;" th:if="${!paymentOrderMailConfigured}">
+                Попълни `spring.mail.*` и `canada.payment-orders.mail.*` в configuration, за да активираш Gmail изпращането.
+            </p>
+        </div>
+    </div>
+</div>
+
+<dialog id="canadaVehicleDeleteDialog" class="fleet-modal fleet-modal--confirm">
+    <div class="fleet-modal__content fleet-modal__content--confirm">
+        <div class="fleet-section-head">
+            <h2 style="margin:0;">Delete Vehicle</h2>
+        </div>
+        <div class="fleet-confirm-copy">
+            <p class="fleet-confirm-copy__warning">Потвърди изтриването. Това действие не може да се върне.</p>
+        </div>
+        <form th:action="@{/canada-vehicles/{id}/delete(id=${vehicle.id})}" method="post">
+            <div class="canada-vehicle-actions">
+                <div class="canada-vehicle-actions__group">
+                    <button type="button" class="btn-sm btn-sm--ghost" onclick="closeCanadaVehicleDeleteDialog()">Cancel</button>
+                    <button type="submit" class="btn-sm btn-sm--danger">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</dialog>
+
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+<script>
+    function openCanadaVehicleDeleteDialog() {
+        const dialog = document.getElementById("canadaVehicleDeleteDialog");
+        if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    }
+
+    function closeCanadaVehicleDeleteDialog() {
+        const dialog = document.getElementById("canadaVehicleDeleteDialog");
+        if (dialog) dialog.close();
+    }
+</script>
+</body>
+</html>

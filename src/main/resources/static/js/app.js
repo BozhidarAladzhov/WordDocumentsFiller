@@ -50,6 +50,7 @@ function updatePillClass(select) {
   if (name === "status") prefix = "pill--status-";
   if (name === "paid") prefix = "pill--paid-";
   if (name === "titles") prefix = "pill--titles-";
+  if (name === "talonstatus") prefix = "pill--talon-";
   if (!prefix) return;
 
   var toRemove = [];
@@ -69,6 +70,29 @@ function initStatusPills() {
     updatePillClass(selects[i]);
     selects[i].addEventListener("change", function (event) {
       updatePillClass(event.target);
+    });
+  }
+}
+
+function autoResizeTextarea(textarea) {
+  if (!textarea) return;
+  textarea.style.height = "auto";
+  textarea.style.height = textarea.scrollHeight + "px";
+}
+
+function initAutoResizeTextareas() {
+  var textareas = document.querySelectorAll("textarea.notes-field");
+  for (var i = 0; i < textareas.length; i += 1) {
+    var textarea = textareas[i];
+    if (textarea.dataset.autoresizeInit === "1") {
+      autoResizeTextarea(textarea);
+      continue;
+    }
+
+    textarea.dataset.autoresizeInit = "1";
+    autoResizeTextarea(textarea);
+    textarea.addEventListener("input", function (event) {
+      autoResizeTextarea(event.target);
     });
   }
 }
@@ -293,6 +317,11 @@ function initFleetVehicleAutoSave() {
   if (fleetVehicleForm) bindAutoSaveForForm(fleetVehicleForm);
 }
 
+function initCanadaVehicleAutoSave() {
+  var canadaVehicleForm = document.getElementById("canadaVehicleDetailsForm");
+  if (canadaVehicleForm) bindAutoSaveForForm(canadaVehicleForm);
+}
+
 function initOpenDetailsOnDoubleClick() {
   var rows = document.querySelectorAll(".js-open-details-row");
   for (var i = 0; i < rows.length; i += 1) {
@@ -302,6 +331,54 @@ function initOpenDetailsOnDoubleClick() {
 
       var url = this.getAttribute("data-details-url");
       if (url) window.location.href = url;
+    });
+  }
+}
+
+function initCarTransportDragAndDrop() {
+  var cards = document.querySelectorAll(".car-transport-vehicle-card[draggable='true']");
+  var dropzones = document.querySelectorAll(".car-transport-dropzone");
+  var form = document.getElementById("carTransportAssignForm");
+
+  if (!cards.length || !dropzones.length || !form) return;
+
+  for (var i = 0; i < cards.length; i += 1) {
+    cards[i].addEventListener("dragstart", function (event) {
+      event.dataTransfer.setData("text/plain", this.getAttribute("data-vehicle-id") || "");
+      event.dataTransfer.effectAllowed = "move";
+      this.classList.add("is-dragging");
+    });
+
+    cards[i].addEventListener("dragend", function () {
+      this.classList.remove("is-dragging");
+    });
+  }
+
+  function submitMove(vehicleId, haulerId) {
+    if (!vehicleId) return;
+    form.action = haulerId
+      ? "/car-transport/vehicles/" + vehicleId + "/assign/" + haulerId
+      : "/car-transport/vehicles/" + vehicleId + "/unassign";
+    form.submit();
+  }
+
+  for (var j = 0; j < dropzones.length; j += 1) {
+    dropzones[j].addEventListener("dragover", function (event) {
+      event.preventDefault();
+      this.classList.add("is-over");
+    });
+
+    dropzones[j].addEventListener("dragleave", function () {
+      this.classList.remove("is-over");
+    });
+
+    dropzones[j].addEventListener("drop", function (event) {
+      event.preventDefault();
+      this.classList.remove("is-over");
+      submitMove(
+        event.dataTransfer.getData("text/plain"),
+        this.getAttribute("data-hauler-id") || ""
+      );
     });
   }
 }
@@ -421,9 +498,12 @@ window.copyToClipboard = copyToClipboard;
 document.addEventListener("DOMContentLoaded", function () {
   initAllDateInputs();
   initStatusPills();
+  initAutoResizeTextareas();
   initContainerTrackerAutoSave();
   initFleetVehicleAutoSave();
+  initCanadaVehicleAutoSave();
   initOpenDetailsOnDoubleClick();
+  initCarTransportDragAndDrop();
 });
 
 window.addEventListener("beforeunload", flushPendingAutoSaves);

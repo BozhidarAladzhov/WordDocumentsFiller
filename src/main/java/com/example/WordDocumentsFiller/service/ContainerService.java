@@ -4,7 +4,6 @@ import com.example.WordDocumentsFiller.entities.Container;
 import com.example.WordDocumentsFiller.entities.enums.ContainerStatus;
 import com.example.WordDocumentsFiller.repositories.ContainerRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,16 +20,12 @@ public class ContainerService {
 
     @Transactional()
     public List<Container> getActive() {
-        return containerRepository.findByArchivedFalse(
-                Sort.by(Sort.Direction.ASC, "eta")
-        );
+        return containerRepository.findAllByArchivedWithVehicles(false);
     }
 
     @Transactional()
     public List<Container> getArchived() {
-        return containerRepository.findByArchivedTrue(
-                Sort.by(Sort.Direction.DESC, "eta")
-        );
+        return containerRepository.findAllByArchivedWithVehicles(true);
     }
 
     @Transactional()

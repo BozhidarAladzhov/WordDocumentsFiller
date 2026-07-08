@@ -59,88 +59,144 @@
             <table class="table">
                 <thead>
                 <tr>
+                    <th class="table-col-tight">Open</th>
+                    <th class="table-col-tight">Preview</th>
                     <th>Container</th>
                     <th>BOL</th>
                     <th>Carrier</th>
                     <th>ETA</th>
                     <th>Status</th>
                     <th>Titles</th>
-                    <th>Open</th>
                     <th>Archive</th>
                     <th>Delete</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="c : ${containers}"
-                    class="js-open-details-row"
-                    th:attr="data-details-url=@{/container-tracker/containers/{id}(id=${c.id})}">
-                    <td>
-                        <a th:if="${c.trackingLink != null && !#strings.isEmpty(#strings.trim(c.trackingLink))}"
-                           th:href="${c.trackingLink}"
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           class="container-link"
-                           onclick="event.stopPropagation();">
-                            <span class="kbd" th:text="${c.containerNo}"></span>
-                        </a>
-                        <span th:if="${c.trackingLink == null || #strings.isEmpty(#strings.trim(c.trackingLink))}"
-                              class="kbd"
-                              th:text="${c.containerNo}"></span>
-                    </td>
-                    <td th:text="${c.bol}"></td>
-                    <td th:text="${c.carrier}"></td>
-                    <td th:text="${c.eta != null ? #temporals.format(c.eta, 'dd.MM.yyyy') : ''}"></td>
-                    <td>
-                        <span class="badge"
-                              th:classappend="${c.status != null && c.status.name() == 'DELIVERED' ? ' good' : (c.status != null && c.status.name() == 'ON_HOLD' ? ' bad' : (c.status != null && c.status.name() == 'CUSTOMS' ? ' info' : ' warn'))}"
-                              th:text="${c.status}"></span>
-                    </td>
-                    <td>
-                        <form th:action="@{/container-tracker/containers/{id}/titles(id=${c.id})}"
-                              method="post"
-                              onclick="event.stopPropagation();">
-                            <select name="titles"
-                                    class="pill container-titles-select"
-                                    onchange="this.form.submit()"
-                                    th:classappend="${' pill--titles-' + #strings.toLowerCase(#strings.replace(containerTitlesStatuses[c.id], '_', '-'))}">
-                                <option value="RECEIVED"
-                                        th:selected="${containerTitlesStatuses[c.id] != null && containerTitlesStatuses[c.id].name() == 'RECEIVED'}">
-                                    YES
-                                </option>
-                                <option value="MISSING"
-                                        th:selected="${containerTitlesStatuses[c.id] == null || containerTitlesStatuses[c.id].name() == 'MISSING'}">
-                                    NO
-                                </option>
-                            </select>
-                        </form>
-                    </td>
-                    <td>
-                        <a class="btn-sm btn-sm--ghost"
-                           th:href="@{/container-tracker/containers/{id}(id=${c.id})}">Details</a>
-                    </td>
-                    <td>
-                        <form th:action="@{/container-tracker/containers/{id}/archive(id=${c.id})}"
-                              method="post"
-                              onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
-                            <button type="submit" class="btn-sm btn--archive">Archive</button>
-                        </form>
-                    </td>
-                    <td>
-                        <form th:action="@{/container-tracker/containers/{id}/delete(id=${c.id})}"
-                              method="post"
-                              onsubmit="return confirm('Delete this container? This will delete all vehicles inside it.');">
-                            <button type="submit" class="btn-sm btn-sm--danger">Delete</button>
-                        </form>
-                    </td>
-
-                </tr>
+                <th:block th:each="c : ${containers}">
+                    <tr class="js-open-details-row"
+                        th:attr="data-details-url=@{/container-tracker/containers/{id}(id=${c.id})}">
+                        <td class="table-cell-tight">
+                            <a class="btn-sm btn-sm--ghost btn-icon"
+                               th:href="@{/container-tracker/containers/{id}(id=${c.id})}"
+                               title="Open details"
+                               aria-label="Open details">↗</a>
+                        </td>
+                        <td class="table-cell-tight">
+                            <button type="button"
+                                    class="btn-sm btn-sm--ghost btn-icon"
+                                    title="Preview vehicles"
+                                    aria-label="Preview vehicles"
+                                    th:attr="onclick=|toggleContainerPreview(${c.id}); event.stopPropagation();|">
+                                <span aria-hidden="true">👁</span>
+                                <span class="btn-icon__count" th:text="${#lists.size(c.vehicles)}">0</span>
+                            </button>
+                        </td>
+                        <td>
+                            <a th:if="${c.trackingLink != null && !#strings.isEmpty(#strings.trim(c.trackingLink))}"
+                               th:href="${c.trackingLink}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="container-link"
+                               onclick="event.stopPropagation();">
+                                <span class="kbd" th:text="${c.containerNo}"></span>
+                            </a>
+                            <span th:if="${c.trackingLink == null || #strings.isEmpty(#strings.trim(c.trackingLink))}"
+                                  class="kbd"
+                                  th:text="${c.containerNo}"></span>
+                        </td>
+                        <td th:text="${c.bol}"></td>
+                        <td th:text="${c.carrier}"></td>
+                        <td th:text="${c.eta != null ? #temporals.format(c.eta, 'dd.MM.yyyy') : ''}"></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${c.status != null && c.status.name() == 'DELIVERED' ? ' good' : (c.status != null && c.status.name() == 'ON_HOLD' ? ' bad' : (c.status != null && c.status.name() == 'CUSTOMS' ? ' info' : ' warn'))}"
+                                  th:text="${c.status}"></span>
+                        </td>
+                        <td>
+                            <form th:action="@{/container-tracker/containers/{id}/titles(id=${c.id})}"
+                                  method="post"
+                                  onclick="event.stopPropagation();">
+                                <select name="titles"
+                                        class="pill container-titles-select"
+                                        onchange="this.form.submit()"
+                                        th:classappend="${' pill--titles-' + #strings.toLowerCase(#strings.replace(containerTitlesStatuses[c.id], '_', '-'))}">
+                                    <option value="RECEIVED"
+                                            th:selected="${containerTitlesStatuses[c.id] != null && containerTitlesStatuses[c.id].name() == 'RECEIVED'}">
+                                        YES
+                                    </option>
+                                    <option value="MISSING"
+                                            th:selected="${containerTitlesStatuses[c.id] == null || containerTitlesStatuses[c.id].name() == 'MISSING'}">
+                                        NO
+                                    </option>
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/container-tracker/containers/{id}/archive(id=${c.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Archive this container? It will be moved to Archive page.');">
+                                <button type="submit" class="btn-sm btn--archive">Archive</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{/container-tracker/containers/{id}/delete(id=${c.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Delete this container? This will delete all vehicles inside it.');">
+                                <button type="submit" class="btn-sm btn-sm--danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:id="${'containerPreview-' + c.id}" class="container-preview-row" style="display:none;">
+                        <td colspan="10">
+                            <div class="container-preview">
+                                <div class="table-wrap" th:if="${!#lists.isEmpty(c.vehicles)}">
+                                    <table class="table container-preview-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>VIN</th>
+                                            <th>Owner</th>
+                                            <th>Paid</th>
+                                            <th>Titles</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="vehicle : ${c.vehicles}">
+                                            <td th:text="${vehicle.description != null && !#strings.isEmpty(#strings.trim(vehicle.description)) ? vehicle.description : '-'}"></td>
+                                            <td><span class="kbd" th:text="${vehicle.vin != null && !#strings.isEmpty(#strings.trim(vehicle.vin)) ? vehicle.vin : '-'}"></span></td>
+                                            <td th:text="${vehicle.ownerName != null && !#strings.isEmpty(#strings.trim(vehicle.ownerName)) ? vehicle.ownerName : '-'}"></td>
+                                            <td>
+                                                <span class="badge"
+                                                      th:classappend="${vehicle.paid != null && vehicle.paid.name() == 'PAID' ? ' good' : ' bad'}"
+                                                      th:text="${vehicle.paid != null && vehicle.paid.name() == 'PAID' ? 'PAID' : 'NOT PAID'}"></span>
+                                            </td>
+                                            <td>
+                                                <span class="badge"
+                                                      th:classappend="${vehicle.titles != null && vehicle.titles.name() == 'RECEIVED' ? ' good' : ' bad'}"
+                                                      th:text="${vehicle.titles != null && vehicle.titles.name() == 'RECEIVED' ? 'RECEIVED' : 'MISSING'}"></span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div th:if="${#lists.isEmpty(c.vehicles)}" class="car-transport-empty">No vehicles in this container.</div>
+                            </div>
+                        </td>
+                    </tr>
+                </th:block>
                 </tbody>
             </table>
         </div>
 
     </div>
 </div>
+    <script>
+        function toggleContainerPreview(containerId) {
+            const row = document.getElementById("containerPreview-" + containerId);
+            if (!row) return;
+            row.style.display = row.style.display === "none" ? "table-row" : "none";
+        }
+    </script>
     <script th:src="@{/js/app.js}" src="/js/app.js"></script>
 </body>
 </html>
-

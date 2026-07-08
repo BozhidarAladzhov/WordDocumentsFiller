@@ -1,3 +1,4 @@
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\CanadianVehicleController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\ContainerTrackerController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\FleetController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\GraphMailController.java
@@ -20,7 +21,10 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\Transpo
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\UnloadingPrefillDto.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\UnpData.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\UpData.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\CanadianVehicle.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\CanadianVehiclePaymentOrder.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Container.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\CanadianDocumentStatus.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\ContainerStatus.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\CustomsDirection.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\FleetEventStatus.java
@@ -38,6 +42,8 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Fl
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Party.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\UpClient.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Vehicle.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\CanadianVehiclePaymentOrderRepository.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\CanadianVehicleRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\ContainerRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\FleetContactRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\FleetEventRepository.java
@@ -46,6 +52,11 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositorie
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\PartyRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\UpClientRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\VehicleRepository.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\CanadaPaymentOrderMailProperties.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\CanadianPaymentOrderStorageProperties.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\CanadianVehiclePaymentOrderMailService.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\CanadianVehiclePaymentOrderService.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\CanadianVehicleService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\ContainerService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\FleetContactService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\FleetEventService.java
