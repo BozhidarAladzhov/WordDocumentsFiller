@@ -6,6 +6,7 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\HomeController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\InstrumentsController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\OfferController.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\OverdueDebtsController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\ProcreditController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\TransportRequestController.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\controllers\UnpInstructionsController.java
@@ -17,6 +18,8 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\GraphMa
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\GraphTokenSession.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\HblData.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OfferData.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OverdueDebtLine.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OverdueDebtMailDraft.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\TransportRequestData.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\UnloadingPrefillDto.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\UnpData.java
@@ -70,6 +73,7 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\Hbl
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\LibreOfficePdfConverter.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\OfferGeneratorService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\OfferPdfService.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\OverdueDebtsService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\PartyService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\ProcreditProcessingException.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\ProcreditService.java

@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,6 +24,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -42,10 +45,34 @@ public class CanadianVehicleController {
     }
 
     @GetMapping
-    public String overview(Model model) {
-        model.addAttribute("vehicles", canadianVehicleService.getAll());
+    public String overview(@RequestParam(name = "paymentDate", required = false)
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate,
+                           @RequestParam(name = "paymentDateFrom", required = false)
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDateFrom,
+                           @RequestParam(name = "paymentDateTo", required = false)
+                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDateTo,
+                           Model model) {
+        if (paymentDate != null) {
+            paymentDateFrom = null;
+            paymentDateTo = null;
+        } else if (paymentDateFrom != null && paymentDateTo != null && paymentDateFrom.isAfter(paymentDateTo)) {
+            LocalDate swap = paymentDateFrom;
+            paymentDateFrom = paymentDateTo;
+            paymentDateTo = swap;
+        }
+
+        List<CanadianVehicle> vehicles = hasPaymentDateFilter(paymentDate, paymentDateFrom, paymentDateTo)
+                ? canadianVehicleService.getByPaymentDateFilter(paymentDate, paymentDateFrom, paymentDateTo)
+                : canadianVehicleService.getAll();
+
+        model.addAttribute("vehicles", vehicles);
         model.addAttribute("newVehicle", new CanadianVehicle());
         model.addAttribute("talonStatusOptions", CanadianDocumentStatus.values());
+        model.addAttribute("paymentDate", paymentDate);
+        model.addAttribute("paymentDateFrom", paymentDateFrom);
+        model.addAttribute("paymentDateTo", paymentDateTo);
+        model.addAttribute("paymentDateFilterActive", hasPaymentDateFilter(paymentDate, paymentDateFrom, paymentDateTo));
+        model.addAttribute("telegramPaymentText", buildTelegramPaymentText(vehicles, paymentDate, paymentDateFrom, paymentDateTo));
         return "canada-vehicles/list";
     }
 
@@ -129,5 +156,74 @@ public class CanadianVehicleController {
     public String delete(@PathVariable Long id) {
         canadianVehicleService.delete(id);
         return "redirect:/canada-vehicles";
+    }
+
+    private boolean hasPaymentDateFilter(LocalDate paymentDate, LocalDate paymentDateFrom, LocalDate paymentDateTo) {
+        return paymentDate != null || paymentDateFrom != null || paymentDateTo != null;
+    }
+
+    private String buildTelegramPaymentText(List<CanadianVehicle> vehicles,
+                                            LocalDate paymentDate,
+                                            LocalDate paymentDateFrom,
+                                            LocalDate paymentDateTo) {
+        if (!hasPaymentDateFilter(paymentDate, paymentDateFrom, paymentDateTo)) {
+            return "";
+        }
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        StringBuilder text = new StringBuilder();
+
+        text.append(buildPeriodLabel(paymentDate, paymentDateFrom, paymentDateTo, dateFormatter));
+
+        if (vehicles.isEmpty()) {
+            text.append('\n').append('\n').append("No rows with payment date for the selected filter.");
+            return text.toString();
+        }
+
+        for (CanadianVehicle vehicle : vehicles) {
+            text.append('\n').append('\n').append(buildVehicleVinLine(vehicle));
+            text.append('\n').append("Invoice: ").append(valueOrDash(vehicle.getInvoiceNumber()));
+            text.append('\n').append("  Amount: ").append(formatAmount(vehicle.getAmount()));
+            text.append('\n').append("  Payment Date: ")
+                    .append(vehicle.getPaymentDate() != null ? vehicle.getPaymentDate().format(dateFormatter) : "-");
+            if (vehicle.getNotes() != null && !vehicle.getNotes().isBlank()) {
+                text.append('\n').append("  Notes: ").append(vehicle.getNotes().trim());
+            }
+        }
+
+        return text.toString();
+    }
+
+    private String buildPeriodLabel(LocalDate paymentDate,
+                                    LocalDate paymentDateFrom,
+                                    LocalDate paymentDateTo,
+                                    DateTimeFormatter dateFormatter) {
+        if (paymentDate != null) {
+            return "Payment Date: " + paymentDate.format(dateFormatter);
+        }
+        if (paymentDateFrom != null && paymentDateTo != null) {
+            return "Payment Date Range: " + paymentDateFrom.format(dateFormatter) + " - " + paymentDateTo.format(dateFormatter);
+        }
+        if (paymentDateFrom != null) {
+            return "Payment Date From: " + paymentDateFrom.format(dateFormatter);
+        }
+        if (paymentDateTo != null) {
+            return "Payment Date To: " + paymentDateTo.format(dateFormatter);
+        }
+        return "Payment Date";
+    }
+
+    private String valueOrDash(String value) {
+        return value != null && !value.isBlank() ? value : "-";
+    }
+
+    private String buildVehicleVinLine(CanadianVehicle vehicle) {
+        String vehicleName = valueOrDash(vehicle.getVehicleName());
+        String vin = valueOrDash(vehicle.getVin());
+        return "-".equals(vin) ? vehicleName : vehicleName + " " + vin;
+    }
+
+    private String formatAmount(Double amount) {
+        return amount != null ? String.format(java.util.Locale.US, "%.2f USD", amount) : "-";
     }
 }

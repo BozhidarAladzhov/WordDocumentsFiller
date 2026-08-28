@@ -17,6 +17,7 @@ com\example\WordDocumentsFiller\controllers\HblController.class
 com\example\WordDocumentsFiller\entities\CanadianVehiclePaymentOrder.class
 com\example\WordDocumentsFiller\service\ProcreditService$1.class
 com\example\WordDocumentsFiller\service\FleetVehicleService$1.class
+com\example\WordDocumentsFiller\controllers\OverdueDebtsController.class
 com\example\WordDocumentsFiller\service\UpClientService.class
 com\example\WordDocumentsFiller\repositories\FleetContactRepository.class
 com\example\WordDocumentsFiller\dto\HblData.class
@@ -47,9 +48,11 @@ com\example\WordDocumentsFiller\dto\FleetDashboardDto.class
 com\example\WordDocumentsFiller\dto\UnpData.class
 com\example\WordDocumentsFiller\service\OfferGeneratorService.class
 com\example\WordDocumentsFiller\repositories\UpClientRepository.class
+com\example\WordDocumentsFiller\service\OverdueDebtsService.class
 com\example\WordDocumentsFiller\service\LibreOfficePdfConverter.class
 com\example\WordDocumentsFiller\service\FleetEventService.class
 com\example\WordDocumentsFiller\repositories\CanadianVehiclePaymentOrderRepository.class
+com\example\WordDocumentsFiller\dto\OverdueDebtLine.class
 com\example\WordDocumentsFiller\entities\enums\PaidStatus.class
 com\example\WordDocumentsFiller\entities\enums\FleetEventType$1.class
 com\example\WordDocumentsFiller\controllers\ContainerTrackerController$EmailDraftViewData.class
@@ -69,6 +72,7 @@ com\example\WordDocumentsFiller\repositories\FleetMaintenanceRecordRepository.cl
 com\example\WordDocumentsFiller\service\CanadianVehicleService.class
 com\example\WordDocumentsFiller\dto\UnloadingPrefillDto$VehicleDto.class
 com\example\WordDocumentsFiller\entities\enums\FleetVehicleStatus$1.class
+com\example\WordDocumentsFiller\service\OverdueDebtsService$1.class
 com\example\WordDocumentsFiller\entities\Container.class
 com\example\WordDocumentsFiller\controllers\ProcreditController.class
 com\example\WordDocumentsFiller\service\GraphMailSignatureService.class
@@ -88,7 +92,9 @@ com\example\WordDocumentsFiller\dto\GraphMailDraft.class
 com\example\WordDocumentsFiller\repositories\PartyRepository.class
 com\example\WordDocumentsFiller\dto\TransportRequestData.class
 com\example\WordDocumentsFiller\service\CanadianVehiclePaymentOrderService.class
+com\example\WordDocumentsFiller\service\OverdueDebtsService$CustomerGroup.class
 com\example\WordDocumentsFiller\entities\enums\CanadianDocumentStatus.class
+com\example\WordDocumentsFiller\dto\OverdueDebtMailDraft.class
 com\example\WordDocumentsFiller\service\CanadianVehiclePaymentOrderMailService.class
 com\example\WordDocumentsFiller\dto\UpData.class
 com\example\WordDocumentsFiller\controllers\GraphMailController.class

@@ -55,7 +55,7 @@ public class GraphMailService {
     }
 
     public GraphTokenSession exchangeCode(String code) {
-        return tokenRequest(Map.of(
+        GraphTokenSession session = tokenRequest(Map.of(
                 "client_id", properties.getClientId(),
                 "client_secret", properties.getClientSecret(),
                 "grant_type", "authorization_code",
@@ -63,10 +63,12 @@ public class GraphMailService {
                 "redirect_uri", properties.getRedirectUri(),
                 "scope", properties.getScopes()
         ));
+        populateAccountInfo(session);
+        return session;
     }
 
     public GraphTokenSession refreshToken(String refreshToken) {
-        return tokenRequest(Map.of(
+        GraphTokenSession session = tokenRequest(Map.of(
                 "client_id", properties.getClientId(),
                 "client_secret", properties.getClientSecret(),
                 "grant_type", "refresh_token",
@@ -74,6 +76,8 @@ public class GraphMailService {
                 "redirect_uri", properties.getRedirectUri(),
                 "scope", properties.getScopes()
         ));
+        populateAccountInfo(session);
+        return session;
     }
 
     public GraphTokenSession ensureValidToken(GraphTokenSession tokenSession) {
@@ -100,9 +104,7 @@ public class GraphMailService {
                                     "contentType", "HTML",
                                     "content", htmlBody
                             ),
-                            "toRecipients", new Object[]{
-                                    Map.of("emailAddress", Map.of("address", to))
-                            },
+                            "toRecipients", recipients(to),
                             "ccRecipients", recipients(cc),
                             "attachments", graphMailSignatureService.inlineAttachments().stream()
                                     .map(att -> Map.of(
@@ -132,6 +134,32 @@ public class GraphMailService {
         } catch (IOException | InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IllegalStateException("Cannot send mail through Microsoft Graph.", e);
+        }
+    }
+
+    private void populateAccountInfo(GraphTokenSession session) {
+        if (session == null || session.getAccessToken() == null || session.getAccessToken().isBlank()) {
+            return;
+        }
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://graph.microsoft.com/v1.0/me?$select=displayName,mail,userPrincipalName"))
+                    .header("Authorization", "Bearer " + session.getAccessToken())
+                    .GET()
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                return;
+            }
+            JsonNode json = objectMapper.readTree(response.body());
+            String mail = readText(json, "mail");
+            String userPrincipalName = readText(json, "userPrincipalName");
+            session.setAccountEmail(mail.isBlank() ? userPrincipalName : mail);
+            session.setAccountDisplayName(readText(json, "displayName"));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (IOException ignored) {
+            // Mail sending still works even if account display metadata cannot be loaded.
         }
     }
 

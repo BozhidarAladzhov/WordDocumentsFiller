@@ -5,6 +5,7 @@ import com.example.WordDocumentsFiller.repositories.CanadianVehicleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class CanadianVehicleService {
     @Transactional
     public List<CanadianVehicle> getAll() {
         return canadianVehicleRepository.findAllForOverview();
+    }
+
+    @Transactional
+    public List<CanadianVehicle> getByPaymentDateFilter(LocalDate exactDate, LocalDate fromDate, LocalDate toDate) {
+        return canadianVehicleRepository.findByPaymentDateFilter(exactDate, fromDate, toDate);
     }
 
     @Transactional

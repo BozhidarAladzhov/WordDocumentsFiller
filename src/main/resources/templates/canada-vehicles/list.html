@@ -11,6 +11,98 @@
             margin: 10px 0 18px;
         }
 
+        .canada-vehicles-filter-card,
+        .canada-vehicles-telegram-card {
+            margin-bottom: 18px;
+        }
+
+        .canada-vehicles-filter-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            align-items: end;
+        }
+
+        .canada-vehicles-filter-form .field {
+            min-width: 0;
+        }
+
+        .canada-vehicles-filter-form label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: .82rem;
+            font-weight: 700;
+        }
+
+        .canada-vehicles-filter-form input {
+            width: 100%;
+            min-height: 40px;
+            padding: 7px 10px;
+            box-sizing: border-box;
+        }
+
+        .canada-vehicles-filter-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .canada-vehicles-filter-summary {
+            margin: 10px 0 0;
+            color: var(--muted);
+            font-size: .88rem;
+        }
+
+        .canada-vehicles-telegram-box {
+            width: 100%;
+            min-height: 320px;
+            resize: vertical;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            background: var(--surface);
+            color: var(--text);
+            font: inherit;
+            line-height: 1.45;
+            white-space: pre-wrap;
+        }
+
+        .canada-vehicles-telegram-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .canada-vehicles-telegram-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .canada-vehicles-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 30px;
+            padding: 0 10px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--surface-2);
+            color: var(--text);
+            font-size: .84rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .canada-vehicles-telegram-hint {
+            margin: 0;
+            color: var(--muted);
+            font-size: .86rem;
+        }
+
         .canada-vehicles-add-btn {
             min-width: 220px;
             height: 48px;
@@ -220,6 +312,45 @@
                 onclick="openCanadaVehicleAddDialog()">Add Vehicle</button>
     </div>
 
+    <div class="card canada-vehicles-filter-card">
+        <h2 style="margin-top:0;">Payment Date Filter</h2>
+        <form method="get" th:action="@{/canada-vehicles}" class="canada-vehicles-filter-form">
+            <div class="field">
+                <label for="paymentDate">Exact Payment Date</label>
+                <input id="paymentDate" name="paymentDate" type="date" th:value="${paymentDate}">
+            </div>
+            <div class="field">
+                <label for="paymentDateFrom">From</label>
+                <input id="paymentDateFrom" name="paymentDateFrom" type="date" th:value="${paymentDateFrom}">
+            </div>
+            <div class="field">
+                <label for="paymentDateTo">To</label>
+                <input id="paymentDateTo" name="paymentDateTo" type="date" th:value="${paymentDateTo}">
+            </div>
+            <div class="canada-vehicles-filter-actions">
+                <button type="submit" class="btn-sm btn-sm--save">Filter</button>
+                <a th:href="@{/canada-vehicles}" class="btn-sm btn-sm--ghost">Clear</a>
+            </div>
+        </form>
+        <p class="canada-vehicles-filter-summary" th:if="${paymentDateFilterActive}"
+           th:text="|Found ${#lists.size(vehicles)} row(s) with payment date for the selected filter.|"></p>
+    </div>
+
+    <div class="card canada-vehicles-telegram-card" th:if="${paymentDateFilterActive}">
+        <div class="canada-vehicles-telegram-actions">
+            <div class="canada-vehicles-telegram-head">
+                <h2 style="margin:0;">Sorted</h2>
+                <span class="canada-vehicles-count-badge"
+                      th:text="|${#lists.size(vehicles)} rows|"></span>
+            </div>
+            <button type="button" class="btn-sm btn-sm--ghost" onclick="copyCanadaVehiclesTelegramText()">Copy Text</button>
+        </div>
+        <textarea id="canadaVehiclesTelegramText"
+                  class="canada-vehicles-telegram-box"
+                  readonly
+                  th:text="${telegramPaymentText}"></textarea>
+    </div>
+
     <div class="card canada-vehicles-card">
         <h2 style="margin-top:0;">All Vehicles</h2>
 
@@ -402,6 +533,20 @@
     function closeCanadaVehicleNotesDialog(id) {
         const dialog = document.getElementById(id);
         if (dialog) dialog.close();
+    }
+
+    async function copyCanadaVehiclesTelegramText() {
+        const field = document.getElementById("canadaVehiclesTelegramText");
+        if (!field) return;
+
+        field.select();
+        field.setSelectionRange(0, field.value.length);
+
+        try {
+            await navigator.clipboard.writeText(field.value);
+        } catch (error) {
+            document.execCommand("copy");
+        }
     }
 </script>
 </body>

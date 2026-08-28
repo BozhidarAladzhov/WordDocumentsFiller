@@ -8,6 +8,8 @@ public class GraphTokenSession implements Serializable {
     private String accessToken;
     private String refreshToken;
     private Instant expiresAt;
+    private String accountEmail;
+    private String accountDisplayName;
 
     public String getAccessToken() {
         return accessToken;
@@ -31,5 +33,21 @@ public class GraphTokenSession implements Serializable {
 
     public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public String getAccountEmail() {
+        return accountEmail;
+    }
+
+    public void setAccountEmail(String accountEmail) {
+        this.accountEmail = accountEmail;
+    }
+
+    public String getAccountDisplayName() {
+        return accountDisplayName;
+    }
+
+    public void setAccountDisplayName(String accountDisplayName) {
+        this.accountDisplayName = accountDisplayName;
     }
 }

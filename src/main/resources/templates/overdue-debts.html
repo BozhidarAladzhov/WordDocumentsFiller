@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Просрочени задължения</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<div th:replace="fragments/navbar :: main-nav"></div>
+
+<div class="container tools tracker tracker--wide">
+    <div class="tracker-topbar">
+        <div>
+            <h1 class="tracker-title">Просрочени задължения</h1>
+            <div class="hint">
+                Справка към <span class="kbd" th:text="${#temporals.format(today, 'dd.MM.yyyy')}">28.08.2026</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="card" style="margin-bottom:16px;">
+        <div class="tracker-topbar" style="margin:0;">
+            <div>
+                <h2 class="section-head">Outlook</h2>
+                <div th:if="${graphConfigured && graphConnected}" class="hint">
+                    Свързан:
+                    <span class="kbd"
+                          th:text="${#strings.isEmpty(graphAccountEmail) ? 'Outlook акаунт' : graphAccountEmail}">
+                        user@example.com
+                    </span>
+                    <span th:if="${!#strings.isEmpty(graphAccountName)}" th:text="${' - ' + graphAccountName}"></span>
+                </div>
+                <div th:if="${graphConfigured && !graphConnected}" class="hint">
+                    Outlook не е свързан.
+                </div>
+                <div th:if="${!graphConfigured}" class="hint">
+                    Microsoft Graph не е настроен.
+                </div>
+            </div>
+            <a th:if="${graphConfigured && !graphConnected}"
+               class="btn"
+               th:href="@{/microsoft/graph/connect(returnTo='/overdue-debts')}">
+                Свържи Outlook
+            </a>
+            <span th:if="${graphConfigured && graphConnected}" class="badge good">готов за изпращане</span>
+            <span th:if="${!graphConfigured}" class="badge bad">не е настроен</span>
+        </div>
+    </section>
+
+    <div th:if="${mailStatus == 'sent'}" class="copied" style="display:block; margin-bottom:12px;">
+        Имейлът е изпратен успешно през Outlook.
+    </div>
+    <div th:if="${mailStatus == 'connected'}" class="copied" style="display:block; margin-bottom:12px;">
+        Outlook акаунтът е свързан успешно.
+    </div>
+    <div th:if="${mailStatus == 'notConnected'}" class="procredit-message--error" style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;">
+        Първо свържи Outlook от бутона най-горе.
+    </div>
+    <div th:if="${mailStatus == 'draftMissing'}" class="procredit-message--error" style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;">
+        Draft-ът вече не е наличен. Качи файла отново.
+    </div>
+    <div th:if="${mailStatus == 'missingRecipient'}" class="procredit-message--error" style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;">
+        Липсва получател. Попълни To или провери email колоната във файла.
+    </div>
+    <div th:if="${mailStatus == 'graphNotConfigured'}"
+         class="procredit-message--error"
+         style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;">
+        Microsoft Graph не е настроен. Провери MS_GRAPH_ENABLED, MS_GRAPH_TENANT_ID, MS_GRAPH_CLIENT_ID, MS_GRAPH_CLIENT_SECRET и MS_GRAPH_REDIRECT_URI.
+    </div>
+    <div th:if="${mailStatus == 'graphStateInvalid'}"
+         class="procredit-message--error"
+         style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;">
+        Outlook връзката върна невалидна сесия. Увери се, че отваряш приложението на същия порт, който е в MS_GRAPH_REDIRECT_URI.
+    </div>
+    <div th:if="${mailStatus == 'graphError'}"
+         class="procredit-message--error"
+         style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;">
+        Outlook връзката не успя. Провери redirect URI и дали Microsoft Graph приложението има Mail.Send permission.
+    </div>
+    <div th:if="${error}" class="procredit-message--error" style="display:block; margin-bottom:12px; padding:10px 14px; border-radius:8px;" th:text="${error}">
+        Error
+    </div>
+
+    <section class="card">
+        <h2 class="section-head">Качване на Excel</h2>
+        <form method="post" th:action="@{/overdue-debts/preview}" enctype="multipart/form-data">
+            <label for="overdueFile">Входен Excel файл</label>
+            <input id="overdueFile" type="file" name="file"
+                   accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+            <div class="btn-row" style="margin-top:14px;">
+                <button type="submit">Генерирай preview</button>
+            </div>
+        </form>
+    </section>
+
+    <div class="section-divider" th:if="${draftCount > 0}"></div>
+
+    <section th:if="${sendableDraftCount > 0}">
+        <div class="tracker-topbar">
+            <div>
+                <h2 class="section-head">Готови за изпращане</h2>
+                <div class="hint">
+                    Изпращаеми имейли: <span class="kbd" th:text="${sendableDraftCount}">0</span>
+                </div>
+            </div>
+            <div class="tracker-actions">
+                <label class="checkbox-chip" style="margin:0;">
+                    <input id="overdueSelectAll" type="checkbox" checked>
+                    Избери всички
+                </label>
+                <button th:if="${graphConfigured && graphConnected}"
+                        id="overdueSendSelected"
+                        type="button"
+                        class="btn">
+                    Изпрати избраните
+                </button>
+                <span th:if="${graphConfigured && !graphConnected}" class="badge warn">Outlook не е свързан</span>
+            </div>
+        </div>
+
+        <div id="overdueBatchStatus" class="copied" style="display:none; margin-bottom:12px;"></div>
+
+        <article class="details-card details-card--compact overdue-draft" th:each="draft, iter : ${sendableDrafts}" style="margin-bottom:16px;">
+            <form class="overdue-send-form" method="post" th:action="@{/overdue-debts/drafts/{id}/send(id=${draft.id()})}">
+                <div class="tracker-topbar" style="margin-top:0;">
+                    <div>
+                        <h3 class="section-head" th:text="${draft.customer()}">Customer</h3>
+                        <div class="hint">
+                            <label class="checkbox-chip" style="margin:0 8px 0 0;">
+                                <input class="overdue-draft-select" type="checkbox" checked>
+                                Избран
+                            </label>
+                            Редове: <span class="kbd" th:text="${#lists.size(draft.lines())}">0</span>
+                            <span class="badge good overdue-send-status" style="display:none; margin-left:8px;">имейлът е изпратен успешно</span>
+                            <span class="badge bad overdue-send-error" style="display:none; margin-left:8px;"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="details-row email-draft-row">
+                    <div class="field">
+                        <label th:for="${'mailTo' + iter.index}">To</label>
+                        <input th:id="${'mailTo' + iter.index}" name="to" th:value="${draft.to()}" required>
+                    </div>
+                    <div class="field">
+                        <label th:for="${'mailCc' + iter.index}">Cc</label>
+                        <input th:id="${'mailCc' + iter.index}" name="cc" th:value="${draft.cc()}">
+                    </div>
+                </div>
+
+                <input type="hidden" name="subject" th:value="${draft.subject()}">
+
+                <div class="details-row email-draft-row" style="margin-top:12px;">
+                    <div class="field" style="grid-column:1 / -1;">
+                        <label th:for="${'mailBody' + iter.index}">Body</label>
+                        <textarea th:id="${'mailBody' + iter.index}" name="body" rows="13" style="width:100%;" th:text="${draft.body()}"></textarea>
+                    </div>
+                </div>
+            </form>
+        </article>
+    </section>
+
+    <section th:if="${reviewDraftCount > 0}" style="margin-top:18px;">
+        <div class="tracker-topbar">
+            <div>
+                <h2 class="section-head">За преглед</h2>
+                <div class="hint">
+                    Просрочени клиенти без реален email за кореспонденция:
+                    <span class="kbd" th:text="${reviewDraftCount}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <article class="details-card details-card--compact" th:each="draft : ${reviewDrafts}" style="margin-bottom:16px;">
+            <div class="tracker-topbar" style="margin-top:0;">
+                <div>
+                    <h3 class="section-head" th:text="${draft.customer()}">Customer</h3>
+                    <div class="hint">
+                        Редове: <span class="kbd" th:text="${#lists.size(draft.lines())}">0</span>
+                        <span class="badge bad" style="margin-left:8px;">няма валиден клиентски email</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-wrap" style="margin-top:12px;">
+                <table class="table" style="min-width:860px;">
+                    <thead>
+                    <tr>
+                        <th>Invoice no.</th>
+                        <th>Invoice date</th>
+                        <th>Payment target</th>
+                        <th>Outstanding amount</th>
+                        <th>Currency</th>
+                        <th>Email във файла</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="line : ${draft.lines()}">
+                        <td th:text="${line.invoiceNo()}">88102</td>
+                        <td th:text="${line.invoiceDate() == null ? '' : #temporals.format(line.invoiceDate(), 'dd.MM.yyyy')}">20.08.2026</td>
+                        <td th:text="${#temporals.format(line.paymentTarget(), 'dd.MM.yyyy')}">20.08.2026</td>
+                        <td th:text="${#numbers.formatDecimal(line.outstandingAmount(), 1, 'COMMA', 2, 'POINT')}">1104.00</td>
+                        <td th:text="${line.currency()}">EUR</td>
+                        <td th:text="${line.email()}">cars@freeline.bg</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+
+    <section th:if="${draftCount == 0}" class="card" style="margin-top:16px;">
+        <h2 class="section-head">Няма генерирани имейли</h2>
+        <div class="hint">Качи `.xlsx` файл, за да се покажат клиентите с падеж до днешна дата.</div>
+    </section>
+</div>
+
+<script th:src="@{/js/app.js}" src="/js/app.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectAll = document.getElementById("overdueSelectAll");
+        const sendSelected = document.getElementById("overdueSendSelected");
+        const batchStatus = document.getElementById("overdueBatchStatus");
+
+        function selectedForms() {
+            return Array.from(document.querySelectorAll(".overdue-send-form"))
+                .filter(function (form) {
+                    const checkbox = form.querySelector(".overdue-draft-select");
+                    return checkbox && checkbox.checked && !checkbox.disabled;
+                });
+        }
+
+        function setBatchStatus(text, isError) {
+            if (!batchStatus) return;
+            batchStatus.textContent = text;
+            batchStatus.style.display = "block";
+            batchStatus.classList.toggle("procredit-message--error", !!isError);
+            batchStatus.classList.toggle("procredit-message--success", !isError);
+        }
+
+        async function sendForm(form) {
+            const draft = form.closest(".overdue-draft");
+            const checkbox = form.querySelector(".overdue-draft-select");
+            const success = form.querySelector(".overdue-send-status");
+            const error = form.querySelector(".overdue-send-error");
+
+            if (success) success.style.display = "none";
+            if (error) {
+                error.style.display = "none";
+                error.textContent = "";
+            }
+
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                credentials: "same-origin",
+                headers: {"X-Requested-With": "XMLHttpRequest"}
+            });
+            const payload = await response.json().catch(function () {
+                return {message: "Възникна грешка при изпращане."};
+            });
+
+            if (!response.ok) {
+                if (error) {
+                    error.textContent = payload.message || "Възникна грешка при изпращане.";
+                    error.style.display = "inline-flex";
+                }
+                throw new Error(payload.message || "Възникна грешка при изпращане.");
+            }
+
+            if (draft) draft.classList.add("overdue-draft--sent");
+            if (success) success.style.display = "inline-flex";
+            if (checkbox) {
+                checkbox.checked = false;
+                checkbox.disabled = true;
+            }
+        }
+
+        if (selectAll) {
+            selectAll.addEventListener("change", function () {
+                document.querySelectorAll(".overdue-draft-select:not(:disabled)").forEach(function (checkbox) {
+                    checkbox.checked = selectAll.checked;
+                });
+            });
+        }
+
+        if (sendSelected) {
+            sendSelected.addEventListener("click", async function () {
+                const forms = selectedForms();
+                if (forms.length === 0) {
+                    setBatchStatus("Няма избрани имейли за изпращане.", true);
+                    return;
+                }
+
+                sendSelected.disabled = true;
+                let sent = 0;
+                let failed = 0;
+
+                for (const form of forms) {
+                    setBatchStatus("Изпращане " + (sent + failed + 1) + " от " + forms.length + "...", false);
+                    try {
+                        await sendForm(form);
+                        sent++;
+                    } catch (ex) {
+                        failed++;
+                    }
+                }
+
+                if (failed === 0) {
+                    setBatchStatus("Изпратени успешно: " + sent + ".", false);
+                } else {
+                    setBatchStatus("Изпратени: " + sent + ". С грешка: " + failed + ".", true);
+                }
+                sendSelected.disabled = false;
+            });
+        }
+
+        document.querySelectorAll(".overdue-send-form").forEach(function (form) {
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+                try {
+                    await sendForm(form);
+                } catch (ex) {
+                    // The row-level error message is rendered by sendForm.
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

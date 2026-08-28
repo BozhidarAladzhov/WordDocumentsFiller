@@ -3119,6 +3119,17 @@ select.pill--status-customs{
   white-space:nowrap;
 }
 
+.overdue-draft--sent{
+  background:#e7f7ee !important;
+  border-color:#8bd3a8 !important;
+}
+
+.overdue-draft--sent input,
+.overdue-draft--sent textarea,
+.overdue-draft--sent .table-wrap{
+  border-color:#a6dfbd;
+}
+
 @media(max-width:1100px){
   .car-transport-form-grid,
   .car-transport-mini-grid{
