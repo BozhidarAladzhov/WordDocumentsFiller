@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,11 +34,14 @@ import java.util.stream.Collectors;
 public class OverdueDebtsController {
 
     private static final String SESSION_DRAFTS_KEY = "overdue.debts.drafts";
+    private static final String SESSION_INSTANCE_KEY = "overdue.debts.instance";
+    private static final String SESSION_PRESERVE_ONCE_KEY = "overdue.debts.preserve.once";
     private static final String RETURN_TO = "/overdue-debts";
 
     private final OverdueDebtsService overdueDebtsService;
     private final GraphMailService graphMailService;
     private final GraphMailProperties graphMailProperties;
+    private final String instanceId = UUID.randomUUID().toString();
 
     public OverdueDebtsController(OverdueDebtsService overdueDebtsService,
                                   GraphMailService graphMailService,
@@ -51,8 +55,17 @@ public class OverdueDebtsController {
     public String index(@RequestParam(required = false) String mailStatus,
                         HttpSession session,
                         Model model) {
+        if (!consumePreserveOnce(session)) {
+            clearDrafts(session);
+        }
         addPageModel(model, session, mailStatus, null);
         return "overdue-debts";
+    }
+
+    @GetMapping("/connect-outlook")
+    public String connectOutlook(HttpSession session) {
+        session.setAttribute(SESSION_PRESERVE_ONCE_KEY, true);
+        return "redirect:/microsoft/graph/connect?returnTo=" + urlEncode(RETURN_TO) + "&sendPending=false";
     }
 
     @PostMapping("/preview")
@@ -62,12 +75,13 @@ public class OverdueDebtsController {
         try {
             List<OverdueDebtMailDraft> drafts = overdueDebtsService.buildDrafts(file, LocalDate.now());
             session.setAttribute(SESSION_DRAFTS_KEY, new ArrayList<>(drafts));
+            session.setAttribute(SESSION_INSTANCE_KEY, instanceId);
             addPageModel(model, session, null, null);
         } catch (ProcreditProcessingException ex) {
-            session.removeAttribute(SESSION_DRAFTS_KEY);
+            clearDrafts(session);
             addPageModel(model, session, null, ex.getMessage());
         } catch (IOException ex) {
-            session.removeAttribute(SESSION_DRAFTS_KEY);
+            clearDrafts(session);
             addPageModel(model, session, null, "Файлът не може да бъде прочетен като Excel.");
         }
         return "overdue-debts";
@@ -131,6 +145,7 @@ public class OverdueDebtsController {
     }
 
     private void addPageModel(Model model, HttpSession session, String mailStatus, String error) {
+        clearStaleDrafts(session);
         List<OverdueDebtMailDraft> drafts = getDrafts(session);
         Map<Boolean, List<OverdueDebtMailDraft>> partitioned = drafts.stream()
                 .collect(Collectors.partitioningBy(draft -> !safeText(draft.to()).isBlank()));
@@ -160,6 +175,24 @@ public class OverdueDebtsController {
             return (List<OverdueDebtMailDraft>) value;
         }
         return List.of();
+    }
+
+    private void clearStaleDrafts(HttpSession session) {
+        Object draftInstance = session.getAttribute(SESSION_INSTANCE_KEY);
+        if (draftInstance != null && !instanceId.equals(draftInstance)) {
+            clearDrafts(session);
+        }
+    }
+
+    private boolean consumePreserveOnce(HttpSession session) {
+        Object preserve = session.getAttribute(SESSION_PRESERVE_ONCE_KEY);
+        session.removeAttribute(SESSION_PRESERVE_ONCE_KEY);
+        return Boolean.TRUE.equals(preserve);
+    }
+
+    private void clearDrafts(HttpSession session) {
+        session.removeAttribute(SESSION_DRAFTS_KEY);
+        session.removeAttribute(SESSION_INSTANCE_KEY);
     }
 
     private OverdueDebtMailDraft findDraft(HttpSession session, String draftId) {

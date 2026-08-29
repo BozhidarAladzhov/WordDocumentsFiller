@@ -40,6 +40,7 @@ com\example\WordDocumentsFiller\service\HblPdfService.class
 com\example\WordDocumentsFiller\service\ContainerService.class
 com\example\WordDocumentsFiller\service\ProcreditService$PaymentRow.class
 com\example\WordDocumentsFiller\entities\enums\CustomsDirection.class
+com\example\WordDocumentsFiller\controllers\GraphMailController$ParsedState.class
 com\example\WordDocumentsFiller\service\TransportRequestPdfService.class
 com\example\WordDocumentsFiller\entities\CanadianVehicle.class
 com\example\WordDocumentsFiller\service\UpGeneratorService.class

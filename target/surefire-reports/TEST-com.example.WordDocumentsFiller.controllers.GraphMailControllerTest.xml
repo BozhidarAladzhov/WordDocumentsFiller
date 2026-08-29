@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.WordDocumentsFiller.service.FleetMaintenanceRecordServiceTest" time="0.212" tests="2" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.WordDocumentsFiller.controllers.GraphMailControllerTest" time="0.179" tests="3" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -60,6 +60,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="shouldCreateMaintenanceRecordForVehicle" classname="com.example.WordDocumentsFiller.service.FleetMaintenanceRecordServiceTest" time="0.205"/>
-  <testcase name="shouldUpdateAndDeleteOwnedMaintenanceRecord" classname="com.example.WordDocumentsFiller.service.FleetMaintenanceRecordServiceTest" time="0.006"/>
+  <testcase name="shouldRejectInvalidState" classname="com.example.WordDocumentsFiller.controllers.GraphMailControllerTest" time="0.026"/>
+  <testcase name="shouldSanitizeStateReturnTo" classname="com.example.WordDocumentsFiller.controllers.GraphMailControllerTest" time="0.113"/>
+  <testcase name="shouldCarryReturnToAndSendPendingInState" classname="com.example.WordDocumentsFiller.controllers.GraphMailControllerTest" time="0.001"/>
 </testsuite>

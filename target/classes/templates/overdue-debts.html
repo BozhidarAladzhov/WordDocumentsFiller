@@ -10,7 +10,7 @@
 <div th:replace="fragments/navbar :: main-nav"></div>
 
 <div class="container tools tracker tracker--wide">
-    <div class="tracker-topbar">
+    <div class="tracker-topbar overdue-page-head">
         <div>
             <h1 class="tracker-title">Просрочени задължения</h1>
             <div class="hint">
@@ -19,34 +19,48 @@
         </div>
     </div>
 
-    <section class="card" style="margin-bottom:16px;">
-        <div class="tracker-topbar" style="margin:0;">
-            <div>
-                <h2 class="section-head">Outlook</h2>
-                <div th:if="${graphConfigured && graphConnected}" class="hint">
-                    Свързан:
-                    <span class="kbd"
-                          th:text="${#strings.isEmpty(graphAccountEmail) ? 'Outlook акаунт' : graphAccountEmail}">
-                        user@example.com
-                    </span>
-                    <span th:if="${!#strings.isEmpty(graphAccountName)}" th:text="${' - ' + graphAccountName}"></span>
+    <div class="overdue-top-panels">
+        <section class="card overdue-panel">
+            <div class="tracker-topbar" style="margin:0;">
+                <div>
+                    <h2 class="section-head">Outlook</h2>
+                    <div th:if="${graphConfigured && graphConnected}" class="hint">
+                        Свързан:
+                        <span class="kbd"
+                              th:text="${#strings.isEmpty(graphAccountEmail) ? 'Outlook акаунт' : graphAccountEmail}">
+                            user@example.com
+                        </span>
+                        <span th:if="${!#strings.isEmpty(graphAccountName)}" th:text="${' - ' + graphAccountName}"></span>
+                    </div>
+                    <div th:if="${graphConfigured && !graphConnected}" class="hint">
+                        Outlook не е свързан.
+                    </div>
+                    <div th:if="${!graphConfigured}" class="hint">
+                        Microsoft Graph не е настроен.
+                    </div>
                 </div>
-                <div th:if="${graphConfigured && !graphConnected}" class="hint">
-                    Outlook не е свързан.
-                </div>
-                <div th:if="${!graphConfigured}" class="hint">
-                    Microsoft Graph не е настроен.
-                </div>
-            </div>
             <a th:if="${graphConfigured && !graphConnected}"
                class="btn"
-               th:href="@{/microsoft/graph/connect(returnTo='/overdue-debts')}">
+               th:href="@{/overdue-debts/connect-outlook}">
                 Свържи Outlook
             </a>
-            <span th:if="${graphConfigured && graphConnected}" class="badge good">готов за изпращане</span>
-            <span th:if="${!graphConfigured}" class="badge bad">не е настроен</span>
-        </div>
-    </section>
+                <span th:if="${graphConfigured && graphConnected}" class="badge good">готов за изпращане</span>
+                <span th:if="${!graphConfigured}" class="badge bad">не е настроен</span>
+            </div>
+        </section>
+
+        <section class="card overdue-panel">
+            <h2 class="section-head">Качване на Excel</h2>
+            <form method="post" th:action="@{/overdue-debts/preview}" enctype="multipart/form-data">
+                <label for="overdueFile">Входен Excel файл</label>
+                <input id="overdueFile" type="file" name="file"
+                       accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                <div class="btn-row" style="margin-top:14px;">
+                    <button type="submit">Обработи</button>
+                </div>
+            </form>
+        </section>
+    </div>
 
     <div th:if="${mailStatus == 'sent'}" class="copied" style="display:block; margin-bottom:12px;">
         Имейлът е изпратен успешно през Outlook.
@@ -82,26 +96,14 @@
         Error
     </div>
 
-    <section class="card">
-        <h2 class="section-head">Качване на Excel</h2>
-        <form method="post" th:action="@{/overdue-debts/preview}" enctype="multipart/form-data">
-            <label for="overdueFile">Входен Excel файл</label>
-            <input id="overdueFile" type="file" name="file"
-                   accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
-            <div class="btn-row" style="margin-top:14px;">
-                <button type="submit">Генерирай preview</button>
-            </div>
-        </form>
-    </section>
-
     <div class="section-divider" th:if="${draftCount > 0}"></div>
 
     <section th:if="${sendableDraftCount > 0}">
         <div class="tracker-topbar">
             <div>
-                <h2 class="section-head">Готови за изпращане</h2>
+                <h2 class="section-head">Генерирани мейли за изпращане</h2>
                 <div class="hint">
-                    Изпращаеми имейли: <span class="kbd" th:text="${sendableDraftCount}">0</span>
+                    Брой на валидни имейли: <span class="kbd" th:text="${sendableDraftCount}">0</span>
                 </div>
             </div>
             <div class="tracker-actions">
@@ -212,7 +214,6 @@
 
     <section th:if="${draftCount == 0}" class="card" style="margin-top:16px;">
         <h2 class="section-head">Няма генерирани имейли</h2>
-        <div class="hint">Качи `.xlsx` файл, за да се покажат клиентите с падеж до днешна дата.</div>
     </section>
 </div>
 
