@@ -78,7 +78,7 @@ public class GraphMailController {
                 session.removeAttribute(SESSION_PENDING_DRAFT_KEY);
                 GraphTokenSession validToken = graphMailService.ensureValidToken(tokenSession);
                 session.setAttribute(SESSION_TOKEN_KEY, validToken);
-                graphMailService.sendMail(validToken.getAccessToken(), pendingDraft.to(), pendingDraft.cc(), pendingDraft.subject(), pendingDraft.body());
+                graphMailService.sendMail(validToken.getAccessToken(), validToken.getAccountEmail(), pendingDraft.to(), pendingDraft.cc(), pendingDraft.subject(), pendingDraft.body());
                 return new RedirectView(pendingDraft.returnTo() + separator(pendingDraft.returnTo()) + "mailStatus=sent");
             }
 

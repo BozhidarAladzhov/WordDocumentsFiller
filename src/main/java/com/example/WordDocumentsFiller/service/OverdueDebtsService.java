@@ -144,8 +144,9 @@ public class OverdueDebtsService {
                 group.customer,
                 String.join("; ", group.emails),
                 DEFAULT_CC,
-                "Просрочени задължения - " + group.customer,
+                "Справка неплатени фактури към " + today.format(DISPLAY_DATE) + " " + group.customer,
                 buildBody(group.customer, sortedLines, totalsByCurrency, today),
+                buildHtmlBody(group.customer, sortedLines, totalsByCurrency, today),
                 sortedLines,
                 totalsByCurrency
         );
@@ -156,9 +157,9 @@ public class OverdueDebtsService {
         List<String> out = new ArrayList<>();
         out.add("Здравейте,");
         out.add("");
-        out.add("Моля да проверите следните просрочени задължения към Freeline.");
+        out.add("Приложено изпращаме справка с неплатените фактури към " + today.format(DISPLAY_DATE) + ".");
+        out.add("Моля да прегледате дължимите суми към Фрилайн ООД и да ни информирате кога можем да очакваме плащане по просрочените фактури.");
         out.add("Клиент: " + customer);
-        out.add("Дата на справката: " + today.format(DISPLAY_DATE));
         out.add("");
         for (OverdueDebtLine line : lines) {
             out.add("Invoice no. " + line.invoiceNo()
@@ -171,8 +172,59 @@ public class OverdueDebtsService {
         totalsByCurrency.forEach((currency, total) ->
                 out.add(formatAmount(total) + " " + currency));
         out.add("");
-        out.add("Моля за съдействие за плащане.");
+        out.add("Благодаря предварително!");
         return String.join("\n", out);
+    }
+
+    private String buildHtmlBody(String customer, List<OverdueDebtLine> lines,
+                                 Map<String, BigDecimal> totalsByCurrency, LocalDate today) {
+        StringBuilder html = new StringBuilder();
+        html.append("<p>Здравейте,</p>");
+        html.append("<p>Приложено изпращаме справка с неплатените фактури към ")
+                .append(today.format(DISPLAY_DATE))
+                .append(".</p>");
+        html.append("<p>Моля да прегледате дължимите суми към Фрилайн ООД и да ни информирате кога можем да очакваме плащане по просрочените фактури.</p>");
+        html.append("<p><strong>Клиент: ").append(escapeHtml(customer)).append("</strong></p>");
+        html.append("""
+                <table style="border-collapse:collapse; margin:12px 0; font-family:'Verdana Pro', Verdana, Arial, sans-serif; font-size:10pt;">
+                  <thead>
+                    <tr>
+                      <th style="border:1px solid #b8b8b8; padding:6px 8px; background:#f2f2f2; text-align:left;">Invoice no.</th>
+                      <th style="border:1px solid #b8b8b8; padding:6px 8px; background:#f2f2f2; text-align:left;">Invoice date</th>
+                      <th style="border:1px solid #b8b8b8; padding:6px 8px; background:#f2f2f2; text-align:left;">Payment target</th>
+                      <th style="border:1px solid #b8b8b8; padding:6px 8px; background:#f2f2f2; text-align:right;">Outstanding amount</th>
+                      <th style="border:1px solid #b8b8b8; padding:6px 8px; background:#f2f2f2; text-align:left;">Currency</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                """);
+        for (OverdueDebtLine line : lines) {
+            boolean highlightOverdue = isOverdueForHighlight(line, today);
+            html.append("<tr>")
+                    .append(tableCell(line.invoiceNo(), "left", highlightOverdue))
+                    .append(tableCell(formatDate(line.invoiceDate()), "left", highlightOverdue))
+                    .append(tableCell(formatDate(line.paymentTarget()), "left", highlightOverdue))
+                    .append(tableCell(formatAmount(line.outstandingAmount()), "right", highlightOverdue))
+                    .append(tableCell(line.currency(), "left", highlightOverdue))
+                    .append("</tr>");
+        }
+        html.append("</tbody></table>");
+        html.append("<p><strong>Общо:<br>");
+        totalsByCurrency.forEach((currency, total) ->
+                html.append(escapeHtml(formatAmount(total))).append(" ").append(escapeHtml(currency)).append("<br>"));
+        html.append("</strong></p>");
+        html.append("<p>Благодаря предварително!</p>");
+        return html.toString();
+    }
+
+    private boolean isOverdueForHighlight(OverdueDebtLine line, LocalDate today) {
+        return line.paymentTarget() != null && line.paymentTarget().isBefore(today);
+    }
+
+    private String tableCell(String value, String align, boolean highlightOverdue) {
+        String emphasis = highlightOverdue ? " color:#c00000; font-weight:700;" : "";
+        return "<td style=\"border:1px solid #b8b8b8; padding:6px 8px; text-align:" + align + ";" + emphasis + "\">" +
+                escapeHtml(value) + "</td>";
     }
 
     private Map<String, Integer> mapColumns(Row headerRow) {
@@ -316,6 +368,18 @@ public class OverdueDebtsService {
 
     private String formatAmount(BigDecimal amount) {
         return amount == null ? "" : amount.setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    private static String escapeHtml(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 
     private static final class CustomerGroup {

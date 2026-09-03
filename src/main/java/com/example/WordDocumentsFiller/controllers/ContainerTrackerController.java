@@ -252,7 +252,7 @@ public class ContainerTrackerController {
 
             GraphTokenSession validToken = graphMailService.ensureValidToken(token);
             session.setAttribute(GraphMailController.SESSION_TOKEN_KEY, validToken);
-            graphMailService.sendMail(validToken.getAccessToken(), to, safeText(cc), subject, body);
+            graphMailService.sendMail(validToken.getAccessToken(), validToken.getAccountEmail(), to, safeText(cc), subject, body);
             return "redirect:" + returnTo + "?mailStatus=sent";
         } catch (Exception ex) {
             session.removeAttribute(GraphMailController.SESSION_TOKEN_KEY);

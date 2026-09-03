@@ -94,9 +94,9 @@ public class GraphMailService {
         return refreshToken(tokenSession.getRefreshToken());
     }
 
-    public void sendMail(String accessToken, String to, String cc, String subject, String body) {
+    public void sendMail(String accessToken, String senderEmail, String to, String cc, String subject, String body) {
         try {
-            String htmlBody = graphMailSignatureService.buildHtmlBody(body);
+            String htmlBody = graphMailSignatureService.buildHtmlBody(body, senderEmail);
             String payload = objectMapper.writeValueAsString(Map.of(
                     "message", Map.of(
                             "subject", subject,

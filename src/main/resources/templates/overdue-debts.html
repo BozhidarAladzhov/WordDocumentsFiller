@@ -156,7 +156,12 @@
                 <div class="details-row email-draft-row" style="margin-top:12px;">
                     <div class="field" style="grid-column:1 / -1;">
                         <label th:for="${'mailBody' + iter.index}">Body</label>
-                        <textarea th:id="${'mailBody' + iter.index}" name="body" rows="13" style="width:100%;" th:text="${draft.body()}"></textarea>
+                        <input type="hidden" th:id="${'mailBody' + iter.index}" name="body" th:value="${draft.bodyHtml()}">
+                        <div class="overdue-mail-editor"
+                             contenteditable="true"
+                             th:utext="${draft.bodyHtml()}"
+                             style="width:100%; min-height:260px; padding:10px 12px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; overflow:auto;">
+                        </div>
                     </div>
                 </div>
             </form>
@@ -241,6 +246,12 @@
         }
 
         async function sendForm(form) {
+            const editor = form.querySelector(".overdue-mail-editor");
+            const bodyInput = form.querySelector("input[name='body']");
+            if (editor && bodyInput) {
+                bodyInput.value = editor.innerHTML;
+            }
+
             const draft = form.closest(".overdue-draft");
             const checkbox = form.querySelector(".overdue-draft-select");
             const success = form.querySelector(".overdue-send-status");

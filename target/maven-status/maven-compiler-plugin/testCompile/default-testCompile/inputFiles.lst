@@ -2,6 +2,7 @@ C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\controllers
 C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\FleetEventServiceTest.java
 C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\FleetMaintenanceRecordServiceTest.java
 C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\FleetVehicleServiceTest.java
+C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\GraphMailSignatureServiceTest.java
 C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\HblGeneratorServiceTest.java
 C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\OverdueDebtsServiceTest.java
 C:\WordDocumentsFiller\src\test\java\com\example\WordDocumentsFiller\service\UpGeneratorServiceTest.java

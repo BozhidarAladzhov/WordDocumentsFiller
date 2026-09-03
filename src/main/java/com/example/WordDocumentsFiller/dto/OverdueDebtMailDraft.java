@@ -12,6 +12,7 @@ public record OverdueDebtMailDraft(
         String cc,
         String subject,
         String body,
+        String bodyHtml,
         List<OverdueDebtLine> lines,
         Map<String, BigDecimal> totalsByCurrency
 ) implements Serializable {

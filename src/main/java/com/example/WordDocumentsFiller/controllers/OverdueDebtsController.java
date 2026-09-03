@@ -128,7 +128,7 @@ public class OverdueDebtsController {
 
             GraphTokenSession validToken = graphMailService.ensureValidToken(token);
             session.setAttribute(GraphMailController.SESSION_TOKEN_KEY, validToken);
-            graphMailService.sendMail(validToken.getAccessToken(), to, ccForSend, subject, body);
+            graphMailService.sendMail(validToken.getAccessToken(), validToken.getAccountEmail(), to, ccForSend, subject, body);
             if (ajax) {
                 return ResponseEntity.ok(Map.of("status", "sent", "message", "Имейлът е изпратен успешно."));
             }
