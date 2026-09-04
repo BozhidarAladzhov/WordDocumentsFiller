@@ -245,12 +245,71 @@
             batchStatus.classList.toggle("procredit-message--success", !isError);
         }
 
-        async function sendForm(form) {
+        function syncEditor(form) {
             const editor = form.querySelector(".overdue-mail-editor");
             const bodyInput = form.querySelector("input[name='body']");
             if (editor && bodyInput) {
                 bodyInput.value = editor.innerHTML;
             }
+        }
+
+        function batchPayload(forms) {
+            return {
+                items: forms.map(function (form) {
+                    syncEditor(form);
+                    return {
+                        to: form.querySelector("input[name='to']").value,
+                        cc: form.querySelector("input[name='cc']").value,
+                        subject: form.querySelector("input[name='subject']").value,
+                        body: form.querySelector("input[name='body']").value
+                    };
+                })
+            };
+        }
+
+        function progressText(progress) {
+            return "Batch #" + progress.batchId +
+                " | Изпратени: " + progress.sent + " / " + progress.total +
+                " | Оставащи: " + progress.pending +
+                " | Грешки: " + progress.failed +
+                " | Лимит: 22 мейла/минута";
+        }
+
+        async function pollBatch(batchId, forms) {
+            while (true) {
+                const response = await fetch("/overdue-debts/batches/" + batchId, {
+                    method: "GET",
+                    credentials: "same-origin"
+                });
+                if (!response.ok) {
+                    setBatchStatus("Не мога да прочета прогреса на batch #" + batchId + ".", true);
+                    return;
+                }
+                const progress = await response.json();
+                const done = progress.status === "COMPLETED" || progress.status === "COMPLETED_WITH_ERRORS" || progress.status === "FAILED";
+                setBatchStatus(progressText(progress), progress.failed > 0);
+                if (done) {
+                    forms.forEach(function (form) {
+                        const draft = form.closest(".overdue-draft");
+                        const checkbox = form.querySelector(".overdue-draft-select");
+                        const success = form.querySelector(".overdue-send-status");
+                        if (draft && progress.failed === 0) draft.classList.add("overdue-draft--sent");
+                        if (success && progress.failed === 0) success.style.display = "inline-flex";
+                        if (checkbox && progress.failed === 0) {
+                            checkbox.checked = false;
+                            checkbox.disabled = true;
+                        }
+                    });
+                    return;
+                }
+                await new Promise(function (resolve) {
+                    setTimeout(resolve, 5000);
+                });
+            }
+        }
+
+        async function sendForm(form) {
+            syncEditor(form);
 
             const draft = form.closest(".overdue-draft");
             const checkbox = form.querySelector(".overdue-draft-select");
@@ -306,6 +365,31 @@
                 }
 
                 sendSelected.disabled = true;
+                setBatchStatus("Създаване на batch за " + forms.length + " мейла...", false);
+                try {
+                    const response = await fetch("/overdue-debts/drafts/batch", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        body: JSON.stringify(batchPayload(forms))
+                    });
+                    const payload = await response.json().catch(function () {
+                        return {message: "Възникна грешка при създаване на batch."};
+                    });
+                    if (!response.ok) {
+                        throw new Error(payload.message || "Възникна грешка при създаване на batch.");
+                    }
+                    setBatchStatus(progressText(payload), false);
+                    await pollBatch(payload.batchId, forms);
+                } catch (ex) {
+                    setBatchStatus(ex.message || "Възникна грешка при batch изпращане.", true);
+                } finally {
+                    sendSelected.disabled = false;
+                }
+                return;
                 let sent = 0;
                 let failed = 0;
 

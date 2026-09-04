@@ -17,6 +17,9 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\FleetVe
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\GraphMailDraft.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\GraphTokenSession.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\HblData.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\MailBatchCreateRequest.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\MailBatchItemRequest.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\MailBatchProgress.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OfferData.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OverdueDebtLine.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\dto\OverdueDebtMailDraft.java
@@ -34,6 +37,8 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\en
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\FleetEventType.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\FleetVehicleStatus.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\InsurancePaymentPlan.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\MailBatchItemStatus.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\MailBatchStatus.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\PaidStatus.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\PartyType.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\enums\TitlesStatus.java
@@ -42,6 +47,8 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Fl
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\FleetEvent.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\FleetMaintenanceRecord.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\FleetVehicle.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\MailBatch.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\MailBatchItem.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Party.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\UpClient.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\entities\Vehicle.java
@@ -52,6 +59,8 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositorie
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\FleetEventRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\FleetMaintenanceRecordRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\FleetVehicleRepository.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\MailBatchItemRepository.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\MailBatchRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\PartyRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\UpClientRepository.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\repositories\VehicleRepository.java
@@ -71,6 +80,7 @@ C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\Gra
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\HblGeneratorService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\HblPdfService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\LibreOfficePdfConverter.java
+C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\MailBatchService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\OfferGeneratorService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\OfferPdfService.java
 C:\WordDocumentsFiller\src\main\java\com\example\WordDocumentsFiller\service\OverdueDebtsService.java

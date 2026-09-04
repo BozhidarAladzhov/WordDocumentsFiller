@@ -12,6 +12,7 @@ public record OverdueDebtLine(
         BigDecimal outstandingAmount,
         String currency,
         LocalDate paymentTarget,
-        String email
+        String email,
+        String freelineUser
 ) implements Serializable {
 }
